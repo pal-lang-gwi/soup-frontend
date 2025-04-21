@@ -1,0 +1,10 @@
+.background{
+    background-image: url(../assets/bono1.JPG);
+    background-size: cover;
+    background-position: center;
+    display:flex;
+    height: 100vh;
+}
+.mainword{
+    font-family: 'mainFont';
+}
