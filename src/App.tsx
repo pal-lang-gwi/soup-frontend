@@ -1,12 +1,14 @@
+import { ThemeProvider } from 'styled-components';
 import './App.css';
-import Home from './pages/home';
-import { FontFace } from './styles/fontTheme';
+import HomePage from './pages/HomePage';
+import { theme } from './styles/theme';
 
 function App() {
   return (
     <>
-    <FontFace />
-    <Home />
+    <ThemeProvider theme={theme}>
+    <HomePage />
+    </ThemeProvider>
     </>
   );
 }
