@@ -13,6 +13,7 @@ function HomePage() {
             <Navbar />
             <Background>
             <GradientOverlay />
+            <BottomGradient />
             <ContentWrapper>
                 <MainGreeting>
                 <h1>
@@ -61,6 +62,20 @@ const GradientOverlay = styled.div`
         to bottom,
         ${({ theme }) => theme.mainColor} 0%,
         #ffffff 100%
+    );
+    z-index: 0;
+`;
+
+const BottomGradient = styled.div`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    background: linear-gradient(
+    to top,
+    ${({ theme }) => theme.mainColor} 0%,
+    #ffffff 100%
     );
     z-index: 0;
 `;

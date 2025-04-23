@@ -17,7 +17,7 @@ interface Props {
 }
 
 const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
-    // 서버데이터 추가
+    // 서버에서 데이터 받아지는지 확인 기능 추가
     const { data: keywords = [], isLoading, error } = useKeywords();
     const [selected, setSelected] = useState<string[]>([]);
     const [search, setSearch]   = useState('');
@@ -29,15 +29,24 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
     );
 
     //검색창 필터링
-    const visible = keywords.filter(kw =>
-        kw.toLowerCase().includes(search.toLowerCase())
-    );
+    const visible = search
+    ? keywords.filter((k) =>
+        k?.name?.toLowerCase().includes(search.toLowerCase())
+        )
+    : keywords;
 
-    const handleSave = () => onSubmit?.(selected);
+    const handleSave = () => {
+        console.log(selected);
 
-    //에러메세지 표기기
-    if (isLoading) return <Info>키워드를 불러오는 중...</Info>;
-    if (error)     return <Info>키워드를 가져오지 못했어요 😢</Info>;
+        //TODO: 백엔드 전송 로직 추가 필요
+        onSubmit?.(selected);
+    }
+
+    //에러메세지 표기
+    if (isLoading) return <Info>키워드를 불러오는 중...🩷</Info>;
+    if (error) {
+        console.log(keywords)
+        return <Info>키워드를 가져오지 못했어요 😢</Info>;}
 
     return(
         <MainMent>
@@ -49,14 +58,14 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
         <SearchInput value={search} onChange={setSearch} />
 
         <SelectBox>
-            {visible.map(kw => (
-            <Label key={kw}>
+        {visible.map(k => (
+            <Label key={k.id}>
                 <input
                 type="checkbox"
-                checked={selected.includes(kw)}
-                onChange={() => toggle(kw)}
+                checked={selected.includes(k.name)}
+                onChange={() => toggle(k.name)}
                 />
-                <span>{kw}</span>
+                <span>{k.name}</span>
             </Label>
             ))}
         </SelectBox>
@@ -91,7 +100,7 @@ const SearchInput = styled(SearchInputBase)`
     width: 100%;
     max-width: 320px;
     padding: 8px 12px;
-    border: 1px solid ${({ theme }) => theme.buttonColor};
+    border: 2px solid ${({ theme }) => theme.buttonColor};
     border-radius: 8px;
     font-size: 0.95rem;
 `;

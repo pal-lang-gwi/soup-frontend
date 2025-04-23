@@ -1,10 +1,11 @@
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { axiosKeywords } from '../api/keywords';
+import { Keyword } from '../types/keyword';
 
 //string으로 변경
-export const useKeywords = (): UseQueryResult<string[], Error> =>
-    useQuery({
-        queryKey: ['keywords'],
-        queryFn: axiosKeywords,
-        staleTime: 1000 * 60 * 10,
+export const useKeywords = () =>
+    useQuery<Keyword[], Error>({
+    queryKey: ['keywords'],
+    queryFn: axiosKeywords,
+    staleTime: 1000 * 60 * 10,
     });
