@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import SearchInputBase from '../components/SearchInput';
+import SearchInput from "../components/SearchInput";
 import { useKeywords } from "../hooks/useKeywords";
 import { theme } from "../styles/theme";
 
@@ -50,9 +50,9 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
 
     return(
         <MainMent>
-        <h3>관심있는 키워드를 선택해주세요!</h3>
-        <h4>매일 선택한 키워드 기반 뉴스를 메일로 받아볼 수 있어요😊</h4>
-        <h4>키워드는 언제든지 변경할 수 있어요!</h4>
+        <h2>관심있는 키워드를 선택해주세요!</h2>
+        <h4>매일 선택한 키워드 기반 뉴스를 메일로 받아볼 수 있어요😊 <br/>
+        키워드는 언제든지 변경할 수 있어요!</h4>
 
         {/* 검색창 */}
         <SearchInput value={search} onChange={setSearch} />
@@ -95,15 +95,7 @@ const Info = styled.div`
     font-size: 1rem;
 `;
 
-const SearchInput = styled(SearchInputBase)`
-    margin-top: 16px;
-    width: 100%;
-    max-width: 320px;
-    padding: 8px 12px;
-    border: 2px solid ${({ theme }) => theme.buttonColor};
-    border-radius: 8px;
-    font-size: 0.95rem;
-`;
+
 const SelectBox = styled.div`
     margin-top: 24px;
     display: flex;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import KeywordSelect from '../components/KeywordSelect';
 import LoginForm from '../components/LoginForm';
 import Navbar from '../components/Navbar';
 import SendButton from '../components/SendButton';
@@ -27,6 +28,9 @@ function HomePage() {
                 <ButtonStyle>
                     <SendButton onClick={openModal}>구독하기</SendButton>
                 </ButtonStyle>
+                <KeywordWrapper>
+                    <KeywordSelect />
+                </KeywordWrapper>
                 </MainGreeting>
             </ContentWrapper>
             </Background>
@@ -84,13 +88,14 @@ const ContentWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 150vh;
     position: relative;
     z-index: 1;
 `;
 
 const MainGreeting = styled.div`
     font-family: ${({ theme }) => theme.mainFont};
+    margin-top:40vh;
     text-align: center;
 `;
 
@@ -102,8 +107,12 @@ const SubGreeting = styled.div`
 const ButtonStyle = styled.div`
     display: flex;
     justify-content: center;
-    margin-top: 30px;
+    margin-top: 5vh;
 `;
+
+const KeywordWrapper = styled.div`
+    margin-top: 40vh;
+`
 
 const ModalOverlay = styled.div`
     position: fixed;
