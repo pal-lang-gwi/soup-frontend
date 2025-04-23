@@ -1,13 +1,14 @@
 import { ThemeProvider } from 'styled-components';
 import './App.css';
-import HomePage from './pages/HomePage';
+import KeywordSelect from './components/KeywordSelect';
 import { theme } from './styles/theme';
 
 function App() {
   return (
     <>
     <ThemeProvider theme={theme}>
-    <HomePage />
+    {/* <HomePage /> */}
+    <KeywordSelect />
     </ThemeProvider>
     </>
   );
