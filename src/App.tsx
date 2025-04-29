@@ -1,18 +1,23 @@
-import { BrowserRouter } from 'react-router';
+
+import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 import './index.css';
+import AuthProvider from './providers/AuthProvider';
 import AppRoutes from './routes/router';
 import { theme } from './styles/theme';
 
 
 
 function App() {
+
   return (
     <>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <AppRoutes />
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
     </>

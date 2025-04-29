@@ -11,6 +11,9 @@ export const onLogInSuccess = (response: AxiosResponse) => {
 
 //Access Token 발급
 export const onLogIn = async (params : LogInAPIParams) => {
+
+
+
     try{
         const response = await api.post('/users/login', params, {
             withCredentials: true,
@@ -30,7 +33,7 @@ export const onLogIn = async (params : LogInAPIParams) => {
             console.error("이도저도 아닌 오류 발생:",error);
         }
     }
-}
+};
 
 
 //Refresh token

@@ -1,24 +1,28 @@
 import { useState } from "react";
 import styled from "styled-components";
 import SearchInput from "../components/SearchInput";
-import { useKeywords } from "../hooks/useKeywords";
 import { theme } from "../styles/theme";
 
-// const KEYWORDS = [
-//     'AI',
-//     '블록체인',
-//     '핀테크',
-//     '자율주행',
-//     '스마트홈',
-// ];
-
+const KEYWORDS = [
+    { id: 1, name: 'AI' },
+    { id: 2, name: '블록체인' },
+    { id: 3, name: '핀테크' },
+    { id: 4, name: '자율주행' },
+    { id: 5, name: '스마트홈' },
+];
 interface Props {
     onSubmit?: (selected: string[]) => void;
 }
 
 const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
     // 서버에서 데이터 받아지는지 확인 기능 추가
-    const { data: keywords = [], isLoading, error } = useKeywords();
+    // const { data: keywords = [], isLoading, error } = useKeywords();
+
+    //임시 데이터 사용용
+    const isLoading = false;
+    const error = false;
+    const keywords = KEYWORDS;
+
     const [selected, setSelected] = useState<string[]>([]);
     const [search, setSearch]   = useState('');
 
