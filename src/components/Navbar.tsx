@@ -47,6 +47,10 @@ const Nav = styled.nav`
 
 const ButtonStyle = styled.div`
     margin-left:auto;
+        button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
 `;
 
 const ModalOverlay = styled.div`
