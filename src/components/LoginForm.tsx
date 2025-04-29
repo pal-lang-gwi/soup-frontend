@@ -45,14 +45,14 @@ const GoogleButton = styled.button`
     background: url(${googleLong}) center/contain no-repeat;
 `;
 
-const NaverButton = styled.button`
-    padding: 12px 20px;
-    background-color:${({theme}) => theme.mainGreen};
-    border: none;
-    font-family:${({theme})=>theme.mainFont};
-    color: white;
-    font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-`;
+// const NaverButton = styled.button`
+//     padding: 12px 20px;
+//     background-color:${({theme}) => theme.mainGreen};
+//     border: none;
+//     font-family:${({theme})=>theme.mainFont};
+//     color: white;
+//     font-size: 16px;
+//     border-radius: 10px;
+//     cursor: pointer;
+//     margin-top: 20px;
+// `;

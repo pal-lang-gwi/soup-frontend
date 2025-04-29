@@ -1,7 +1,8 @@
+import { BrowserRouter } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 import './index.css';
-import HomePage from './pages/HomePage';
+import AppRoutes from './routes/router';
 import { theme } from './styles/theme';
 
 
@@ -9,9 +10,11 @@ import { theme } from './styles/theme';
 function App() {
   return (
     <>
-    <ThemeProvider theme={theme}>
-    <HomePage />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <AppRoutes />
+      </ThemeProvider>
+    </BrowserRouter>
     </>
   );
 }
