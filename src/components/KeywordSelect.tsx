@@ -69,7 +69,7 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
             </Label>
             ))}
         </SelectBox>
-
+            <SelectCheck>현재 <SelectedKeyword>이것저것</SelectedKeyword> 키워드를 선택했어요</SelectCheck>
         <SaveButton disabled={selected.length === 0} onClick={handleSave}>
             저장하기
         </SaveButton>
@@ -118,6 +118,15 @@ const Label = styled.label`
     span {
         font-size: 0.95rem;
     }
+`;
+
+const SelectCheck = styled.div`
+
+`;
+
+const SelectedKeyword = styled.div`
+    color: ${({theme})=> theme.buttonColor};
+    font-weight: 400;
 `;
 
 const SaveButton = styled.button<{ disabled: boolean }>`
