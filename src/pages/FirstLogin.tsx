@@ -23,9 +23,7 @@ function FirstLogin() {
             birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
             gender,
         };
-        console.log('제출할 데이터:', data);
-
-        // TODO: 백엔드로 POST 요청 보내기
+        console.log('데이터:', data);
         // TODO: 데이터 없으면 없다고 에러창 띄우기
     };
     
