@@ -9,11 +9,19 @@ function FirstLogin() {
     const [birthDay, setBirthDay] = useState('');
     const [gender, setGender] = useState('');
 
+    const NicknameCheck = () => {
+        console.log('닉네임: ', nickname);
+        // TODO: 공란이면 닉네임 만들라고 하기
+        // TODO: 랜덤 닉네임 생성버튼
+        // TODO: 백엔드에서 중복체크하고 응답받기
+
+    }
+
     const handleSubmit = () => {
         const data = {
             nickname,
             birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
-            gender, // "MALE" or "FEMALE"
+            gender,
         };
         console.log('제출할 데이터:', data);
 
@@ -33,12 +41,13 @@ function FirstLogin() {
             <InputWrapper>
             <Field>
             <Label>닉네임</Label>
-                <Input 
-                    type="text" 
-                    placeholder="닉네임을 입력해주세요" 
+                <Input
+                    type="text"
+                    placeholder="닉네임을 입력해주세요"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                 />
+                <NicknameCheckButton onClick={NicknameCheck}>중복 확인</NicknameCheckButton>
             </Field>
 
             <Field>
@@ -163,7 +172,7 @@ const InputWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 300px;
+    width: 350px;
 `;
 const Field = styled.div`
     display: flex;
@@ -179,9 +188,18 @@ const Label = styled.div`
 
 const Input = styled.input`
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid ${({theme}) => theme.mainGreen};
     border-radius: 8px;
 `;
+
+const NicknameCheckButton = styled.button`
+    color: white;
+    cursor: pointer;
+    padding: 10px 8px;
+    background-color: ${({theme}) => theme.mainGreen};
+    border: none;
+    border-radius: 8px;
+`
 
 const BirthWrapper = styled.div`
     display: flex;
@@ -191,7 +209,7 @@ const BirthWrapper = styled.div`
 const Select = styled.select`
     flex: 1;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid ${({theme}) => theme.mainGreen};
     border-radius: 8px;
 `;
 
@@ -201,7 +219,7 @@ const GenderWrapper = styled.div`
 `;
 
 const Radio = styled.input`
-    margin-right: 8px;
+    margin-right: 10px;
 `;
 
 const SubmitButton = styled.button`
