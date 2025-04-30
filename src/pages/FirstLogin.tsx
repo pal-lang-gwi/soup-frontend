@@ -10,11 +10,14 @@ function FirstLogin() {
     const [gender, setGender] = useState('');
 
     const NicknameCheck = () => {
-        console.log('닉네임: ', nickname);
-        // TODO: 공란이면 닉네임 만들라고 하기
+        const trimNickname = nickname.trim();
+        //공란이면 닉네임 만들라고 하기
+        if(!trimNickname){
+            alert("닉네임을 입력해주세요🥲");
+            return;
+        }
         // TODO: 랜덤 닉네임 생성버튼
         // TODO: 백엔드에서 중복체크하고 응답받기
-
     }
 
     const handleSubmit = () => {
@@ -24,7 +27,17 @@ function FirstLogin() {
             gender,
         };
         console.log('데이터:', data);
+
         // TODO: 데이터 없으면 없다고 에러창 띄우기
+        if(!nickname || !birthYear || !birthMonth || !birthDay || !gender){
+            alert("모든 항목을 입력해주세요🥲");
+            return;
+        }
+        // TODO: 모달 창 띄워서 한번 더 확인시키기
+        const isConfirmed = window.confirm("이거 맞아?");
+        if(!isConfirmed) return;
+
+        // TODO: 백엔드로 전송송
     };
     
     return (
