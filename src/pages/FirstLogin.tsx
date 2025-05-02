@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import InfoCheck from "../components/InfoCheck";
 import Navbar from "../components/Navbar";
 
 function FirstLogin() {
@@ -9,7 +10,10 @@ function FirstLogin() {
     const [birthDay, setBirthDay] = useState('');
     const [gender, setGender] = useState('');
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const NicknameCheck = () => {
+        //띄어쓰기만 있는 경우도 거르기
         const trimNickname = nickname.trim();
         //공란이면 닉네임 만들라고 하기
         if(!trimNickname){
@@ -21,23 +25,14 @@ function FirstLogin() {
     }
 
     const handleSubmit = () => {
-        const data = {
-            nickname,
-            birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
-            gender,
-        };
-        console.log('데이터:', data);
-
-        // TODO: 데이터 없으면 없다고 에러창 띄우기
-        if(!nickname || !birthYear || !birthMonth || !birthDay || !gender){
+        const trimNickname = nickname.trim();
+        //데이터 없으면 없다고 에러창 띄우기
+        if(!trimNickname || !birthYear || !birthMonth || !birthDay || !gender){
             alert("모든 항목을 입력해주세요🥲");
             return;
         }
-        // TODO: 모달 창 띄워서 한번 더 확인시키기
-        const isConfirmed = window.confirm("이거 맞아?");
-        if(!isConfirmed) return;
-
-        // TODO: 백엔드로 전송송
+        //모달 창 띄워서 한번 더 확인시키기
+        setIsModalOpen(true);
     };
     
     return (
@@ -113,6 +108,28 @@ function FirstLogin() {
             </InputWrapper>
         </StyleWrapper>
         </Background>
+
+        {isModalOpen && (
+            <ModalOverlay onClick={() => setIsModalOpen(false)}>
+                <ModalContent onClick={(e) => e.stopPropagation()}>
+                <InfoCheck
+                    nickname={nickname}
+                    birthDate={`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`}
+                    gender={gender}
+                    onCancel={() => setIsModalOpen(false)}
+                    onConfirm={() => {
+                        setIsModalOpen(false);
+                        // TODO: 백엔드로 전송
+                        console.log("전송할 데이터:", {
+                        nickname,
+                        birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
+                        gender,
+                        });
+                    }}
+                    />
+                </ModalContent>
+            </ModalOverlay>
+        )}
         </>
     );
 }
@@ -244,4 +261,20 @@ const SubmitButton = styled.button`
     cursor: pointer;
     font-size: 1rem;
 `;
+const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+`;
 
+const ModalContent = styled.div`
+    z-index: 1001;
+    max-width: 90%;
+`;
