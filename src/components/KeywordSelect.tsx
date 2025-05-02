@@ -12,13 +12,14 @@ const KEYWORDS = [
 ];
 interface Props {
     onSubmit?: (selected: string[]) => void;
+    scrollToNextRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
+const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
     // 서버에서 데이터 받아지는지 확인 기능 추가
     // const { data: keywords = [], isLoading, error } = useKeywords();
 
-    //임시 데이터 사용용
+    //임시 데이터 사용
     const isLoading = false;
     const error = false;
     const keywords = KEYWORDS;
@@ -26,7 +27,7 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
     const [selected, setSelected] = useState<string[]>([]);
     const [search, setSearch]   = useState('');
 
-    //체크박스스
+    //체크박스
     const toggle = (kw: string) =>
     setSelected(prev =>
         prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw]
@@ -44,6 +45,10 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit }) => {
 
         //TODO: 백엔드 전송 로직 추가 필요
         onSubmit?.(selected);
+
+        //스크롤
+        if(scrollToNextRef?.current)
+            scrollToNextRef.current.scrollIntoView({ behavior: 'smooth'});
     }
 
     //에러메세지 표기

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import InfoCheck from "../components/InfoCheck";
+import KeywordSelect from "../components/KeywordSelect";
 import Navbar from "../components/Navbar";
 
 function FirstLogin() {
@@ -10,6 +11,7 @@ function FirstLogin() {
     const [birthDay, setBirthDay] = useState('');
     const [gender, setGender] = useState('');
 
+    //정보 확인 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const NicknameCheck = () => {
@@ -34,14 +36,21 @@ function FirstLogin() {
         //모달 창 띄워서 한번 더 확인시키기
         setIsModalOpen(true);
     };
-    
+
+    //키워드 스크롤
+    const keywordRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const welcomeRef = useRef<HTMLDivElement>(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
     return (
         <>
         <Navbar />
-        <Background>
+        <Background isSubmitted={isSubmitted} ref={containerRef}>
         <GradientOverlay />
         <BottomGradient />
-        <StyleWrapper>
+        {/* <StyleWrapper> */}
+            <Section>
             <MainMent>추가정보를 입력해주세요!</MainMent>
             <SubMent>당신을 위한 스프를 요리할게요🍽️</SubMent>
             <InputWrapper>
@@ -106,7 +115,21 @@ function FirstLogin() {
                 </Field>
                 <SubmitButton onClick={handleSubmit}>저장하기</SubmitButton>
             </InputWrapper>
-        </StyleWrapper>
+            </Section>
+            <Section>
+            <div ref={keywordRef}>
+                <KeyWordSection>
+            <KeywordSelect
+                scrollToNextRef={welcomeRef}
+            />
+            </KeyWordSection>
+            </div>
+            </Section>
+            <Section ref ={welcomeRef}>
+                <h2>가입이 완료되었습니다!</h2>
+                <h4>내일부터 메일이 발송될거에요</h4>
+            </Section>
+        {/* </StyleWrapper> */}
         </Background>
 
         {isModalOpen && (
@@ -119,28 +142,36 @@ function FirstLogin() {
                     onCancel={() => setIsModalOpen(false)}
                     onConfirm={() => {
                         setIsModalOpen(false);
+                        setIsSubmitted(true);
                         // TODO: 백엔드로 전송
                         console.log("전송할 데이터:", {
                         nickname,
                         birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
                         gender,
                         });
+                        //키워드 선택 쪽으로 자동 스크롤
+                        setTimeout(() => {
+                            keywordRef.current?.scrollIntoView({ behavior: 'smooth'});
+                        }, 100);
                     }}
                     />
                 </ModalContent>
             </ModalOverlay>
         )}
+
+        
         </>
     );
 }
 
 export default FirstLogin;
 
-const Background = styled.div`
+const Background = styled.div<{ isSubmitted: boolean }>`
     position: relative;
     background-color: white;
     height: 300vh;
-    overflow: hidden;
+    overflow-y: ${({ isSubmitted }) => (isSubmitted ? "auto" : "hidden")};
+    scroll-behavior: smooth;
 `;
 
 const GradientOverlay = styled.div`
@@ -171,16 +202,26 @@ const BottomGradient = styled.div`
     z-index: 0;
 `;
 
-const StyleWrapper = styled.div`
+const Section = styled.section`
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh; //TODO: 나중에 스크롤로 수정하기
-    padding: 20px;
+    align-items: center;
     position: relative;
-    z-index: 1;
+    z-index: 1,
 `;
+
+// const StyleWrapper = styled.div`
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     height: 100vh; //TODO: 나중에 스크롤로 수정하기
+//     padding: 20px;
+//     position: relative;
+//     z-index: 1;
+// `;
 
 const MainMent = styled.div`
     font-size: 2rem;
@@ -278,3 +319,7 @@ const ModalContent = styled.div`
     z-index: 1001;
     max-width: 90%;
 `;
+
+const KeyWordSection = styled.div`
+    margin-top: 30%;
+`
