@@ -78,7 +78,7 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
             </Label>
             ))}
         </SelectBox>
-            <SelectCheck>현재 <SelectedKeyword>이것저것</SelectedKeyword> 키워드를 선택했어요</SelectCheck>
+            <SelectCheck>현재 <SelectedKeyword>{selected}</SelectedKeyword> 키워드를 선택했어요</SelectCheck>
         <SaveButton disabled={selected.length === 0} onClick={handleSave}>
             저장하기
         </SaveButton>

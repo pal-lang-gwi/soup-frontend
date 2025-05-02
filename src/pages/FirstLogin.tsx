@@ -217,7 +217,7 @@ const Section = styled.section`
 //     flex-direction: column;
 //     align-items: center;
 //     justify-content: center;
-//     height: 100vh; //TODO: 나중에 스크롤로 수정하기
+//     height: 100vh;
 //     padding: 20px;
 //     position: relative;
 //     z-index: 1;
