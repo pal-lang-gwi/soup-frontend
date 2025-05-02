@@ -78,7 +78,7 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
             </Label>
             ))}
         </SelectBox>
-            <SelectCheck>현재 <SelectedKeyword>{selected}</SelectedKeyword> 키워드를 선택했어요</SelectCheck>
+            <SelectCheck>현재 <SelectedKeyword>{selected.join(', ')}</SelectedKeyword> 키워드를 선택했어요</SelectCheck>
         <SaveButton disabled={selected.length === 0} onClick={handleSave}>
             저장하기
         </SaveButton>
@@ -106,7 +106,7 @@ const Info = styled.div`
 
 
 const SelectBox = styled.div`
-    margin-top: 24px;
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -117,7 +117,7 @@ const Label = styled.label`
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
+    padding: 4px 12px;
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
@@ -130,11 +130,12 @@ const Label = styled.label`
 `;
 
 const SelectCheck = styled.div`
-
+    margin-top: 30px;
+    
 `;
 
 const SelectedKeyword = styled.div`
-    color: ${({theme})=> theme.buttonColor};
+    color: ${({theme})=> theme.mainGreen};
     font-weight: 400;
 `;
 

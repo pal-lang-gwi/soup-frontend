@@ -3,7 +3,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 import './index.css';
-import AuthProvider from './providers/AuthProvider';
 import AppRoutes from './routes/router';
 import { theme } from './styles/theme';
 
@@ -15,9 +14,9 @@ function App() {
     <>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <AuthProvider>
+        {/* <AuthProvider> */}
           <AppRoutes />
-        </AuthProvider>
+        {/* </AuthProvider> */}
       </ThemeProvider>
     </BrowserRouter>
     </>

@@ -1,5 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
+import ConfettiEffect from "../components/ConfettiEffect";
 import InfoCheck from "../components/InfoCheck";
 import KeywordSelect from "../components/KeywordSelect";
 import Navbar from "../components/Navbar";
@@ -42,6 +44,35 @@ function FirstLogin() {
     const containerRef = useRef<HTMLDivElement>(null);
     const welcomeRef = useRef<HTMLDivElement>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    //완료 시 홈으로 돌아가기
+    const navigate = useNavigate();
+    const handleDone = () => {
+        navigate('/');
+        window.scrollTo(0, 0)
+    }
+    //컨페티
+    const [fireTrigger, setFireTrigger] = useState(false);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+        ([entry]) => {
+            if (entry.isIntersecting) {
+            setFireTrigger(true);
+            }
+        },
+        { threshold: 0.5 } // 50% 이상 보여질 때 발사
+        );
+    
+        if (welcomeRef.current) {
+        observer.observe(welcomeRef.current);
+        }
+    
+        return () => {
+        if (welcomeRef.current) {
+            observer.unobserve(welcomeRef.current);
+        }
+        };
+    }, []);
 
     return (
         <>
@@ -126,8 +157,15 @@ function FirstLogin() {
             </div>
             </Section>
             <Section ref ={welcomeRef}>
+                {/* 컨페티 터지게 */}
+                <ConfettiEffect fireTrigger={fireTrigger} />
                 <h2>가입이 완료되었습니다!</h2>
                 <h4>내일부터 메일이 발송될거에요</h4>
+                <HomeButtonWrapper onClick={handleDone}>홈으로 돌아가기
+                    <HoverEffect>
+                        <div />
+                    </HoverEffect>
+                </HomeButtonWrapper>
             </Section>
         {/* </StyleWrapper> */}
         </Background>
@@ -323,3 +361,73 @@ const ModalContent = styled.div`
 const KeyWordSection = styled.div`
     margin-top: 30%;
 `
+
+const HomeButtonWrapper = styled.button`
+    margin-top: 10%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 30px;
+    border: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10rem;
+    transition: all 0.02s;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgb(37, 37, 37);
+    z-index: 0;
+    box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
+
+    &:hover {
+        background: rgb(248, 232, 193);
+        color: rgb(33, 0, 85);
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+`;
+
+const HoverEffect = styled.div`
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+    div {
+        background: linear-gradient(
+        90deg,
+        rgba(253, 218, 110, 1) 0%,
+        rgba(194, 216, 105,1) 49%,
+        rgba(248, 232, 193, 1) 100%
+        );
+        border-radius: 40rem;
+        width: 10rem;
+        height: 10rem;
+        transition: 0.4s;
+        filter: blur(20px);
+        animation: effect infinite 3s linear;
+        opacity: 0.5;
+    }
+
+    ${HomeButtonWrapper}:hover & div {
+        width: 8rem;
+        height: 8rem;
+    }
+
+    @keyframes effect {
+        0% {
+        transform: rotate(0deg);
+        }
+
+        100% {
+        transform: rotate(360deg);
+        }
+    }
+`;

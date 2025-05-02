@@ -15,7 +15,9 @@ const AuthProvider = ({children} : AuthProviderProps) => {
             try{
                 await onSilentRefresh();
                 console.log('토큰있어서 그냥 로그인할게요');
-                navigate('/signup');
+                if (location.pathname === "/") {
+                    navigate('/signup');
+                }
             }catch(error){
                 console.log('에러남', error);
             }
