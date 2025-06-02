@@ -93,7 +93,8 @@ const ContentWrapper = styled.div`
 const Container = styled.div`
     width: calc(100% - 200px);
     max-width: 95%
-    min-height: 70vh;
+    min-height: 30vh;
+    max-height: 75vh;
     margin: 0 auto;
     padding: 2rem 1rem;
     background-color: white;

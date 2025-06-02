@@ -17,7 +17,7 @@ const FilterInput: React.FC<FilterInputProps> = ({ onSearch }) => {
 return (
     <StyledWrapper>
     <div className="InputContainer">
-        <input placeholder="Search" id="input" className="input" name="text" type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} onClick={() => onSearch(keyword)} onKeyDown={handleKeyDown}/>
+        <input placeholder="키워드를 입력해주세요" id="input" className="input" name="text" type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} onClick={() => onSearch(keyword)} onKeyDown={handleKeyDown}/>
         <label className="labelforsearch" onClick={() => onSearch(keyword)} htmlFor="input">
         <svg className="searchIcon" viewBox="0 0 512 512">
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
@@ -31,6 +31,7 @@ return (
 const StyledWrapper = styled.div`
 .InputContainer {
     height: 40px;
+    width: 150%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,12 +44,12 @@ const StyledWrapper = styled.div`
 }
 
 .input {
-    width: 170px;
+    width: 100%;
     height: 100%;
     border: none;
     outline: none;
     font-size: 0.9em;
-    caret-color: rgb(255, 81, 0);
+    caret-color: ${({theme}) => theme.mainGreen};
 }
 
 .labelforsearch {
