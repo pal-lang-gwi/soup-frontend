@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { NewsDtos } from '../types/news';
 import Navbar from './Navbar';
+import StarPoint from './StarPoint';
 
 const NewsPage: React.FC = () => {
     //TODO: 더미데이터 지우고 props로 바꾸기
@@ -47,6 +48,9 @@ const NewsPage: React.FC = () => {
             </ArticleCard>
             ))}
         </ArticleList>
+        <Rating>
+            <StarPoint />
+        </Rating>
         </Container>
         </ContentWrapper>
         </Background>
@@ -157,3 +161,9 @@ const ArticleSummary = styled.p`
     color: #555;
     margin-top: 0.5rem;
 `;
+
+const Rating = styled.div`
+    padding-top: 2%;
+    display: flex;
+    justify-content: flex-end;
+`
