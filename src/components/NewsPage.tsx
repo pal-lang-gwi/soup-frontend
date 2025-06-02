@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { NewsDetailProps } from '../types/news';
+import { NewsDtos } from '../types/news';
 import Navbar from './Navbar';
 
 const NewsPage: React.FC = () => {
     //TODO: 더미데이터 지우고 props로 바꾸기
-    const dummyData: NewsDetailProps = {
+    const dummyData: NewsDtos = {
         keyword: 'AI',
         longSummary: '2025년 기준 AI 산업은...',
         createdDate: '2025-04-10T08:00:00Z',
@@ -80,18 +80,25 @@ const GradientOverlay = styled.div`
 const ContentWrapper = styled.div`
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    // align-items: flex-start;
     padding-top: 10vh;
     min-height: 90vh;
     position: relative;
     z-index: 1;
 `;
 const Container = styled.div`
-    padding: 2rem;
+    width: calc(100% - 200px);
+    max-width: 95%
+    min-height: 70vh;
+    margin: 0 auto;
+    padding: 2rem 1rem;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;s
+    @media (max-width: 480px) {
+        width: calc(100% - 32px);
+        padding: 1.5rem;
+    }
 `;
 
 const Header = styled.div`
@@ -119,6 +126,7 @@ const Summary = styled.p`
     font-size: 1.1rem;
     margin-bottom: 2rem;
     line-height: 1.6;
+    text-align: left;
 `;
 
 const ArticleList = styled.div`
@@ -131,6 +139,7 @@ const ArticleCard = styled.div`
     padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
+    text-align: left;
 `;
 
 const ArticleTitle = styled.a`
@@ -138,7 +147,6 @@ const ArticleTitle = styled.a`
     font-weight: bold;
     color: #333;
     text-decoration: none;
-
     &:hover {
         text-decoration: underline;
     }

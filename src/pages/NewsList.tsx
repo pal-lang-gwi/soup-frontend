@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 
-function MailList(){
+function NewsList(){
 
     return(
         <>
@@ -20,7 +20,7 @@ function MailList(){
     );
 }
 
-export default MailList;
+export default NewsList;
 
 const Background = styled.div`
     position: relative;
