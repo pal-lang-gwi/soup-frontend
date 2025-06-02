@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { NewsDetailProps } from '../types/news';
+import Navbar from './Navbar';
 
 const NewsPage: React.FC = () => {
     //TODO: 더미데이터 지우고 props로 바꾸기
@@ -25,10 +26,14 @@ const NewsPage: React.FC = () => {
     const { keyword, longSummary, createdDate, articles } = dummyData;
         return (
             <>
-        {/* <Navbar /> */}
+        <Navbar  />
+        <Background>
+        <GradientOverlay />
+        <ContentWrapper>
         <Container>
         <Header>
             <KeywordTag>{keyword}</KeywordTag>
+            {/* //TODO: 날짜 노출 방식 변경 */}
             <Date>{createdDate}</Date>
         </Header>
         <Summary>{longSummary}</Summary>
@@ -43,19 +48,50 @@ const NewsPage: React.FC = () => {
             ))}
         </ArticleList>
         </Container>
+        </ContentWrapper>
+        </Background>
         </>
     );
 };
 
 export default NewsPage;
 
+const Background = styled.div`
+    position: relative;
+    background-color: white;
+    height: 100vh;
+    overflow: hidden;
+`;
 
+const GradientOverlay = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    background: linear-gradient(
+        to bottom,
+        ${({ theme }) => theme.mainColor} 0%,
+        #ffffff 100%
+    );
+    z-index: 0;
+`;
+
+const ContentWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10vh;
+    min-height: 90vh;
+    position: relative;
+    z-index: 1;
+`;
 const Container = styled.div`
-    min-height: 20vh;
     padding: 2rem;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;s
 `;
 
 const Header = styled.div`

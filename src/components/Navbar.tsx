@@ -17,6 +17,7 @@ const Navbar = () => {
             <Logo />
             <NavList>
                 <NavLink onClick={() => navigate('/news')}>게시판</NavLink>
+                <NavLink onClick={() => navigate('/todaynews')}>오늘의뉴스</NavLink>
                 <NavLink onClick={() => navigate('/health')}>헬스체크</NavLink>
             </NavList>
             

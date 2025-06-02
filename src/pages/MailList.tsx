@@ -12,6 +12,7 @@ function MailList(){
         여기에 메일 조회
         {/* //TODO: 날짜별 조회 */}
         {/* //TODO: 페이지 조회 */}
+
         
         </ContentWrapper>
         </Background>

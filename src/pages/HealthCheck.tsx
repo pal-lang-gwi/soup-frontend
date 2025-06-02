@@ -59,6 +59,7 @@ const ContentWrapper = styled.div`
     display: flex;
     margin-top: 10vh;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     min-height: 20vh;
     position: relative;
