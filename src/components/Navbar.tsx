@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import styled from "styled-components";
 import LoginForm from '../components/LoginForm';
 import Logo from "./Logo";
@@ -10,9 +11,15 @@ const Navbar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+    const navigate = useNavigate();
     return (
         <Nav>
             <Logo />
+            <NavList>
+                <NavLink onClick={() => navigate('/news')}>게시판</NavLink>
+                <NavLink onClick={() => navigate('/health')}>헬스체크</NavLink>
+            </NavList>
+            
             <ButtonStyle>
             <SendButton onClick={openModal}>구독하기</SendButton>
             </ButtonStyle>
@@ -45,6 +52,26 @@ const Nav = styled.nav`
     z-index:1000;
 `;
 
+const NavList = styled.div`
+    display: flex;
+    gap: 30px;
+    margin-left: 2rem;
+    align-items: center;
+`;
+
+const NavLink = styled.button`
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        color: ${({theme}) => theme.mainGreen};
+    }
+`;
 const ButtonStyle = styled.div`
     margin-left:auto;
         button {

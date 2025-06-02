@@ -1,0 +1,115 @@
+import React from 'react';
+import styled from 'styled-components';
+import { NewsDetailProps } from '../types/news';
+
+const NewsPage: React.FC = () => {
+    //TODO: 더미데이터 지우고 props로 바꾸기
+    const dummyData: NewsDetailProps = {
+        keyword: 'AI',
+        longSummary: '2025년 기준 AI 산업은...',
+        createdDate: '2025-04-10T08:00:00Z',
+        articles: [
+            {
+            title: '생성형 AI, 2025년 산업 주도',
+            url: 'https://news.site/article1',
+            summary: '생성형 AI가 여러 산업에 빠르게 확산되고 있으며...',
+            },
+            {
+            title: 'AI 기술, 인프라 투자의 핵심으로',
+            url: 'https://news.site/article2',
+            summary: '최근 AI 반도체에 대한 투자 규모가 증가하고 있음...',
+            },
+        ],
+        };
+    
+    const { keyword, longSummary, createdDate, articles } = dummyData;
+        return (
+            <>
+        {/* <Navbar /> */}
+        <Container>
+        <Header>
+            <KeywordTag>{keyword}</KeywordTag>
+            <Date>{createdDate}</Date>
+        </Header>
+        <Summary>{longSummary}</Summary>
+        <ArticleList>
+            {articles.map((article, idx) => (
+            <ArticleCard key={idx}>
+                <ArticleTitle href={article.url} target="_blank" rel="noopener noreferrer">
+                {article.title}
+                </ArticleTitle>
+                <ArticleSummary>{article.summary}</ArticleSummary>
+            </ArticleCard>
+            ))}
+        </ArticleList>
+        </Container>
+        </>
+    );
+};
+
+export default NewsPage;
+
+
+const Container = styled.div`
+    min-height: 20vh;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Header = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+`;
+
+const KeywordTag = styled.span`
+    background-color: ${({ theme }) => theme.mainGreen};
+    color: white;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: bold;
+`;
+
+const Date = styled.span`
+    color: gray;
+    font-size: 0.85rem;
+`;
+
+const Summary = styled.p`
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+`;
+
+const ArticleList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+`;
+
+const ArticleCard = styled.div`
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+`;
+
+const ArticleTitle = styled.a`
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+`;
+
+const ArticleSummary = styled.p`
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 0.5rem;
+`;
