@@ -35,11 +35,10 @@ jobs:
 
       - name: Clear S3 bucket
         run: |
-          aws s3 rm s3://www.soupspoon.kr --recursive
+          aws s3 rm s3://soupspoon.kr --recursive
 
       - name: Deploy to S3
-        run: aws s3 sync dist/ s3://www.soupspoon.kr --delete
-
+        run: aws s3 sync dist/ s3://soupspoon.kr --delete
       - name: Notify Mattermost on Success
         if: success()
         uses: fjogeleit/http-request-action@v1.14.0
