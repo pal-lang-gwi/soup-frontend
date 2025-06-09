@@ -2,7 +2,7 @@ import styled from "styled-components";
 import googleLong from '../assets/logo_google_long.png';
 import Logo from "./Logo";
 
-const GOOGLE_LOGIN_URL = 'http://localhost:8080/oauth2/authorization/google';
+const GOOGLE_LOGIN_URL = import.meta.env.GOOGLE_LOGIN_URL;
 // const NAVER_LOGIN_URL = 'https://naver.com' //TODO: 추가 필요
 
 const LoginForm = () => {
