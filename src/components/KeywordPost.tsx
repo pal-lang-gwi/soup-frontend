@@ -10,7 +10,9 @@ const KeywordPost: React.FC = () => {
       
 
       <Title>💚 구독 키워드 추가하기</Title>
+      <KeywordSelectWrapper>
       <KeywordSelect />
+      </KeywordSelectWrapper>
       
     </Container>
   );
@@ -27,5 +29,9 @@ const Title = styled.h3`
   font-size: 25px;
   font-weight: bold;
   margin-bottom: 24px;
+  text-align: left;
+`
+
+const KeywordSelectWrapper = styled.div`
   text-align: left;
 `

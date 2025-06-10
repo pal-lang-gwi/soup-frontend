@@ -105,7 +105,7 @@ const SelectBox = styled.div`
     margin-top: 30px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    // align-items: center;
     gap: 10px;
 `;
 
