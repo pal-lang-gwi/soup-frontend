@@ -8,13 +8,10 @@ const Profile: React.FC = () => {
   const [birthYear, setBirthYear] = useState('');
   const [birthMonth, setBirthMonth] = useState('');
   const [birthDay, setBirthDay] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const birthDate = `${birthYear}-${birthMonth}-${birthDay}`;
-
     // TODO: API 요청
     
     alert('수정이 완료되었습니다🎉');
@@ -42,8 +39,8 @@ const Profile: React.FC = () => {
         </Field>
 
         <Field>
-        <NicknameWrapper>
         <Label>닉네임</Label>
+        <NicknameWrapper>
         {/* //TODO: 닉네임 기존거 불러오기 */}
         <Input type="text" placeholder="닉네임" value={nickname} onChange={(e) => setNickname(e.target.value)} />
         <NicknameCheckButton type="button" onClick={handleNicknameCheck}>
@@ -130,32 +127,29 @@ const Title = styled.h3`
 
 const Field = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  gap: 16px;
 `;
 
 const Label = styled.label`
   width: 100px;
-  min-width: 100px;
-  margin-right: 16px;
   font-weight: 600;
   text-align: left;
+  margin-right: 20%;
 `;
 
 const Input = styled.input`
   flex: 1;
   padding: 10px;
-  margin-top: 8px;
-  margin-left: 30%;
-  border: 1px solid ${({theme}) => theme.mainGreen};
+  border: 1px solid ${({ theme }) => theme.mainGreen};
   border-radius: 4px;
 `;
 
 const NicknameWrapper = styled.div`
-  display: flex;
   flex: 1;
-  
+  display: flex;
+  gap: 12px;
   align-items: center;
 `
 const NicknameCheckButton = styled.button`
@@ -165,26 +159,25 @@ const NicknameCheckButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  white-space: nowrap;
 `;
 
 const Select = styled.select`
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.mainGreen};
 `;
 
 const BirthWrapper = styled.div`
-  display: flex;
   flex: 1;
-  gap: 8px;
-  margin-left: 30%;
+  display: flex;
+  gap: 12px;
 `;
 
 const GenderWrapper = styled.div`
-  display: flex;
   flex: 1;
-  justify-content: flex-start;
+  display: flex;
   gap: 24px;
 
   label {
