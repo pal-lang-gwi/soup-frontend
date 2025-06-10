@@ -17,7 +17,10 @@ const Navbar = () => {
             <Logo />
             <NavList>
                 <NavLink onClick={() => navigate('/news')}>게시판</NavLink>
+                {/* //TODO: 아래 항목 다 지우기 */}
                 <NavLink onClick={() => navigate('/todaynews')}>오늘의뉴스</NavLink>
+                <NavLink onClick={() => navigate('/mypage')}>마이페이지</NavLink>
+                <NavLink onClick={() => navigate('/signup')}>회원가입</NavLink>                
                 <NavLink onClick={() => navigate('/health')}>헬스체크</NavLink>
             </NavList>
             
