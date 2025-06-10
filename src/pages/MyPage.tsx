@@ -4,12 +4,20 @@ import FixProfile from '../components/FixProfile';
 import KeywordPost from '../components/KeywordPost';
 import LookUpProfile from '../components/LookUpProfile';
 import Navbar from "../components/Navbar";
+import { User } from '../types/auth';
 
 type TabType = 'lookupprofile' | 'fixprofile' | 'keywords';
 
 function MyPage(){
     const [activeTab, setActiveTab] = useState<TabType>('lookupprofile');
+    const [user, setUser] = useState<User | null>(null);
 
+    //TODO: 백엔드 조회 로직 추가
+    // useEffect(() => {
+    // axiosUser().then(setUser).catch((err) => {
+    //   console.error('유저 정보 조회 실패:', err);
+    // });
+  // }, []);
     return(
         <>
 
@@ -18,6 +26,8 @@ function MyPage(){
         <ContentWrapper>
             <Navbar />
             <Sidebar>
+            <ProfileImage
+              src={user?.profileImageUrl || '/assets/sample.jpg'} />
             <Title>마이페이지</Title>
             <SidebarButton
               $active={activeTab === 'lookupprofile'}
@@ -90,6 +100,15 @@ const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+`;
+
+const ProfileImage = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  margin-top: 20px;
 `;
 
 const Title = styled.h2`
