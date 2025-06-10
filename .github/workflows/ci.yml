@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord on PR
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: '🔔 새로운 PR이 생성되었습니다!\nPR 제목: ${{ github.event.pull_request.title }}\n작성자: ${{ github.event.pull_request.user.login }}\n링크: ${{ github.event.pull_request.html_url }}'
+
+      - name: Notify Discord on Push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: '🚀 main 브랜치에 새로운 커밋이 푸시되었습니다!\n커밋 메시지: ${{ github.event.head_commit.message }}\n작성자: ${{ github.event.head_commit.author.name }}\n링크: ${{ github.event.head_commit.url }}'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_BASE: https://soupspoon.kr/api/v1
+          GOOGLE_LOGIN_URL: https://soupsoon.kr/oauth2/authorization/google
+
+      - name: Notify Discord on Success
+        if: success()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            ${{ github.event_name == 'pull_request' && format('✅ CI가 성공적으로 완료되었습니다!\nPR 제목: {0}\n작성자: {1}\n링크: {2}', github.event.pull_request.title, github.event.pull_request.user.login, github.event.pull_request.html_url) || format('✅ CI가 성공적으로 완료되었습니다!\n커밋 메시지: {0}\n작성자: {1}\n링크: {2}', github.event.head_commit.message, github.event.head_commit.author.name, github.event.head_commit.url) }}
+
+      - name: Notify Discord on Failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            ${{ github.event_name == 'pull_request' && format('❌ CI가 실패했습니다!\nPR 제목: {0}\n작성자: {1}\n링크: {2}', github.event.pull_request.title, github.event.pull_request.user.login, github.event.pull_request.html_url) || format('❌ CI가 실패했습니다!\n커밋 메시지: {0}\n작성자: {1}\n링크: {2}', github.event.head_commit.message, github.event.head_commit.author.name, github.event.head_commit.url) }}
