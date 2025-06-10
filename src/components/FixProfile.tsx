@@ -12,9 +12,7 @@ const FixProfile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // const birthDate = `${birthYear}-${birthMonth}-${birthDay}`;
-    // TODO: API post
-    
+    // TODO: API patch
     alert('수정이 완료되었습니다🎉');
   };
 
