@@ -1,0 +1,116 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_BASE: https://soupspoon.kr/api/v1
+          GOOGLE_LOGIN_URL: https://soupsoon.kr/oauth2/authorization/google
+
+      # Frontend-CICD-Manager IAM 사용자의 자격 증명으로 S3 접근
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Clear S3 bucket
+        run: |
+          aws s3 rm s3://soupspoon.kr --recursive
+
+      - name: Deploy to S3
+        run: aws s3 sync dist/ s3://soupspoon.kr --delete
+
+      - name: Notify Discord on Success
+        if: success()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            {
+              "embeds": [{
+                "title": "✅ 배포 성공",
+                "description": "프론트엔드 배포가 성공적으로 완료되었습니다.",
+                "color": 5814783,
+                "fields": [
+                  {
+                    "name": "Repository",
+                    "value": "`${{ github.repository }}`",
+                    "inline": true
+                  },
+                  {
+                    "name": "Branch",
+                    "value": "`${{ github.ref_name }}`",
+                    "inline": true
+                  },
+                  {
+                    "name": "Commit",
+                    "value": "`${{ github.event.head_commit.message }}`"
+                  },
+                  {
+                    "name": "Committer",
+                    "value": "`${{ github.event.head_commit.author.name }}`",
+                    "inline": true
+                  }
+                ]
+              }]
+            }
+
+      - name: Notify Discord on Failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            {
+              "embeds": [{
+                "title": "❌ 배포 실패",
+                "description": "프론트엔드 배포 중 오류가 발생했습니다.",
+                "color": 15158332,
+                "fields": [
+                  {
+                    "name": "Repository",
+                    "value": "`${{ github.repository }}`",
+                    "inline": true
+                  },
+                  {
+                    "name": "Branch",
+                    "value": "`${{ github.ref_name }}`",
+                    "inline": true
+                  },
+                  {
+                    "name": "Commit",
+                    "value": "`${{ github.event.head_commit.message }}`"
+                  },
+                  {
+                    "name": "Committer",
+                    "value": "`${{ github.event.head_commit.author.name }}`",
+                    "inline": true
+                  }
+                ]
+              }]
+            }
