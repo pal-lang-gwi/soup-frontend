@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const Profile: React.FC = () => {
+const FixProfile: React.FC = () => {
+  // TODO: 백엔드에서 Email 가져오기
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('');
@@ -11,8 +12,8 @@ const Profile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const birthDate = `${birthYear}-${birthMonth}-${birthDay}`;
-    // TODO: API 요청
+    // const birthDate = `${birthYear}-${birthMonth}-${birthDay}`;
+    // TODO: API post
     
     alert('수정이 완료되었습니다🎉');
   };
@@ -107,7 +108,7 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default FixProfile;
 
 const Container = styled.div`
   width: 100%;

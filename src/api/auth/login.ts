@@ -12,8 +12,6 @@ export const onLogInSuccess = (response: AxiosResponse) => {
 //Access Token 발급
 export const onLogIn = async (params : LogInAPIParams) => {
 
-
-
     try{
         const response = await api.post('/users/login', params, {
             withCredentials: true,

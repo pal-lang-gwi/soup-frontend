@@ -10,6 +10,3 @@ export const axiosKeywords = (): Promise<Keyword[]> => {
         return res.data.data.keywords
     });
 };
-  // 내 키워드 등록
-// export const saveKeywords = (list:string[]) =>
-//     api.post('user/me/keywords',{list});

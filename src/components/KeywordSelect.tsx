@@ -88,8 +88,8 @@ const MainMent = styled.div`
     background-color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    // justify-content: center;
+    // align-items: center;
     width: 100&;
     padding: 10px;
 `;

@@ -12,7 +12,6 @@ const SearchInput = ({ value, onChange }: { value: string; onChange: (v: string)
 const StyledInput = styled.input`
     margin-top: 16px;
     width: 100%;
-    max-width: 200px;
     padding: 8px 12px;
     border: 2px solid ${({ theme }) => theme.mainGreen};
     border-radius: 8px;

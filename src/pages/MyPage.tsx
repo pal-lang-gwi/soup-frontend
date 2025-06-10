@@ -1,13 +1,14 @@
-import styled from 'styled-components';
-import Navbar from "../components/Navbar";
 import { useState } from 'react';
-import Profile from '../components/Profile';
+import styled from 'styled-components';
+import FixProfile from '../components/FixProfile';
 import KeywordPost from '../components/KeywordPost';
+import LookUpProfile from '../components/LookUpProfile';
+import Navbar from "../components/Navbar";
 
-type TabType = 'profile' | 'keywords';
+type TabType = 'lookupprofile' | 'fixprofile' | 'keywords';
 
 function MyPage(){
-    const [activeTab, setActiveTab] = useState<TabType>('profile');
+    const [activeTab, setActiveTab] = useState<TabType>('lookupprofile');
 
     return(
         <>
@@ -19,8 +20,14 @@ function MyPage(){
             <Sidebar>
             <Title>마이페이지</Title>
             <SidebarButton
-              $active={activeTab === 'profile'}
-              onClick={() => setActiveTab('profile')}
+              $active={activeTab === 'lookupprofile'}
+              onClick={() => setActiveTab('lookupprofile')}
+            >
+              나의 정보
+            </SidebarButton>
+            <SidebarButton
+              $active={activeTab === 'fixprofile'}
+              onClick={() => setActiveTab('fixprofile')}
             >
               회원정보 수정
             </SidebarButton>
@@ -32,7 +39,8 @@ function MyPage(){
             </SidebarButton>
           </Sidebar>
           <MainContent>
-            {activeTab === 'profile' && <Profile />}
+            {activeTab === 'lookupprofile' && <LookUpProfile />}
+            {activeTab === 'fixprofile' && <FixProfile />}
             {activeTab === 'keywords' && <KeywordPost />}
           </MainContent>
         </ContentWrapper>
