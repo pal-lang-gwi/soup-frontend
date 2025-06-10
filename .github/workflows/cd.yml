@@ -26,7 +26,7 @@ jobs:
         run: npm run build
         env:
           VITE_API_BASE: https://soupspoon.kr/api/v1
-          GOOGLE_LOGIN_URL: https://soupsoon.kr/oauth2/authorization/google
+          VITE_GOOGLE_LOGIN_URL: https://soupspoon.kr/oauth2/authorization/google
 
       # Frontend-CICD-Manager IAM 사용자의 자격 증명으로 S3 접근
       - name: Configure AWS credentials
