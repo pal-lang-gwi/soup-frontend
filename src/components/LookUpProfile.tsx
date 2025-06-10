@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { axiosUser } from '../api/auth/userApi';
+import { theme } from '../styles/theme';
 import { User } from '../types/auth';
 
 const LookUpProfile: React.FC = () => {
@@ -12,7 +13,7 @@ const LookUpProfile: React.FC = () => {
     { keyword: '하스스톤', status: '거절' },
     ];
     const dummyNews = [
-        { title: '개그는 유재광 개발은 유재석!', url: 'naver.com' },
+        { title: '개그는유재광 개발은 유재석!', url: 'naver.com' },
         { title: '저 도마뱀 밥주러 가야하는데요?', url: 'google.com' },
         { title: '협업에 No!를 외치는 개발자', url: 'chatgpt.com/' },
     ];
@@ -162,10 +163,10 @@ const StatusBadge = styled.span<{ status: string }>`
 
     background-color: ${({ status }) =>
         status === '검토중'
-        ?'#fdda6e'
+        ? theme.buttonColor
         : status === '승인'
-        ? '#C2D869'
-        : '#f87171'}; // 빨강 (거절)
+        ? theme.mainGreen
+        : theme.mainRed};
 
     text-align: center;
 `;

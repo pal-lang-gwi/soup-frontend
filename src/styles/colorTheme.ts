@@ -5,4 +5,8 @@ export const colorTheme = {
     buttonColor: '#fdda6e',
     // rgb(194, 216, 105)
     mainGreen: '#C2D869',
+    mainPink: '#fda4af',
+    // rgb(253, 164, 175)
+    mainRed: '#f87171'
+    //rgb(248, 113, 113)
 }

@@ -5,6 +5,8 @@ declare module 'styled-components' {
     mainColor : string;
     buttonColor: string;
     mainGreen: string;
+    mainPink: string;
+    mainRed: string;
     mainFont : string;
     }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { NewsDtos } from '../types/news';
+import HeartCheckbox from './HeartCheckbox';
 import Navbar from './Navbar';
 import StarPoint from './StarPoint';
 
@@ -32,6 +33,10 @@ const NewsPage: React.FC = () => {
         <GradientOverlay />
         <ContentWrapper>
         <Container>
+        {/* //! 하트 지울꺼면 지우기 */}
+        <HeartWrapper>
+            <HeartCheckbox />
+        </HeartWrapper>
         <Header>
             <KeywordTag>{keyword}</KeywordTag>
             {/* //TODO: 날짜 노출 방식 변경 */}
@@ -91,6 +96,7 @@ const ContentWrapper = styled.div`
     z-index: 1;
 `;
 const Container = styled.div`
+    position: relative;
     width: calc(100% - 200px);
     max-width: 95%
     min-height: 30vh;
@@ -104,6 +110,15 @@ const Container = styled.div`
         width: calc(100% - 32px);
         padding: 1.5rem;
     }
+`;
+
+const HeartWrapper = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 1rem;
+    transform: scale(0.6);
+    transform-origin: top right;
 `;
 
 const Header = styled.div`
