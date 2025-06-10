@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
 
   return (
     <Container>
-      <Title>회원정보 수정</Title>
+      <Title>💚 회원정보 수정</Title>
       <form onSubmit={handleSubmit}>
         <ContentWrapper>
         <Field>
@@ -119,10 +119,10 @@ const ContentWrapper =styled.div`
 `
 
 const Title = styled.h3`
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
   margin-bottom: 24px;
-  text-align: center;
+  text-align: left;
 `
 
 const Field = styled.div`

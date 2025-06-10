@@ -150,10 +150,13 @@ function FirstLogin() {
             <Section>
             <div ref={keywordRef}>
                 <KeyWordSection>
-            <KeywordSelect
-                scrollToNextRef={welcomeRef}
-            />
-            </KeyWordSection>
+                    <h2>관심있는 키워드를 선택해주세요!</h2>
+                    <h4>매일 선택한 키워드 기반 뉴스를 메일로 받아볼 수 있어요😊 <br/>
+                    키워드는 언제든지 변경할 수 있어요!</h4>
+                    <KeywordSelect
+                        scrollToNextRef={welcomeRef}
+                    />
+                </KeyWordSection>
             </div>
             </Section>
             <Section ref ={welcomeRef}>

@@ -59,10 +59,6 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
 
     return(
         <MainMent>
-        <h2>관심있는 키워드를 선택해주세요!</h2>
-        <h4>매일 선택한 키워드 기반 뉴스를 메일로 받아볼 수 있어요😊 <br/>
-        키워드는 언제든지 변경할 수 있어요!</h4>
-
         {/* 검색창 */}
         <SearchInput value={search} onChange={setSearch} />
 
@@ -117,12 +113,12 @@ const Label = styled.label`
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
+    padding: 2px 12px;
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
     input {
-        accent-color: ${({theme})=>theme.buttonColor};
+        accent-color: ${({theme})=>theme.mainGreen};
     }
     span {
         font-size: 0.95rem;
