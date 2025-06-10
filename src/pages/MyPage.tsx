@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import FixProfile from '../components/FixProfile';
 import KeywordPost from '../components/KeywordPost';
@@ -18,6 +18,24 @@ function MyPage(){
     //   console.error('유저 정보 조회 실패:', err);
     // });
   // }, []);
+
+    //프로필 이미지 변경
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageClick = () => {
+      fileInputRef.current?.click();
+    };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setUser((prev) => prev ? { ...prev, profileImageUrl: reader.result as string } : null);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
     return(
         <>
 
@@ -26,8 +44,17 @@ function MyPage(){
         <ContentWrapper>
             <Navbar />
             <Sidebar>
-            <ProfileImage
-              src={user?.profileImageUrl || '/assets/sample.jpg'} />
+            <ProfileImageWrapper onClick={handleImageClick}>
+              <ProfileImage src={user?.profileImageUrl || '/assets/sample.jpg'} />
+              <ImageOverlay>프로필 변경하기</ImageOverlay>
+              </ProfileImageWrapper>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
             <Title>마이페이지</Title>
             <SidebarButton
               $active={activeTab === 'lookupprofile'}
@@ -60,7 +87,6 @@ function MyPage(){
 }
 
 export default MyPage;
-
 
 const Background = styled.div`
     position: relative;
@@ -102,13 +128,45 @@ const Sidebar = styled.aside`
   min-height: 100vh;
 `;
 
-const ProfileImage = styled.img`
+const ProfileImageWrapper = styled.div`
+  position: relative;
   width: 150px;
   height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
   margin: 0 auto;
   margin-top: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  &:hover div {
+    opacity: 1;
+  }
+`;
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+`;
+
+const ImageOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(120, 120, 120, 0.5);
+  color: white;
+  font-size: 19px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 `;
 
 const Title = styled.h2`
