@@ -5,6 +5,7 @@ import ConfettiEffect from "../components/ConfettiEffect";
 import InfoCheck from "../components/InfoCheck";
 import KeywordSelect from "../components/KeywordSelect";
 import Navbar from "../components/Navbar";
+import { validateNickname } from "../api/user/user";
 
 function FirstLogin() {
     const [nickname, setNickname] = useState('');
@@ -16,7 +17,10 @@ function FirstLogin() {
     //정보 확인 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const NicknameCheck = () => {
+    //닉네임 중복 검사 유무
+    const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+
+    const NicknameCheck = async () => {
         //띄어쓰기만 있는 경우도 거르기
         const trimNickname = nickname.trim();
         //공란이면 닉네임 만들라고 하기
@@ -25,7 +29,27 @@ function FirstLogin() {
             return;
         }
         // TODO: 랜덤 닉네임 생성버튼
-        // TODO: 백엔드에서 중복체크하고 응답받기
+
+        // 닉네임 중복체크
+        try {
+            const availableNickname = await validateNickname({ nickname: trimNickname });
+            if (!availableNickname) {
+                alert("이미 사용 중인 닉네임입니다 😢");
+                setIsNicknameChecked(false);
+            } else {
+                alert("사용 가능한 닉네임입니다 😊");
+                setIsNicknameChecked(true);
+            }
+        } catch (error) {
+            //닉네임이 규칙에 맞지 않을 경우
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert("알 수 없는 에러가 발생했습니다.");
+            }
+            setIsNicknameChecked(false);
+        }
+    
     }
 
     const handleSubmit = () => {
@@ -35,6 +59,13 @@ function FirstLogin() {
             alert("모든 항목을 입력해주세요🥲");
             return;
         }
+
+        // 닉네임 중복 확인이 되어있지 않은 경우 에러창 띄우기
+        if (!isNicknameChecked) {
+            alert("닉네임 중복 확인을 먼저 해주세요🥲");
+            return;
+        }
+
         //모달 창 띄워서 한번 더 확인시키기
         setIsModalOpen(true);
     };
@@ -73,6 +104,11 @@ function FirstLogin() {
         }
         };
     }, []);
+
+    //닉네임을 바꿨을 때 isNicknameChecked를 다시 false로 바꿔주기기
+    useEffect(() => {
+        setIsNicknameChecked(false);
+    }, [nickname]);
 
     return (
         <>
