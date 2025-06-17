@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SearchInput from "../components/SearchInput";
 import { theme } from "../styles/theme";
 import { useKeywords } from "../hooks/useKeywords";
+import { subscribeKeywords } from "../api/keywords";
 
 // const KEYWORDS = [
 //     { id: 1, name: 'AI' },
@@ -43,15 +44,22 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
 		  )
 		: keywords;
 
-	const handleSave = () => {
-		console.log(selected);
+	const handleSave = async () => {
+		try {
+			// 백엔드에 구독 요청
+			await subscribeKeywords(selected);
 
-		//TODO: 백엔드 전송 로직 추가 필요
-		onSubmit?.(selected);
+			// 성공 시 부모 컴포넌트에 알림
+			onSubmit?.(selected);
 
-		//스크롤
-		if (scrollToNextRef?.current)
-			scrollToNextRef.current.scrollIntoView({ behavior: "smooth" });
+			// 스크롤
+			if (scrollToNextRef?.current) {
+				scrollToNextRef.current.scrollIntoView({ behavior: "smooth" });
+			}
+		} catch (error) {
+			// 에러 처리 로직 추가 필요
+			console.error("키워드 구독 실패:", error);
+		}
 	};
 
 	//에러메세지 표기
