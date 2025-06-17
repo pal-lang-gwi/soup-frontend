@@ -75,10 +75,23 @@ function FirstLogin() {
     const containerRef = useRef<HTMLDivElement>(null);
     const welcomeRef = useRef<HTMLDivElement>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isKeywordSelected, setIsKeywordSelected] = useState(false);
 
     //완료 시 홈으로 돌아가기
     const navigate = useNavigate();
     const handleDone = () => {
+        if (!isSubmitted) {
+            alert("정보를 입력해주세요 🥲");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        if (!isKeywordSelected) {
+            alert("키워드를 등록하지 않으셨어요!\n키워드는 나중에 수정이 가능해요!😊");
+            keywordRef.current?.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
         navigate('/');
         window.scrollTo(0, 0)
     }
@@ -188,6 +201,7 @@ function FirstLogin() {
                 <KeyWordSection>
             <KeywordSelect
                 scrollToNextRef={welcomeRef}
+                onKeywordSelected={() => setIsKeywordSelected(true)}
             />
             </KeyWordSection>
             </div>
