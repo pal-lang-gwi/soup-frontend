@@ -5,7 +5,7 @@ import ConfettiEffect from "../components/ConfettiEffect";
 import InfoCheck from "../components/InfoCheck";
 import KeywordSelect from "../components/KeywordSelect";
 import Navbar from "../components/Navbar";
-import { validateNickname } from "../api/user/user";
+import { initFirstUser, validateNickname } from "../api/user/user";
 
 function FirstLogin() {
     const [nickname, setNickname] = useState('');
@@ -75,10 +75,23 @@ function FirstLogin() {
     const containerRef = useRef<HTMLDivElement>(null);
     const welcomeRef = useRef<HTMLDivElement>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isKeywordSelected, setIsKeywordSelected] = useState(false);
 
     //완료 시 홈으로 돌아가기
     const navigate = useNavigate();
     const handleDone = () => {
+        if (!isSubmitted) {
+            alert("정보를 입력해주세요 🥲");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        if (!isKeywordSelected) {
+            alert("키워드를 등록하지 않으셨어요!\n키워드는 나중에 수정이 가능해요!😊");
+            keywordRef.current?.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
         navigate('/');
         window.scrollTo(0, 0)
     }
@@ -188,6 +201,7 @@ function FirstLogin() {
                 <KeyWordSection>
             <KeywordSelect
                 scrollToNextRef={welcomeRef}
+                onKeywordSelected={() => setIsKeywordSelected(true)}
             />
             </KeyWordSection>
             </div>
@@ -214,19 +228,34 @@ function FirstLogin() {
                     birthDate={`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`}
                     gender={gender}
                     onCancel={() => setIsModalOpen(false)}
-                    onConfirm={() => {
+                    onConfirm={async () => {
                         setIsModalOpen(false);
-                        setIsSubmitted(true);
-                        // TODO: 백엔드로 전송
-                        console.log("전송할 데이터:", {
-                        nickname,
-                        birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
-                        gender,
+
+                        const birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+                        try {
+                            await initFirstUser({
+                                nickname,
+                                birthDate,
+                                gender
+                            })
+
+                            console.log("전송할 데이터:", {
+                            nickname,
+                            birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
+                            gender,
                         });
+                        setIsSubmitted(true);
+                        console.log("초기 유저 정보 전송 완료");
+
                         //키워드 선택 쪽으로 자동 스크롤
                         setTimeout(() => {
                             keywordRef.current?.scrollIntoView({ behavior: 'smooth'});
                         }, 100);
+                        } catch (error) {
+                            if (error instanceof Error) {
+                                alert(`전송 실패 : ${error.message}`);
+                            }
+                        }
                     }}
                     />
                 </ModalContent>

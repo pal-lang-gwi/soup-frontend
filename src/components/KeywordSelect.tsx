@@ -13,6 +13,7 @@ const KEYWORDS = [
 interface Props {
     onSubmit?: (selected: string[]) => void;
     scrollToNextRef?: React.RefObject<HTMLDivElement | null>;
+    onKeywordSelected?: () => void;
 }
 
 const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
