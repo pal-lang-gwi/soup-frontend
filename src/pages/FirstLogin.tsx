@@ -5,7 +5,7 @@ import ConfettiEffect from "../components/ConfettiEffect";
 import InfoCheck from "../components/InfoCheck";
 import KeywordSelect from "../components/KeywordSelect";
 import Navbar from "../components/Navbar";
-import { validateNickname } from "../api/user/user";
+import { initFirstUser, validateNickname } from "../api/user/user";
 
 function FirstLogin() {
     const [nickname, setNickname] = useState('');
@@ -214,19 +214,34 @@ function FirstLogin() {
                     birthDate={`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`}
                     gender={gender}
                     onCancel={() => setIsModalOpen(false)}
-                    onConfirm={() => {
+                    onConfirm={async () => {
                         setIsModalOpen(false);
-                        setIsSubmitted(true);
-                        // TODO: 백엔드로 전송
-                        console.log("전송할 데이터:", {
-                        nickname,
-                        birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
-                        gender,
+
+                        const birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+                        try {
+                            await initFirstUser({
+                                nickname,
+                                birthDate,
+                                gender
+                            })
+
+                            console.log("전송할 데이터:", {
+                            nickname,
+                            birthDate: `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`,
+                            gender,
                         });
+                        setIsSubmitted(true);
+                        console.log("초기 유저 정보 전송 완료");
+
                         //키워드 선택 쪽으로 자동 스크롤
                         setTimeout(() => {
                             keywordRef.current?.scrollIntoView({ behavior: 'smooth'});
                         }, 100);
+                        } catch (error) {
+                            if (error instanceof Error) {
+                                alert(`전송 실패 : ${error.message}`);
+                            }
+                        }
                     }}
                     />
                 </ModalContent>

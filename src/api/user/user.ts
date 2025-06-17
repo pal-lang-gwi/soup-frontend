@@ -13,3 +13,19 @@ export const validateNickname = async (params: {nickname?: string}): Promise<boo
         throw new Error(message);
     }
 }
+
+//초기 유저 정보 입력
+export const initFirstUser = async (body : {
+    nickname: string,
+    birthDate: string; // "YYYY-MM-DD" Format
+    gender: string;
+}) => {
+    try {
+        const response = await api.post('/users/init', body);
+        return response.data.data;
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+        const message = err.response?.data?.error?.message ?? 'Unknown Error';
+        throw new Error(message);
+    }
+}
