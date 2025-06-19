@@ -1,14 +1,32 @@
 export interface Keyword {
     id: number;
     name: string;
-    }
-    
-export interface KeywordsApiResponse {
-    status: number;
-    message: string;
+    normalizedName: string;
+}
+
+export interface SearchKeywordDto {
+    id: number;
+    name: string;
+    normalized: string;
+    isSubscribed: boolean;
+}
+
+export interface SearchKeywordsResponseDto {
+    success: boolean;
     data: {
-    keywords: Keyword[];
-    currentPage: number;
-    totalPages: number;
+        keywords: SearchKeywordDto[];
+        totalElements: number;
+        totalPages: number;
+        currentPage: number;
+    }
+}
+    
+export interface KeywordListResponseDto {
+    success: boolean;
+    data: {
+        KeywordResponseDtos: Keyword[];
+        totalElements: number;
+        totalPages: number;
+        currentPage: number;
     };
 }

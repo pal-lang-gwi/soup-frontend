@@ -1,31 +1,65 @@
-import { Keyword, KeywordsApiResponse } from "../types/keyword";
-import { api } from "./axiosInstance";
+import { api } from "./axiosInstance"
+import { AxiosError } from "axios";
+import { KeywordListResponseDto, SearchKeywordsResponseDto } from "../types/keyword";
 
 // 전체 키워드 목록 조회
-export const axiosKeywords = (): Promise<Keyword[]> => {
-	return api
-		.get<KeywordsApiResponse>("/keywords")
-		.then((res) => res.data.data.keywords);
+export const axiosKeywords = async (): Promise<KeywordListResponseDto> => {
+    try {
+        const response = await api.get('/keywords');
+        if (!response.data.success) {
+            const message = response.data.error?.message ?? '키워드 목록 조회 실패';
+            throw new Error(message);
+        }
+        return response.data.data.KeywordResponseDtos;
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+		const message = err.response?.data?.error?.message ?? (err as Error).message ?? '키워드 목록 조회 실패';
+		throw new Error(message);
+    }
 };
 
+
 // 키워드 검색
-export const searchKeywords = (keyword: string): Promise<Keyword[]> => {
-	return api
-		.get(`/keywords/search`, { params: { keyword } })
-		.then((res) => res.data.data.keywords);
+export const searchKeywords = async (keyword: string): Promise<SearchKeywordsResponseDto> => {
+    try {
+        const response = await api.get("/keywords/search", { params: { keyword } });
+        return response.data.data.keywords;
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+        const message = err.response?.data?.error?.message ?? '키워드 검색 실패';
+        throw new Error(message);
+    }
 };
 
 // 키워드 구독
-export const subscribeKeywords = (subscribeKeywords: string[]) => {
-	return api.post("/keywords", { subscribeKeywords });
+export const subscribeKeywords = async (subscribeKeywords: string[]): Promise<void> => {
+    try {
+        await api.post("/keywords", { subscribeKeywords });
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+        const message = err.response?.data?.error?.message ?? '키워드 구독 실패';
+        throw new Error(message);
+    }
 };
 
 // 키워드 구독 해지
- export const unsubscribeKeyword = (keywordId: number) => {
-	return api.post(`/keywords/${keywordId}`);
+export const unsubscribeKeyword = async (keywordId: number): Promise<void> => {
+    try {
+        await api.post(`/keywords/${keywordId}`);
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+        const message = err.response?.data?.error?.message ?? '키워드 구독 해지 실패';
+        throw new Error(message);
+    }
 };
 
 // 키워드 요청 등록
-export const requestKeyword = (userId: string, keyword: string) => {
-	return api.post("/keywords/request", { userId, keyword });
+export const requestKeyword = async (userId: string, keyword: string): Promise<void> => {
+    try {
+        await api.post("/keywords/request", { userId, keyword });
+    } catch (error) {
+        const err = error as AxiosError<{ error: { message: string } }>;
+        const message = err.response?.data?.error?.message ?? '키워드 요청 실패';
+        throw new Error(message);
+    }
 };
