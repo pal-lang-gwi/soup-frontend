@@ -1,26 +1,27 @@
 import { api } from "./axiosInstance"
 import { AxiosError } from "axios";
-import { KeywordListResponseDto, SearchKeywordsResponseDto } from "../types/keyword";
+import { keyword, searchKeywordsResponseDto } from "../types/keyword";
 
-// 전체 키워드 목록 조회
-export const axiosKeywords = async (): Promise<KeywordListResponseDto> => {
-    try {
-        const response = await api.get('/keywords');
-        if (!response.data.success) {
-            const message = response.data.error?.message ?? '키워드 목록 조회 실패';
-            throw new Error(message);
-        }
-        return response.data.data.KeywordResponseDtos;
-    } catch (error) {
-        const err = error as AxiosError<{ error: { message: string } }>;
-		const message = err.response?.data?.error?.message ?? (err as Error).message ?? '키워드 목록 조회 실패';
-		throw new Error(message);
+export const axiosKeywords = async (): Promise<keyword[]> => {
+  try {
+    const response = await api.get('/keywords');
+    if (!response.data.success) {
+      const message = response.data.error?.message ?? '키워드 목록 조회 실패';
+      throw new Error(message);
     }
+
+    return response.data.data.keywordResponseDtos;
+  } catch (error) {
+    const err = error as AxiosError<{ error: { message: string } }>;
+    const message = err.response?.data?.error?.message ?? (err as Error).message ?? '키워드 목록 조회 실패';
+    throw new Error(message);
+  }
 };
 
 
+
 // 키워드 검색
-export const searchKeywords = async (keyword: string): Promise<SearchKeywordsResponseDto> => {
+export const searchKeywords = async (keyword: string): Promise<searchKeywordsResponseDto> => {
     try {
         const response = await api.get("/keywords/search", { params: { keyword } });
         return response.data.data.keywords;
