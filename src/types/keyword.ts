@@ -1,30 +1,30 @@
-export interface Keyword {
+export interface keyword {
     id: number;
     name: string;
     normalizedName: string;
 }
 
-export interface SearchKeywordDto {
+export interface searchKeywordDto {
     id: number;
     name: string;
     normalized: string;
     isSubscribed: boolean;
 }
 
-export interface SearchKeywordsResponseDto {
+export interface searchKeywordsResponseDto {
     success: boolean;
     data: {
-        keywords: SearchKeywordDto[];
+        keywords: searchKeywordDto[];
         totalElements: number;
         totalPages: number;
         currentPage: number;
     }
 }
     
-export interface KeywordListResponseDto {
+export interface keywordListResponseDto {
     success: boolean;
     data: {
-        KeywordResponseDtos: Keyword[];
+        keywordResponseDtos: keyword[];
         totalElements: number;
         totalPages: number;
         currentPage: number;
