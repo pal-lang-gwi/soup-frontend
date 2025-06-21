@@ -201,7 +201,10 @@ function FirstLogin() {
                 <KeyWordSection>
             <KeywordSelect
                 scrollToNextRef={welcomeRef}
-                onKeywordSelected={() => setIsKeywordSelected(true)}
+                onKeywordSelected={() => {
+                    console.log("onKeywordSelected called!");
+                    setIsKeywordSelected(true);
+                }}
             />
             </KeyWordSection>
             </div>
