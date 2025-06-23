@@ -1,0 +1,18 @@
+<svg width="300" height="120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .s { fill: #1B4332; }
+    .o { fill: #343A40; }
+    .u { fill: #95D5B2; }
+    .p { fill: #1B4332; }
+    text {
+      font-family: 'Inter', sans-serif;
+      font-size: 96px;
+      font-weight: 900;
+      dominant-baseline: middle;
+    }
+  </style>
+  <text x="0" y="60" class="s">S</text>
+  <text x="75" y="60" class="o">O</text>
+  <text x="150" y="60" class="u">U</text>
+  <text x="225" y="60" class="p">P</text>
+</svg>

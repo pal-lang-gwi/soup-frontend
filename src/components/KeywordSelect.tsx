@@ -110,14 +110,57 @@ const MainMent = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 100&;
-	padding: 10px;
+	width: 100%;
+	padding: 20px;
+	max-width: 600px;
+	margin: 0 auto;
+
+	h2 {
+		font-size: 1.8rem;
+		margin-bottom: 1rem;
+		text-align: center;
+
+		@media (max-width: 768px) {
+			font-size: 1.5rem;
+		}
+
+		@media (max-width: 480px) {
+			font-size: 1.3rem;
+		}
+	}
+
+	h4 {
+		font-size: 1rem;
+		line-height: 1.6;
+		text-align: center;
+		margin-bottom: 2rem;
+		color: #666;
+
+		@media (max-width: 768px) {
+			font-size: 0.9rem;
+			line-height: 1.5;
+			margin-bottom: 1.5rem;
+		}
+
+		@media (max-width: 480px) {
+			font-size: 0.85rem;
+		}
+	}
+
+	@media (max-width: 768px) {
+		padding: 16px;
+	}
 `;
 
 const Info = styled.div`
 	margin-top: 40px;
 	text-align: center;
 	font-size: 1rem;
+
+	@media (max-width: 768px) {
+		margin-top: 20px;
+		font-size: 0.9rem;
+	}
 `;
 
 const SelectBox = styled.div`
@@ -126,41 +169,119 @@ const SelectBox = styled.div`
 	flex-direction: column;
 	align-items: center;
 	gap: 10px;
+	width: 100%;
+	max-width: 400px;
+
+	@media (max-width: 768px) {
+		margin-top: 20px;
+		gap: 8px;
+	}
 `;
 
 const Label = styled.label`
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	padding: 4px 12px;
+	gap: 8px;
+	padding: 8px 16px;
 	border-radius: 8px;
 	cursor: pointer;
 	user-select: none;
-	input {
-		accent-color: ${({ theme }) => theme.buttonColor};
+	width: 100%;
+	max-width: 300px;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: rgba(72, 187, 120, 0.1);
 	}
+
+	input {
+		accent-color: ${({ theme }) => theme.mainGreen};
+		width: 18px;
+		height: 18px;
+	}
+
 	span {
 		font-size: 0.95rem;
+		flex: 1;
+	}
+
+	@media (max-width: 768px) {
+		padding: 10px 12px;
+		gap: 6px;
+
+		input {
+			width: 16px;
+			height: 16px;
+		}
+
+		span {
+			font-size: 0.9rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		padding: 8px 10px;
+
+		span {
+			font-size: 0.85rem;
+		}
 	}
 `;
 
 const SelectCheck = styled.div`
 	margin-top: 30px;
+	text-align: center;
+	font-size: 0.9rem;
+	line-height: 1.5;
+
+	@media (max-width: 768px) {
+		margin-top: 20px;
+		font-size: 0.85rem;
+	}
 `;
 
 const SelectedKeyword = styled.div`
 	color: ${({ theme }) => theme.mainGreen};
-	font-weight: 400;
+	font-weight: 600;
+	word-break: break-all;
 `;
 
 const SaveButton = styled.button<{ disabled: boolean }>`
 	margin-top: 32px;
-	padding: 10px 28px;
+	padding: 12px 32px;
 	border: none;
 	border-radius: 999px;
 	font-weight: 600;
+	font-size: 1rem;
 	cursor: pointer;
-	background: ${({ disabled }) => (disabled ? "#ccc" : theme.mainGreen)};
+	background: ${({ disabled }) => (disabled ? "#CBD5E0" : theme.buttonColor)};
 	color: #fff;
 	opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
+	transition: all 0.2s ease;
+	min-height: 44px;
+	touch-action: manipulation;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+	&:hover:not(:disabled) {
+		background: ${({ disabled }) => (disabled ? "#CBD5E0" : theme.mainGreen)};
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
+	}
+
+	@media (max-width: 768px) {
+		margin-top: 24px;
+		padding: 10px 28px;
+		font-size: 0.95rem;
+		min-height: 48px;
+	}
+
+	@media (max-width: 480px) {
+		padding: 8px 24px;
+		font-size: 0.9rem;
+		min-height: 44px;
+	}
 `;
