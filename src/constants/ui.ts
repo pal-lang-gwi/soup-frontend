@@ -1,0 +1,53 @@
+// UI 관련 상수들
+export const UI_CONSTANTS = {
+	// 애니메이션 관련
+	ANIMATION_DELAY_MS: 300,
+	SCROLL_DELAY_MS: 100,
+
+	// 레이아웃 관련
+	NAVBAR_HEIGHT: 60,
+	MOBILE_NAVBAR_HEIGHT: 70,
+	SIDEBAR_WIDTH: 250,
+	CONTENT_PADDING: 200,
+	MOBILE_CONTENT_PADDING: 32,
+
+	// Z-Index 레이어
+	Z_INDEX: {
+		NAVBAR: 1000,
+		MODAL_OVERLAY: 1001,
+		MODAL_CONTENT: 1002,
+		CONFETTI: 9999,
+	},
+
+	// 반응형 브레이크포인트
+	BREAKPOINTS: {
+		MOBILE: 768,
+		TABLET: 1024,
+		DESKTOP: 1200,
+	},
+
+	// 컨페티 설정
+	CONFETTI: {
+		PARTICLE_COUNT: 300,
+		SPREAD: 100,
+		START_VELOCITY: 70,
+		GRAVITY: 0.5,
+		TICKS: 300,
+		SCALAR: 0.9,
+	},
+
+	// 폼 관련
+	FORM: {
+		MAX_NICKNAME_LENGTH: 20,
+		MIN_AGE: 18,
+		MAX_AGE: 99,
+		BIRTH_YEAR_RANGE: 106,
+		MONTHS_IN_YEAR: 12,
+		DAYS_IN_MONTH: 31,
+	},
+
+	// 페이지네이션
+	PAGINATION: {
+		DEFAULT_PAGE: 0,
+	},
+} as const;
