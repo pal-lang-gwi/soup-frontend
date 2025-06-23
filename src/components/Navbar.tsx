@@ -13,7 +13,7 @@ const Navbar = () => {
 	const openModal = () => setIsModalOpen(true);
 	const closeModal = () => setIsModalOpen(false);
 	const navigate = useNavigate();
-	const { isAuthenticated, logout } = useAuth();
+	const { isAuthenticated, logout, isAdmin } = useAuth();
 
 	const handleNavClick = (path: string) => {
 		navigate(path);
@@ -37,14 +37,16 @@ const Navbar = () => {
 				{/* 데스크톱 네비게이션 */}
 				<NavList>
 					<NavLink onClick={() => handleNavClick("/news")}>게시판</NavLink>
-					<NavLink onClick={() => handleNavClick("/todaynews")}>
-						오늘의뉴스
-					</NavLink>
 					<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
+					{isAuthenticated && isAdmin() && (
+						<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
+					)}
 				</NavList>
 
 				<ButtonStyle>
-					<SendButton onClick={openModal}>구독하기</SendButton>
+					{!isAuthenticated && (
+						<SendButton onClick={openModal}>구독하기</SendButton>
+					)}
 				</ButtonStyle>
 
 				{isAuthenticated && (
@@ -79,18 +81,22 @@ const Navbar = () => {
 						<span>📋</span>
 						게시판
 					</MobileNavLink>
-					<MobileNavLink onClick={() => handleNavClick("/todaynews")}>
-						<span>📰</span>
-						오늘의뉴스
-					</MobileNavLink>
 					<MobileNavLink onClick={() => handleNavClick("/health")}>
 						<span>💚</span>
 						헬스체크
 					</MobileNavLink>
+					{isAuthenticated && isAdmin() && (
+						<MobileNavLink onClick={() => handleNavClick("/admin")}>
+							<span>⚙️</span>
+							관리자
+						</MobileNavLink>
+					)}
 				</MobileNavLinks>
 
 				<MobileButtonWrapper>
-					<SendButton onClick={openModal}>구독하기</SendButton>
+					{!isAuthenticated && (
+						<SendButton onClick={openModal}>구독하기</SendButton>
+					)}
 					{isAuthenticated && (
 						<MobileLogoutButton onClick={handleLogout}>
 							로그아웃
@@ -102,9 +108,11 @@ const Navbar = () => {
 			{/* 모바일 메뉴 오버레이 */}
 			<MobileOverlay isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
 
+			{/* 로그인 모달 */}
 			{isModalOpen && (
 				<ModalOverlay onClick={closeModal}>
 					<ModalContent onClick={(e) => e.stopPropagation()}>
+						<CloseButton onClick={closeModal}>×</CloseButton>
 						<LoginForm />
 					</ModalContent>
 				</ModalOverlay>
@@ -385,8 +393,7 @@ const LogoutButton = styled.button`
 	}
 
 	@media (max-width: ${UI_CONSTANTS.BREAKPOINTS.MOBILE}px) {
-		padding: 0.4rem 0.8rem;
-		font-size: 0.8rem;
+		display: none;
 	}
 `;
 
@@ -407,5 +414,29 @@ const MobileLogoutButton = styled.button`
 	@media (max-width: ${UI_CONSTANTS.BREAKPOINTS.MOBILE}px) {
 		padding: 0.4rem 0.8rem;
 		font-size: 0.8rem;
+	}
+`;
+
+const CloseButton = styled.button`
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: none;
+	border: none;
+	font-size: 24px;
+	color: #666;
+	cursor: pointer;
+	padding: 0;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background-color: #f5f5f5;
+		color: #333;
 	}
 `;

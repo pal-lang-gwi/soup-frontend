@@ -5,13 +5,16 @@ import React, {
 	useEffect,
 	ReactNode,
 } from "react";
+import { getCurrentUser } from "../api/auth/login";
+import { User } from "../types/auth";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
-	user: any | null;
-	login: (userData: any) => void;
+	user: User | null;
+	login: (userData: User) => void;
 	logout: () => void;
 	loading: boolean;
+	isAdmin: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,33 +25,41 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [user, setUser] = useState<any | null>(null);
+	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// 로컬 스토리지에서 인증 상태 확인
-		const token = localStorage.getItem("accessToken");
-		const userData = localStorage.getItem("user");
+		// 앱 시작 시 현재 사용자 정보 조회
+		const checkAuthStatus = async () => {
+			try {
+				const userData = await getCurrentUser();
+				if (userData) {
+					setUser(userData);
+					setIsAuthenticated(true);
+				}
+			} catch (error) {
+				console.error("인증 상태 확인 실패:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-		if (token && userData) {
-			setIsAuthenticated(true);
-			setUser(JSON.parse(userData));
-		}
-
-		setLoading(false);
+		checkAuthStatus();
 	}, []);
 
-	const login = (userData: any) => {
+	const login = (userData: User) => {
 		setIsAuthenticated(true);
 		setUser(userData);
-		localStorage.setItem("user", JSON.stringify(userData));
 	};
 
 	const logout = () => {
 		setIsAuthenticated(false);
 		setUser(null);
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("user");
+		// 로그아웃은 서버에서 쿠키 만료 처리
+	};
+
+	const isAdmin = (): boolean => {
+		return user?.role === "ADMIN";
 	};
 
 	const value = {
@@ -57,6 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		login,
 		logout,
 		loading,
+		isAdmin,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
