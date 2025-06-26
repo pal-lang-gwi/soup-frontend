@@ -12,6 +12,7 @@
 	text-align: center;
 	min-height: 100vh;
 	padding-top: 60px; /* 네비게이션 바 높이만큼 상단 여백 */
+	will-change: scroll-position;
 }
 
 .logo {
@@ -19,6 +20,7 @@
 	padding: var(--logo-padding);
 	will-change: filter;
 	transition: filter calc(var(--animation-delay-ms) * 1ms);
+	transform: translateZ(0);
 }
 .logo:hover {
 	filter: drop-shadow(0 0 2em #646cffaa);
@@ -29,10 +31,10 @@
 
 @keyframes logo-spin {
 	from {
-		transform: rotate(0deg);
+		transform: rotate(0deg) translateZ(0);
 	}
 	to {
-		transform: rotate(360deg);
+		transform: rotate(360deg) translateZ(0);
 	}
 }
 
@@ -44,6 +46,8 @@
 
 .card {
 	padding: var(--card-padding);
+	will-change: transform;
+	transform: translateZ(0);
 }
 
 .read-the-docs {
@@ -66,4 +70,20 @@
 	.card {
 		padding: 1.5em;
 	}
+}
+
+/* 성능 최적화를 위한 GPU 가속 */
+* {
+	backface-visibility: hidden;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* 스크롤 성능 최적화 */
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	overflow-x: hidden;
 }

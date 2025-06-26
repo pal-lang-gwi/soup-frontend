@@ -3,6 +3,7 @@ import React, {
 	useContext,
 	useState,
 	useEffect,
+	useCallback,
 	ReactNode,
 } from "react";
 import { getCurrentUser } from "../api/auth/login";
@@ -47,20 +48,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		checkAuthStatus();
 	}, []);
 
-	const login = (userData: User) => {
+	const login = useCallback((userData: User) => {
 		setIsAuthenticated(true);
 		setUser(userData);
-	};
+	}, []);
 
-	const logout = () => {
+	const logout = useCallback(() => {
 		setIsAuthenticated(false);
 		setUser(null);
 		// 로그아웃은 서버에서 쿠키 만료 처리
-	};
+	}, []);
 
-	const isAdmin = (): boolean => {
+	const isAdmin = useCallback((): boolean => {
 		return user?.role === "ADMIN";
-	};
+	}, [user?.role]);
 
 	const value = {
 		isAuthenticated,

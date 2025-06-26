@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import FilterInput from "../components/FilterInput";
 import Navbar from "../components/Navbar";
@@ -30,7 +30,7 @@ function NewsList() {
 	const [error, setError] = useState<string | null>(null);
 	const [keywords, setKeywords] = useState(myKeywords);
 
-	const fetchNews = async () => {
+	const fetchNews = useCallback(async () => {
 		setLoading(true);
 		setError(null);
 		try {
@@ -53,35 +53,38 @@ function NewsList() {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [keyword, startDate, endDate, page]);
 
 	useEffect(() => {
 		fetchNews();
-		// eslint-disable-next-line
-	}, [page]);
+	}, [fetchNews]);
 
-	const handlePrev = () => {
+	const handlePrev = useCallback(() => {
 		if (page > 0) setPage(page - 1);
 		else alert("첫번째 페이지에요!😉");
-	};
-	const handleNext = () => {
+	}, [page]);
+
+	const handleNext = useCallback(() => {
 		if (page + 1 < totalPage) setPage(page + 1);
 		else alert("마지막 페이지에요!🥲");
-	};
+	}, [page, totalPage]);
 
-	const handleSearch = (value: string) => {
-		setKeyword(value);
+	const handleSearch = useCallback(
+		(value: string) => {
+			setKeyword(value);
+			setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
+			// 검색 시 바로 조회
+			fetchNews();
+		},
+		[fetchNews]
+	);
+
+	const handleDateSearch = useCallback(() => {
 		setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
-		// 검색 시 바로 조회
 		fetchNews();
-	};
+	}, [fetchNews]);
 
-	const handleDateSearch = () => {
-		setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
-		fetchNews();
-	};
-
-	const handleToggleKeyword = async (keywordId: number) => {
+	const handleToggleKeyword = useCallback(async (keywordId: number) => {
 		try {
 			// 실제 API 호출 (현재는 더미 데이터로 시뮬레이션)
 			// await toggleKeywordActive(keywordId);
@@ -96,9 +99,9 @@ function NewsList() {
 			console.error("키워드 상태 변경 실패:", error);
 			alert("키워드 상태 변경에 실패했습니다.");
 		}
-	};
+	}, []);
 
-	const handleDeleteKeyword = async (keywordId: number) => {
+	const handleDeleteKeyword = useCallback(async (keywordId: number) => {
 		try {
 			// 실제 API 호출 (현재는 더미 데이터로 시뮬레이션)
 			// await deleteKeyword(keywordId);
@@ -109,7 +112,21 @@ function NewsList() {
 			console.error("키워드 삭제 실패:", error);
 			alert("키워드 삭제에 실패했습니다.");
 		}
-	};
+	}, []);
+
+	const handleStartDateChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setStartDate(e.target.value);
+		},
+		[]
+	);
+
+	const handleEndDateChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setEndDate(e.target.value);
+		},
+		[]
+	);
 
 	return (
 		<>
@@ -147,13 +164,13 @@ function NewsList() {
 									<input
 										type="date"
 										value={startDate}
-										onChange={(e) => setStartDate(e.target.value)}
+										onChange={handleStartDateChange}
 										max={endDate || undefined}
 									/>
 									<input
 										type="date"
 										value={endDate}
-										onChange={(e) => setEndDate(e.target.value)}
+										onChange={handleEndDateChange}
 										min={startDate || undefined}
 									/>
 									<SearchButton onClick={handleDateSearch}>조회</SearchButton>

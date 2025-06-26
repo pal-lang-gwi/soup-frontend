@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import Navbar from "./Navbar";
 import KeywordToggle from "./KeywordToggle";
@@ -22,33 +22,42 @@ const LoggedInHomePage: React.FC = () => {
 		},
 	];
 
-	const handleSearch = async (keyword: string) => {
-		if (!keyword.trim()) return;
+	const handleSearch = useCallback(
+		async (keyword: string) => {
+			if (!keyword.trim()) return;
 
-		setIsSearching(true);
-		try {
-			// 실제 API 대신 더미 데이터 사용
-			await new Promise((res) => setTimeout(res, 500)); // 로딩 효과
-			setSearchResults(
-				dummyResults.filter((item) => item.name.includes(keyword))
-			);
-			setTotalPages(1);
-		} finally {
-			setIsSearching(false);
-		}
-	};
+			setIsSearching(true);
+			try {
+				// 실제 API 대신 더미 데이터 사용
+				await new Promise((res) => setTimeout(res, 500)); // 로딩 효과
+				setSearchResults(
+					dummyResults.filter((item) => item.name.includes(keyword))
+				);
+				setTotalPages(1);
+			} finally {
+				setIsSearching(false);
+			}
+		},
+		[dummyResults]
+	);
 
-	const handleSearchSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		handleSearch(searchKeyword);
-	};
+	const handleSearchSubmit = useCallback(
+		(e: React.FormEvent) => {
+			e.preventDefault();
+			handleSearch(searchKeyword);
+		},
+		[handleSearch, searchKeyword]
+	);
 
-	const handlePageChange = (newPage: number) => {
-		setCurrentPage(newPage);
-		handleSearch(searchKeyword);
-	};
+	const handlePageChange = useCallback(
+		(newPage: number) => {
+			setCurrentPage(newPage);
+			handleSearch(searchKeyword);
+		},
+		[handleSearch, searchKeyword]
+	);
 
-	const handleToggleKeyword = async (keywordId: number) => {
+	const handleToggleKeyword = useCallback(async (keywordId: number) => {
 		try {
 			// 실제 API 호출 (현재는 더미 데이터로 시뮬레이션)
 			// await toggleKeywordActive(keywordId);
@@ -63,9 +72,9 @@ const LoggedInHomePage: React.FC = () => {
 			console.error("키워드 상태 변경 실패:", error);
 			alert("키워드 상태 변경에 실패했습니다.");
 		}
-	};
+	}, []);
 
-	const handleDeleteKeyword = async (keywordId: number) => {
+	const handleDeleteKeyword = useCallback(async (keywordId: number) => {
 		try {
 			// 실제 API 호출 (현재는 더미 데이터로 시뮬레이션)
 			// await deleteKeyword(keywordId);
@@ -76,7 +85,14 @@ const LoggedInHomePage: React.FC = () => {
 			console.error("키워드 삭제 실패:", error);
 			alert("키워드 삭제에 실패했습니다.");
 		}
-	};
+	}, []);
+
+	const handleSearchInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setSearchKeyword(e.target.value);
+		},
+		[]
+	);
 
 	return (
 		<>
@@ -97,7 +113,7 @@ const LoggedInHomePage: React.FC = () => {
 							type="text"
 							placeholder="키워드를 검색해보세요..."
 							value={searchKeyword}
-							onChange={(e) => setSearchKeyword(e.target.value)}
+							onChange={handleSearchInputChange}
 							maxLength={100}
 						/>
 						<SearchButton type="submit" disabled={isSearching}>

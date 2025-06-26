@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import LoginForm from "../components/LoginForm";
@@ -10,24 +10,27 @@ import { useAuth } from "../contexts/AuthContext";
 const Navbar = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	const openModal = () => setIsModalOpen(true);
-	const closeModal = () => setIsModalOpen(false);
+	const openModal = useCallback(() => setIsModalOpen(true), []);
+	const closeModal = useCallback(() => setIsModalOpen(false), []);
 	const navigate = useNavigate();
 	const { isAuthenticated, logout, isAdmin } = useAuth();
 
-	const handleNavClick = (path: string) => {
-		navigate(path);
-		setIsMobileMenuOpen(false);
-	};
+	const handleNavClick = useCallback(
+		(path: string) => {
+			navigate(path);
+			setIsMobileMenuOpen(false);
+		},
+		[navigate]
+	);
 
-	const toggleMobileMenu = () => {
+	const toggleMobileMenu = useCallback(() => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
-	};
+	}, [isMobileMenuOpen]);
 
-	const handleLogout = () => {
+	const handleLogout = useCallback(() => {
 		logout();
 		window.location.href = "/";
-	};
+	}, [logout]);
 
 	return (
 		<Nav>
