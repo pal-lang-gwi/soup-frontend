@@ -19,7 +19,7 @@ interface Props {
 	onKeywordSelected?: () => void;
 }
 
-const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
+const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef, onKeywordSelected }) => {
 	// 서버에서 데이터 받아지는지 확인 기능 추가
 	const { data: keywords = [], isLoading, error } = useKeywords();
 
@@ -48,9 +48,10 @@ const KeywordSelect: React.FC<Props> = ({ onSubmit, scrollToNextRef }) => {
 		try {
 			// 백엔드에 구독 요청
 			await subscribeKeywords(selected);
-
+			console.log("요청 성공");
 			// 성공 시 부모 컴포넌트에 알림
 			onSubmit?.(selected);
+			onKeywordSelected?.();
 
 			// 스크롤
 			if (scrollToNextRef?.current) {
