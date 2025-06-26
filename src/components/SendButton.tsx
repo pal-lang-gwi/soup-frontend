@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styled from 'styled-components';
 
@@ -32,7 +31,7 @@ const StyledWrapper = styled.div`
         font-family: inherit;
         font-size: 20px;
         background: ${({ theme }) => theme.buttonColor};
-        color: black;
+        color: white;
         padding: 0.7em 1em;
         padding-left: 0.9em;
         display: flex;
@@ -42,6 +41,9 @@ const StyledWrapper = styled.div`
         overflow: hidden;
         transition: all 0.2s;
         cursor: pointer;
+        min-height: 44px;
+        touch-action: manipulation;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     button span {
@@ -54,6 +56,12 @@ const StyledWrapper = styled.div`
         display: block;
         transform-origin: center center;
         transition: transform 0.3s ease-in-out;
+    }
+
+    button:hover {
+        background: ${({ theme }) => theme.mainGreen};
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     button:hover .svg-wrapper {
@@ -80,7 +88,42 @@ const StyledWrapper = styled.div`
         to {
         transform: translateY(-0.1em);
         }
-    }`;
+    }
+
+    @media (max-width: 768px) {
+        button {
+            font-size: 18px;
+            padding: 0.6em 0.8em;
+            padding-left: 0.8em;
+            min-height: 48px;
+        }
+
+        button:hover span {
+            transform: translateX(3em);
+        }
+
+        button:hover svg {
+            transform: translateX(0.8em) rotate(45deg) scale(1.1);
+        }
+    }
+
+    @media (max-width: 480px) {
+        button {
+            font-size: 16px;
+            padding: 0.5em 0.7em;
+            padding-left: 0.7em;
+            min-height: 44px;
+        }
+
+        button:hover span {
+            transform: translateX(2.5em);
+        }
+
+        button:hover svg {
+            transform: translateX(0.6em) rotate(45deg) scale(1.1);
+        }
+    }
+`;
 
 export default SendButton;
 
