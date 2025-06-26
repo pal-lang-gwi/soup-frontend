@@ -12,6 +12,9 @@ import LoggedInHomePage from "./components/LoggedInHomePage";
 import NewsList from "./pages/NewsList";
 import HealthCheck from "./pages/HealthCheck";
 import FirstLogin from "./pages/FirstLogin";
+import AdminPage from "./pages/AdminPage";
+import LoginRequiredModal from "./components/LoginRequiredModal";
+import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 import "./index.css";
 
@@ -25,7 +28,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 		return <div>로딩 중...</div>;
 	}
 
-	return isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
+	return isAuthenticated ? <>{children}</> : <LoginRequiredModal />;
 };
 
 // 로그인하지 않은 사용자만 접근 가능한 컴포넌트를 감싸는 래퍼
@@ -90,6 +93,16 @@ const AppRoutes: React.FC = () => {
 						<ProtectedRoute>
 							<FirstLogin />
 						</ProtectedRoute>
+					}
+				/>
+
+				{/* 어드민 전용 라우트 */}
+				<Route
+					path="/admin"
+					element={
+						<AdminRoute>
+							<AdminPage />
+						</AdminRoute>
 					}
 				/>
 

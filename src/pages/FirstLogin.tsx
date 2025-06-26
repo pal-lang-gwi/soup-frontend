@@ -12,31 +12,22 @@ function FirstLogin() {
 	useEffect(() => {
 		const processLogin = async () => {
 			try {
-				// URL 파라미터에서 토큰과 사용자 정보 확인
-				const token = searchParams.get("token");
+				// URL 파라미터에서 사용자 정보 확인
 				const userInfo = searchParams.get("user");
 
-				if (!token) {
-					setError("로그인 토큰이 없습니다.");
+				if (!userInfo) {
+					setError("사용자 정보가 없습니다.");
 					return;
 				}
 
-				// 토큰을 로컬 스토리지에 저장
-				localStorage.setItem("accessToken", token);
-
-				// 사용자 정보가 있으면 파싱하여 저장
-				if (userInfo) {
-					try {
-						const userData = JSON.parse(decodeURIComponent(userInfo));
-						login(userData);
-					} catch (parseError) {
-						console.error("사용자 정보 파싱 실패:", parseError);
-						// 기본 사용자 정보 생성
-						login({ id: "user", email: "user@example.com" });
-					}
-				} else {
-					// 기본 사용자 정보로 로그인
-					login({ id: "user", email: "user@example.com" });
+				// 사용자 정보 파싱
+				try {
+					const userData = JSON.parse(decodeURIComponent(userInfo));
+					login(userData);
+				} catch (parseError) {
+					console.error("사용자 정보 파싱 실패:", parseError);
+					// 기본 사용자 정보 생성
+					login({ id: "user", email: "user@example.com", role: "USER" });
 				}
 
 				// 로그인 성공 후 홈페이지로 리다이렉트
