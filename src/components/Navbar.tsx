@@ -16,6 +16,21 @@ const Navbar = () => {
 	const { isAuthenticated, logout } = useAuth();
 
 	const handleNavClick = (path: string) => {
+		// 헬스체크는 로그인 없이 접근 가능
+		if (path === "/health") {
+			navigate(path);
+			setIsMobileMenuOpen(false);
+			return;
+		}
+
+		// 로그인하지 않은 사용자는 로그인 모달 표시
+		if (!isAuthenticated) {
+			openModal();
+			setIsMobileMenuOpen(false);
+			return;
+		}
+
+		// 로그인한 사용자는 해당 페이지로 이동
 		navigate(path);
 		setIsMobileMenuOpen(false);
 	};

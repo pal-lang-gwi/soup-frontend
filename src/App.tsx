@@ -75,14 +75,8 @@ const AppRoutes: React.FC = () => {
 					}
 				/>
 
-				<Route
-					path="/health"
-					element={
-						<ProtectedRoute>
-							<HealthCheck />
-						</ProtectedRoute>
-					}
-				/>
+				{/* 헬스체크는 인증 없이 접근 가능 */}
+				<Route path="/health" element={<HealthCheck />} />
 
 				<Route
 					path="/first-login"

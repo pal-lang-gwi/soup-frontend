@@ -43,8 +43,8 @@ function FirstLogin() {
 					return;
 				}
 
-				// 토큰을 로컬 스토리지에 저장
-				localStorage.setItem("accessToken", token);
+				// HttpOnly 쿠키는 서버에서 자동으로 설정됨
+				// localStorage.setItem("accessToken", token); // 제거
 
 				// 사용자 정보가 있으면 파싱하여 저장
 				if (userInfo) {
@@ -53,10 +53,32 @@ function FirstLogin() {
 						login(userData);
 					} catch (parseError) {
 						console.error("사용자 정보 파싱 실패:", parseError);
-						login({ id: "user", email: "user@example.com" });
+						login({
+							id: "user",
+							email: "user@example.com",
+							username: "user",
+							nickname: "사용자",
+							role: "USER" as const,
+							gender: "MALE" as const,
+							birthDate: "1990-01-01",
+							providerId: "local",
+							profileImageUrl: "",
+							userKeywords: { userKeywordList: [] },
+						});
 					}
 				} else {
-					login({ id: "user", email: "user@example.com" });
+					login({
+						id: "user",
+						email: "user@example.com",
+						username: "user",
+						nickname: "사용자",
+						role: "USER" as const,
+						gender: "MALE" as const,
+						birthDate: "1990-01-01",
+						providerId: "local",
+						profileImageUrl: "",
+						userKeywords: { userKeywordList: [] },
+					});
 				}
 			} catch (error) {
 				console.error("로그인 처리 실패:", error);

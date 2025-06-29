@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	ReactNode,
 } from "react";
+import { api } from "../api/axiosInstance";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -25,30 +26,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [user, setUser] = useState<any | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		// 로컬 스토리지에서 인증 상태 확인
-		const token = localStorage.getItem("accessToken");
-		const userData = localStorage.getItem("user");
-
-		if (token && userData) {
-			setIsAuthenticated(true);
-			setUser(JSON.parse(userData));
+	// 서버에 로그인 상태 확인 요청
+	const checkAuthStatus = async () => {
+		try {
+			const response = await api.get("/api/v1/users");
+			if (response.status === 200) {
+				setIsAuthenticated(true);
+				setUser(response.data.data);
+			}
+		} catch (error) {
+			// 401, 403 등 인증 실패 시 로그아웃 상태로 설정
+			setIsAuthenticated(false);
+			setUser(null);
+		} finally {
+			setLoading(false);
 		}
+	};
 
-		setLoading(false);
+	useEffect(() => {
+		// 앱 시작 시 서버에 로그인 상태 확인
+		checkAuthStatus();
 	}, []);
 
 	const login = (userData: any) => {
 		setIsAuthenticated(true);
 		setUser(userData);
-		localStorage.setItem("user", JSON.stringify(userData));
 	};
 
-	const logout = () => {
-		setIsAuthenticated(false);
-		setUser(null);
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("user");
+	const logout = async () => {
+		try {
+			// 서버에 로그아웃 요청 (HttpOnly 쿠키 제거)
+			await api.post("/api/v1/auth/logout");
+		} catch (error) {
+			console.error("로그아웃 API 호출 실패:", error);
+		} finally {
+			// 클라이언트 상태 초기화
+			setIsAuthenticated(false);
+			setUser(null);
+		}
 	};
 
 	const value = {

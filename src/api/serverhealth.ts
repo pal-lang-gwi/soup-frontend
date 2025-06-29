@@ -1,5 +1,5 @@
 import { api } from "./axiosInstance";
 
 export const axiosServerHealth = () => {
-    return api.get('/health');
-}
+	return api.get("/health");
+};
