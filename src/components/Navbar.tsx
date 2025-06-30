@@ -29,9 +29,6 @@ const Navbar = () => {
 		window.location.href = "/";
 	};
 
-	// 사용자가 관리자인지 확인
-	const isAdmin = user?.role === 'ADMIN';
-
 	return (
 		<Nav>
 			<NavContainer>
@@ -44,9 +41,7 @@ const Navbar = () => {
 						오늘의뉴스
 					</NavLink>
 					<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
-					{isAdmin && (
-						<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
-					)}
+					<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
 				</NavList>
 
 				<ButtonStyle>
@@ -93,12 +88,10 @@ const Navbar = () => {
 						<span>💚</span>
 						헬스체크
 					</MobileNavLink>
-					{isAdmin && (
-						<MobileNavLink onClick={() => handleNavClick("/admin")}>
-							<span>⚙️</span>
-							관리자
-						</MobileNavLink>
-					)}
+					<MobileNavLink onClick={() => handleNavClick("/admin")}>
+						<span>⚙️</span>
+						관리자
+					</MobileNavLink>
 				</MobileNavLinks>
 
 				<MobileButtonWrapper>

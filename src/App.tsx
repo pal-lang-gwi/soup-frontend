@@ -29,132 +29,21 @@ const queryClient = new QueryClient({
 	},
 });
 
-// 인증이 필요한 컴포넌트를 감싸는 래퍼
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => {
-	const { isAuthenticated, loading } = useAuth();
-
-	if (loading) {
-		return <div>로딩 중...</div>;
-	}
-
-	return isAuthenticated ? <>{children}</> : <Navigate to="/" replace />;
-};
-
-// 로그인하지 않은 사용자만 접근 가능한 컴포넌트를 감싸는 래퍼
-const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const { isAuthenticated, loading } = useAuth();
-
-	if (loading) {
-		return <div>로딩 중...</div>;
-	}
-
-	return !isAuthenticated ? <>{children}</> : <Navigate to="/home" replace />;
-};
-
-// 초기 설정이 필요한 사용자를 위한 래퍼
-const InitRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const { isAuthenticated, user, loading } = useAuth();
-
-	if (loading) {
-		return <div>로딩 중...</div>;
-	}
-
-	// 로그인하지 않은 경우 홈페이지로
-	if (!isAuthenticated) {
-		return <Navigate to="/" replace />;
-	}
-
-	// 사용자 정보가 초기화되지 않은 경우 (닉네임이 없는 경우) UserInit으로
-	if (!user?.nickname) {
-		return <Navigate to="/user-init" replace />;
-	}
-
-	return <>{children}</>;
-};
-
 const AppRoutes: React.FC = () => {
-	const { isAuthenticated } = useAuth();
-
 	return (
 		<Router>
 			<Routes>
-				{/* 로그인하지 않은 사용자를 위한 홈페이지 */}
-				<Route
-					path="/"
-					element={
-						<PublicRoute>
-							<HomePage />
-						</PublicRoute>
-					}
-				/>
-
-				{/* 초기 설정 페이지 */}
-				<Route
-					path="/user-init"
-					element={
-						<ProtectedRoute>
-							<UserInit />
-						</ProtectedRoute>
-					}
-				/>
-
-				{/* 로그인한 사용자를 위한 홈페이지 */}
-				<Route
-					path="/home"
-					element={
-						<InitRoute>
-							<LoggedInHomePage />
-						</InitRoute>
-					}
-				/>
-
-				{/* 기타 보호된 라우트들 */}
-				<Route
-					path="/news"
-					element={
-						<InitRoute>
-							<NewsList />
-						</InitRoute>
-					}
-				/>
-
-				<Route
-					path="/health"
-					element={
-						<InitRoute>
-							<HealthCheck />
-						</InitRoute>
-					}
-				/>
-
-				<Route
-					path="/first-login"
-					element={
-						<ProtectedRoute>
-							<FirstLogin />
-						</ProtectedRoute>
-					}
-				/>
-
-				{/* 관리자 페이지 - 로그인 + 관리자 권한 필요 */}
-				<Route
-					path="/admin"
-					element={
-						<ProtectedRoute>
-							<AdminGuard>
-								<AdminPage />
-							</AdminGuard>
-						</ProtectedRoute>
-					}
-				/>
-
+				{/* 모든 페이지에 자유롭게 접근 가능 */}
+				<Route path="/" element={<HomePage />} />
+				<Route path="/user-init" element={<UserInit />} />
+				<Route path="/home" element={<LoggedInHomePage />} />
+				<Route path="/news" element={<NewsList />} />
+				<Route path="/health" element={<HealthCheck />} />
+				<Route path="/first-login" element={<FirstLogin />} />
+				<Route path="/admin" element={<AdminPage />} />
+				
 				{/* 기본 리다이렉트 */}
-				<Route
-					path="*"
-					element={<Navigate to={isAuthenticated ? "/home" : "/"} replace />}
-				/>
+				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</Router>
 	);
