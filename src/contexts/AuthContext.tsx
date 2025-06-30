@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			// 서버에 로그아웃 요청
 			await logoutApi();
 		} catch (error) {
-			console.error('로그아웃 API 호출 실패:', error);
+			console.error("로그아웃 API 호출 실패:", error);
 			// API 호출이 실패해도 클라이언트에서는 로그아웃 처리
 		} finally {
 			// 클라이언트 상태 정리

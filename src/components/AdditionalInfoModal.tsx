@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 import styled from "styled-components";
 import {
 	initUserAdditionalInfo,
 	UserAdditionalInfoRequestDto,
 } from "../api/user";
 import { useAuth } from "../contexts/AuthContext";
-import Navbar from "../components/Navbar";
 
-const UserInit: React.FC = () => {
-	const navigate = useNavigate();
+interface AdditionalInfoModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+}
+
+const AdditionalInfoModal: React.FC<AdditionalInfoModalProps> = ({
+	isOpen,
+	onClose,
+}) => {
 	const { login } = useAuth();
 	const [formData, setFormData] = useState({
 		nickname: "",
@@ -24,7 +29,7 @@ const UserInit: React.FC = () => {
 			// 사용자 정보 업데이트
 			login(data);
 			alert("사용자 정보가 설정되었습니다!");
-			navigate("/home");
+			onClose();
 		},
 		onError: (error: Error) => {
 			alert(`설정 실패: ${error.message}`);
@@ -63,83 +68,92 @@ const UserInit: React.FC = () => {
 		}));
 	};
 
+	if (!isOpen) return null;
+
 	return (
-		<>
-			<Navbar />
-			<Container>
-				<FormWrapper>
-					<Title>환영합니다! 🎉</Title>
-					<Subtitle>서비스 이용을 위해 추가 정보를 입력해주세요.</Subtitle>
+		<ModalOverlay onClick={onClose}>
+			<ModalContent onClick={(e) => e.stopPropagation()}>
+				<Title>추가 정보 입력</Title>
+				<Subtitle>서비스 이용을 위해 추가 정보를 입력해주세요.</Subtitle>
 
-					<Form onSubmit={handleSubmit}>
-						<FormGroup>
-							<Label htmlFor="nickname">닉네임 *</Label>
-							<Input
-								type="text"
-								id="nickname"
-								name="nickname"
-								value={formData.nickname}
-								onChange={handleInputChange}
-								placeholder="닉네임을 입력하세요"
-								maxLength={20}
-								required
-							/>
-						</FormGroup>
+				<Form onSubmit={handleSubmit}>
+					<FormGroup>
+						<Label htmlFor="nickname">닉네임 *</Label>
+						<Input
+							type="text"
+							id="nickname"
+							name="nickname"
+							value={formData.nickname}
+							onChange={handleInputChange}
+							placeholder="닉네임을 입력하세요"
+							maxLength={20}
+							required
+						/>
+					</FormGroup>
 
-						<FormGroup>
-							<Label htmlFor="gender">성별 *</Label>
-							<Select
-								id="gender"
-								name="gender"
-								value={formData.gender}
-								onChange={handleInputChange}
-								required
-							>
-								<option value="MALE">남성</option>
-								<option value="FEMALE">여성</option>
-							</Select>
-						</FormGroup>
+					<FormGroup>
+						<Label htmlFor="gender">성별 *</Label>
+						<Select
+							id="gender"
+							name="gender"
+							value={formData.gender}
+							onChange={handleInputChange}
+							required
+						>
+							<option value="MALE">남성</option>
+							<option value="FEMALE">여성</option>
+						</Select>
+					</FormGroup>
 
-						<FormGroup>
-							<Label htmlFor="birthDate">생년월일 *</Label>
-							<Input
-								type="date"
-								id="birthDate"
-								name="birthDate"
-								value={formData.birthDate}
-								onChange={handleInputChange}
-								required
-							/>
-						</FormGroup>
+					<FormGroup>
+						<Label htmlFor="birthDate">생년월일 *</Label>
+						<Input
+							type="date"
+							id="birthDate"
+							name="birthDate"
+							value={formData.birthDate}
+							onChange={handleInputChange}
+							required
+						/>
+					</FormGroup>
 
+					<ButtonGroup>
+						<CancelButton type="button" onClick={onClose}>
+							나중에
+						</CancelButton>
 						<SubmitButton type="submit" disabled={initMutation.isPending}>
 							{initMutation.isPending ? "설정 중..." : "설정 완료"}
 						</SubmitButton>
-					</Form>
-				</FormWrapper>
-			</Container>
-		</>
+					</ButtonGroup>
+				</Form>
+			</ModalContent>
+		</ModalOverlay>
 	);
 };
 
-export default UserInit;
+export default AdditionalInfoModal;
 
-const Container = styled.div`
-	min-height: 100vh;
-	background-color: #f5f5f5;
-	padding-top: 80px;
+const ModalOverlay = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 1000;
 `;
 
-const FormWrapper = styled.div`
+const ModalContent = styled.div`
 	background: white;
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	width: 100%;
 	max-width: 400px;
+	margin: 1rem;
 `;
 
 const Title = styled.h1`
@@ -201,7 +215,31 @@ const Select = styled.select`
 	}
 `;
 
+const ButtonGroup = styled.div`
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+`;
+
+const CancelButton = styled.button`
+	flex: 1;
+	padding: 1rem;
+	background-color: #f8f9fa;
+	color: #666;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #e9ecef;
+	}
+`;
+
 const SubmitButton = styled.button`
+	flex: 1;
 	padding: 1rem;
 	background-color: ${({ theme }) => theme.mainGreen};
 	color: white;

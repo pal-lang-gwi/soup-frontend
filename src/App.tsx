@@ -5,7 +5,7 @@ import {
 	Navigate,
 } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { theme } from "./styles/theme";
 import { AuthProvider } from "./contexts/AuthContext";
 import HomePage from "./pages/HomePage";
@@ -40,7 +40,7 @@ const AppRoutes: React.FC = () => {
 				<Route path="/health" element={<HealthCheck />} />
 				<Route path="/first-login" element={<FirstLogin />} />
 				<Route path="/admin" element={<AdminPage />} />
-				
+
 				{/* 기본 리다이렉트 */}
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
