@@ -15,6 +15,7 @@ import HealthCheck from "./pages/HealthCheck";
 import FirstLogin from "./pages/FirstLogin";
 import AdminPage from "./pages/AdminPage";
 import AdminGuard from "./components/AdminGuard";
+import UserInit from "./pages/UserInit";
 import "./App.css";
 import "./index.css";
 
@@ -52,6 +53,27 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	return !isAuthenticated ? <>{children}</> : <Navigate to="/home" replace />;
 };
 
+// 초기 설정이 필요한 사용자를 위한 래퍼
+const InitRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+	const { isAuthenticated, user, loading } = useAuth();
+
+	if (loading) {
+		return <div>로딩 중...</div>;
+	}
+
+	// 로그인하지 않은 경우 홈페이지로
+	if (!isAuthenticated) {
+		return <Navigate to="/" replace />;
+	}
+
+	// 사용자 정보가 초기화되지 않은 경우 (닉네임이 없는 경우) UserInit으로
+	if (!user?.nickname) {
+		return <Navigate to="/user-init" replace />;
+	}
+
+	return <>{children}</>;
+};
+
 const AppRoutes: React.FC = () => {
 	const { isAuthenticated } = useAuth();
 
@@ -68,13 +90,23 @@ const AppRoutes: React.FC = () => {
 					}
 				/>
 
+				{/* 초기 설정 페이지 */}
+				<Route
+					path="/user-init"
+					element={
+						<ProtectedRoute>
+							<UserInit />
+						</ProtectedRoute>
+					}
+				/>
+
 				{/* 로그인한 사용자를 위한 홈페이지 */}
 				<Route
 					path="/home"
 					element={
-						<ProtectedRoute>
+						<InitRoute>
 							<LoggedInHomePage />
-						</ProtectedRoute>
+						</InitRoute>
 					}
 				/>
 
@@ -82,18 +114,18 @@ const AppRoutes: React.FC = () => {
 				<Route
 					path="/news"
 					element={
-						<ProtectedRoute>
+						<InitRoute>
 							<NewsList />
-						</ProtectedRoute>
+						</InitRoute>
 					}
 				/>
 
 				<Route
 					path="/health"
 					element={
-						<ProtectedRoute>
+						<InitRoute>
 							<HealthCheck />
-						</ProtectedRoute>
+						</InitRoute>
 					}
 				/>
 

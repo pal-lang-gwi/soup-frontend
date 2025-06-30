@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	ReactNode,
 } from "react";
+import { logout as logoutApi } from "../api/auth";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -44,11 +45,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		localStorage.setItem("user", JSON.stringify(userData));
 	};
 
-	const logout = () => {
-		setIsAuthenticated(false);
-		setUser(null);
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("user");
+	const logout = async () => {
+		try {
+			// 서버에 로그아웃 요청
+			await logoutApi();
+		} catch (error) {
+			console.error('로그아웃 API 호출 실패:', error);
+			// API 호출이 실패해도 클라이언트에서는 로그아웃 처리
+		} finally {
+			// 클라이언트 상태 정리
+			setIsAuthenticated(false);
+			setUser(null);
+			localStorage.removeItem("accessToken");
+			localStorage.removeItem("user");
+		}
 	};
 
 	const value = {

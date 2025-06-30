@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { getNewsList } from "../api/news";
+import { getFilteredNews, DailyNewsRequestDto } from "../api/news";
 import FilterInput from "../components/FilterInput";
 import Navbar from "../components/Navbar";
-import { NewsDtos } from "../types/news";
 import { UI_CONSTANTS } from "../constants/ui";
 import { extractDateFromISO } from "../utils/dateUtils";
 
@@ -18,24 +18,18 @@ function NewsList() {
 		UI_CONSTANTS.PAGINATION.DEFAULT_PAGE
 	);
 
-	//가져올 것
-	//뉴스 데이터, 현재페이지/총페이지
-	const [data, setData] = useState<NewsDtos[]>([]);
-	const [totalPage, setTotalPage] = useState(0);
-
-	const getData = async () => {
-		console.log(keyword);
-		try {
-			const res = await getNewsList({ keyword, startDate, endDate, page });
-			setData(res.data.data.newsDtos);
-			setTotalPage(res.data.data.totalPages);
-		} catch (error) {
-			console.log("뉴스 리스트 조회 에러 :", error);
-		}
-	};
-	useEffect(() => {
-		getData();
-	}, [page]);
+	// React Query를 사용하여 뉴스 데이터 조회
+	const { data: newsData, isLoading, error } = useQuery({
+		queryKey: ['news', keyword, startDate, endDate, page],
+		queryFn: () => {
+			const params: DailyNewsRequestDto = {};
+			if (keyword) params.keyword = keyword;
+			if (startDate) params.startDate = startDate;
+			if (endDate) params.endDate = endDate;
+			return getFilteredNews(params, page, 20);
+		},
+		enabled: true, // 항상 활성화
+	});
 
 	//다음페이지 이전페이지
 	const handlePrev = () => {
@@ -43,9 +37,39 @@ function NewsList() {
 		else alert("첫번째 페이지에요!😉");
 	};
 	const handleNext = () => {
-		if (page + 1 < totalPage) setPage(page + 1);
+		if (newsData && page + 1 < newsData.totalPages) setPage(page + 1);
 		else alert("마지막 페이지에요!🥲");
 	};
+
+	if (isLoading) {
+		return (
+			<>
+				<Navbar />
+				<Background>
+					<OuterContentWrapper>
+						<Header>✉️뉴스 조회✉️</Header>
+						<div style={{ textAlign: 'center', padding: '20px' }}>로딩 중...</div>
+					</OuterContentWrapper>
+				</Background>
+			</>
+		);
+	}
+
+	if (error) {
+		return (
+			<>
+				<Navbar />
+				<Background>
+					<OuterContentWrapper>
+						<Header>✉️뉴스 조회✉️</Header>
+						<div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+							에러: {error.message}
+						</div>
+					</OuterContentWrapper>
+				</Background>
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -84,7 +108,6 @@ function NewsList() {
 									<SearchButton
 										onClick={() => {
 											setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
-											getData();
 										}}
 									>
 										조회
@@ -93,10 +116,10 @@ function NewsList() {
 							</FilterSection>
 							{/* //TODO: 페이지 조회 */}
 							<NewsSection>
-								{data.length === 0 ? (
+								{!newsData || newsData.newsDtos.length === 0 ? (
 									<NoData>조회된 뉴스가 없습니다.</NoData>
 								) : (
-									data.map((item, idx) => (
+									newsData.newsDtos.map((item, idx) => (
 										<NewsCard key={idx}>
 											<strong>{item.keyword}</strong>
 											<small>{extractDateFromISO(item.createdDate)}</small>
@@ -104,7 +127,7 @@ function NewsList() {
 											{item.articles.map((article, i) => (
 												<a
 													key={i}
-													href={article.url}
+													href={article.link}
 													target="_blank"
 													rel="noreferrer"
 												>
@@ -116,17 +139,19 @@ function NewsList() {
 								)}
 							</NewsSection>
 							{/* //이전, 다음 버튼 */}
-							<NextPrev>
-								<button onClick={handlePrev} disabled={page === 0}>
-									이전
-								</button>
-								<span>
-									{page + 1} / {totalPage}
-								</span>
-								<button onClick={handleNext} disabled={page + 1 === totalPage}>
-									다음
-								</button>
-							</NextPrev>
+							{newsData && newsData.totalPages > 1 && (
+								<NextPrev>
+									<button onClick={handlePrev} disabled={page === 0}>
+										이전
+									</button>
+									<span>
+										{page + 1} / {newsData.totalPages}
+									</span>
+									<button onClick={handleNext} disabled={page + 1 === newsData.totalPages}>
+										다음
+									</button>
+								</NextPrev>
+							)}
 						</NewsListWrapper>
 					</ContentWrapper>
 				</OuterContentWrapper>
