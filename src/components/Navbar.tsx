@@ -13,7 +13,7 @@ const Navbar = () => {
 	const openModal = () => setIsModalOpen(true);
 	const closeModal = () => setIsModalOpen(false);
 	const navigate = useNavigate();
-	const { isAuthenticated, logout } = useAuth();
+	const { isAuthenticated, logout, user } = useAuth();
 
 	const handleNavClick = (path: string) => {
 		navigate(path);
@@ -29,6 +29,9 @@ const Navbar = () => {
 		window.location.href = "/";
 	};
 
+	// 사용자가 관리자인지 확인
+	const isAdmin = user?.role === 'ADMIN';
+
 	return (
 		<Nav>
 			<NavContainer>
@@ -41,6 +44,9 @@ const Navbar = () => {
 						오늘의뉴스
 					</NavLink>
 					<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
+					{isAdmin && (
+						<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
+					)}
 				</NavList>
 
 				<ButtonStyle>
@@ -54,7 +60,7 @@ const Navbar = () => {
 				{/* 모바일 햄버거 메뉴 버튼 */}
 				<MobileMenuButton
 					onClick={toggleMobileMenu}
-					isOpen={isMobileMenuOpen}
+					$isOpen={isMobileMenuOpen}
 					aria-label="메뉴 열기/닫기"
 				>
 					<span></span>
@@ -64,7 +70,7 @@ const Navbar = () => {
 			</NavContainer>
 
 			{/* 모바일 메뉴 */}
-			<MobileMenu isOpen={isMobileMenuOpen}>
+			<MobileMenu $isOpen={isMobileMenuOpen}>
 				<MobileMenuHeader>
 					<MobileLogo>
 						<Logo />
@@ -87,6 +93,12 @@ const Navbar = () => {
 						<span>💚</span>
 						헬스체크
 					</MobileNavLink>
+					{isAdmin && (
+						<MobileNavLink onClick={() => handleNavClick("/admin")}>
+							<span>⚙️</span>
+							관리자
+						</MobileNavLink>
+					)}
 				</MobileNavLinks>
 
 				<MobileButtonWrapper>
@@ -100,7 +112,7 @@ const Navbar = () => {
 			</MobileMenu>
 
 			{/* 모바일 메뉴 오버레이 */}
-			<MobileOverlay isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
+			<MobileOverlay $isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
 
 			{isModalOpen && (
 				<ModalOverlay onClick={closeModal}>
@@ -181,7 +193,7 @@ const ButtonStyle = styled.div`
 	}
 `;
 
-const MobileMenuButton = styled.button<{ isOpen: boolean }>`
+const MobileMenuButton = styled.button<{ $isOpen: boolean }>`
 	display: none;
 	flex-direction: column;
 	justify-content: space-around;
@@ -209,22 +221,22 @@ const MobileMenuButton = styled.button<{ isOpen: boolean }>`
 
 	span:nth-child(1) {
 		transform: ${(props) =>
-			props.isOpen ? "rotate(45deg) translate(6px, 6px)" : "rotate(0)"};
+			props.$isOpen ? "rotate(45deg) translate(6px, 6px)" : "rotate(0)"};
 	}
 
 	span:nth-child(2) {
-		opacity: ${(props) => (props.isOpen ? "0" : "1")};
+		opacity: ${(props) => (props.$isOpen ? "0" : "1")};
 		transform: ${(props) =>
-			props.isOpen ? "translateX(-20px)" : "translateX(0)"};
+			props.$isOpen ? "translateX(-20px)" : "translateX(0)"};
 	}
 
 	span:nth-child(3) {
 		transform: ${(props) =>
-			props.isOpen ? "rotate(-45deg) translate(6px, -6px)" : "rotate(0)"};
+			props.$isOpen ? "rotate(-45deg) translate(6px, -6px)" : "rotate(0)"};
 	}
 `;
 
-const MobileOverlay = styled.div<{ isOpen: boolean }>`
+const MobileOverlay = styled.div<{ $isOpen: boolean }>`
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -232,8 +244,8 @@ const MobileOverlay = styled.div<{ isOpen: boolean }>`
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.5);
 	z-index: 998;
-	opacity: ${(props) => (props.isOpen ? "1" : "0")};
-	visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
+	opacity: ${(props) => (props.$isOpen ? "1" : "0")};
+	visibility: ${(props) => (props.$isOpen ? "visible" : "hidden")};
 	transition: all 0.3s ease;
 
 	@media (min-width: 769px) {
@@ -241,10 +253,10 @@ const MobileOverlay = styled.div<{ isOpen: boolean }>`
 	}
 `;
 
-const MobileMenu = styled.div<{ isOpen: boolean }>`
+const MobileMenu = styled.div<{ $isOpen: boolean }>`
 	position: fixed;
 	top: 0;
-	right: ${(props) => (props.isOpen ? "0" : "-100%")};
+	right: ${(props) => (props.$isOpen ? "0" : "-100%")};
 	width: 280px;
 	height: 100vh;
 	background: rgba(255, 255, 255, 0.18);

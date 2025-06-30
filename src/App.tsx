@@ -5,6 +5,7 @@ import {
 	Navigate,
 } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { theme } from "./styles/theme";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import HomePage from "./pages/HomePage";
@@ -12,8 +13,20 @@ import LoggedInHomePage from "./components/LoggedInHomePage";
 import NewsList from "./pages/NewsList";
 import HealthCheck from "./pages/HealthCheck";
 import FirstLogin from "./pages/FirstLogin";
+import AdminPage from "./pages/AdminPage";
+import AdminGuard from "./components/AdminGuard";
 import "./App.css";
 import "./index.css";
+
+// React Query 클라이언트 생성
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: 1,
+			refetchOnWindowFocus: false,
+		},
+	},
+});
 
 // 인증이 필요한 컴포넌트를 감싸는 래퍼
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -93,6 +106,18 @@ const AppRoutes: React.FC = () => {
 					}
 				/>
 
+				{/* 관리자 페이지 - 로그인 + 관리자 권한 필요 */}
+				<Route
+					path="/admin"
+					element={
+						<ProtectedRoute>
+							<AdminGuard>
+								<AdminPage />
+							</AdminGuard>
+						</ProtectedRoute>
+					}
+				/>
+
 				{/* 기본 리다이렉트 */}
 				<Route
 					path="*"
@@ -105,11 +130,13 @@ const AppRoutes: React.FC = () => {
 
 function App() {
 	return (
-		<ThemeProvider theme={theme}>
-			<AuthProvider>
-				<AppRoutes />
-			</AuthProvider>
-		</ThemeProvider>
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider theme={theme}>
+				<AuthProvider>
+					<AppRoutes />
+				</AuthProvider>
+			</ThemeProvider>
+		</QueryClientProvider>
 	);
 }
 
