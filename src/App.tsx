@@ -7,14 +7,13 @@ import {
 import { ThemeProvider } from "styled-components";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { theme } from "./styles/theme";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import HomePage from "./pages/HomePage";
 import LoggedInHomePage from "./components/LoggedInHomePage";
 import NewsList from "./pages/NewsList";
 import HealthCheck from "./pages/HealthCheck";
 import FirstLogin from "./pages/FirstLogin";
 import AdminPage from "./pages/AdminPage";
-import AdminGuard from "./components/AdminGuard";
 import UserInit from "./pages/UserInit";
 import "./App.css";
 import "./index.css";

@@ -13,7 +13,7 @@ const Navbar = () => {
 	const openModal = () => setIsModalOpen(true);
 	const closeModal = () => setIsModalOpen(false);
 	const navigate = useNavigate();
-	const { isAuthenticated, logout, user } = useAuth();
+	const { isAuthenticated, logout } = useAuth();
 
 	const handleNavClick = (path: string) => {
 		navigate(path);
