@@ -4,76 +4,164 @@ import LoginForm from "../components/LoginForm";
 import Navbar from "../components/Navbar";
 import SendButton from "../components/SendButton";
 import { UI_CONSTANTS } from "../constants/ui";
+import { useAuth } from "../contexts/AuthContext";   // ✅ 추가
+import GoogleHome from "../components/GoogleHome";
 
 function HomePage() {
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const openModal = () => setIsModalOpen(true);
-	const closeModal = () => setIsModalOpen(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
-	return (
-		<>
-			<Navbar />
-			<PageContainer>
-				{/* 첫 번째 화면: 환영 메시지 */}
-				<WelcomeSection>
-					<WelcomeContent>
-						<WelcomeTitle>SOUP에 오신 것을 환영합니다! 🍲</WelcomeTitle>
-						<WelcomeSubtitle>
-							매일 업데이트되는 뉴스를 이메일로 받아보세요 <br />
-							관심 있는 키워드를 구독하고 맞춤형 뉴스를 만나보세요!
-						</WelcomeSubtitle>
-						<ButtonStyle>
-							<SendButton onClick={openModal}>시작하기</SendButton>
-						</ButtonStyle>
-					</WelcomeContent>
-				</WelcomeSection>
+  const { isAuthenticated } = useAuth();             // ✅ 로그인 상태
 
-				{/* 두 번째 화면: 맞춤형 뉴스 */}
-				<FeatureSection $variant="news">
-					<FeatureContent>
-						<FeatureIcon>📰</FeatureIcon>
-						<FeatureTitle>맞춤형 뉴스</FeatureTitle>
-						<FeatureDescription>
-							관심 있는 키워드의 최신 뉴스를 매일 받아보세요
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
+  return (
+    <>
+      <Navbar />
+      <PageContainer>
+        {/* ───────── 로그인 X : 기존 웰컴 ───────── */}
+        {!isAuthenticated && (
+          <WelcomeSection>
+            <WelcomeContent>
+              <WelcomeTitle>SOUP에 오신 것을 환영합니다! 🍲</WelcomeTitle>
+              <WelcomeSubtitle>
+                매일 업데이트되는 뉴스를 이메일로 받아보세요 <br />
+                관심 있는 키워드를 구독하고 맞춤형 뉴스를 만나보세요!
+              </WelcomeSubtitle>
+              <ButtonStyle>
+                <SendButton onClick={openModal}>시작하기</SendButton>
+              </ButtonStyle>
+            </WelcomeContent>
+          </WelcomeSection>
+        )}
 
-				{/* 세 번째 화면: 키워드 검색 */}
-				<FeatureSection $variant="search">
-					<FeatureContent>
-						<FeatureIcon>🔍</FeatureIcon>
-						<FeatureTitle>키워드 검색</FeatureTitle>
-						<FeatureDescription>
-							다양한 키워드를 검색하고 구독할 수 있습니다
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
+        {isAuthenticated && <GoogleHome />}
 
-				{/* 네 번째 화면: 이메일 발송 */}
-				<FeatureSection $variant="email">
-					<FeatureContent>
-						<FeatureIcon>📧</FeatureIcon>
-						<FeatureTitle>이메일 발송</FeatureTitle>
-						<FeatureDescription>
-							매일 정해진 시간에 뉴스를 이메일로 발송합니다
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
-			</PageContainer>
 
-			{isModalOpen && (
-				<ModalOverlay onClick={closeModal}>
-					<ModalContent onClick={(e) => e.stopPropagation()}>
-						<LoginForm />
-					</ModalContent>
-				</ModalOverlay>
-			)}
-		</>
-	);
+        {/* 이하 기존 FeatureSection 3개는 그대로 */}
+        <FeatureSection $variant="news">
+          <FeatureContent>
+            <FeatureIcon>📰</FeatureIcon>
+            <FeatureTitle>맞춤형 뉴스</FeatureTitle>
+            <FeatureDescription>
+              관심 있는 키워드의 최신 뉴스를 매일 받아보세요
+            </FeatureDescription>
+          </FeatureContent>
+        </FeatureSection>
+
+        <FeatureSection $variant="search">
+          <FeatureContent>
+            <FeatureIcon>🔍</FeatureIcon>
+            <FeatureTitle>키워드 검색</FeatureTitle>
+            <FeatureDescription>
+              다양한 키워드를 검색하고 구독할 수 있습니다
+            </FeatureDescription>
+          </FeatureContent>
+        </FeatureSection>
+
+        <FeatureSection $variant="email">
+          <FeatureContent>
+            <FeatureIcon>📧</FeatureIcon>
+            <FeatureTitle>이메일 발송</FeatureTitle>
+            <FeatureDescription>
+              매일 정해진 시간에 뉴스를 이메일로 발송합니다
+            </FeatureDescription>
+          </FeatureContent>
+        </FeatureSection>
+      </PageContainer>
+
+      {isModalOpen && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <LoginForm />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </>
+  );
 }
 
 export default HomePage;
+
+/* ─────────────────────────────────────────
+   신규 스타일 ― 검색창
+────────────────────────────────────────── */
+const GoogleStyleContainer = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+`;
+
+const Title = styled.h1`
+  font-size: 80px;
+  font-weight: 600;
+  color: #4285f4; /* Blue from Google */
+  margin-bottom: 40px;
+  font-family: 'Product Sans', sans-serif;
+`;
+
+const SearchIcon = styled.div`
+  font-size: 18px;
+  color: #9aa0a6;
+`;
+
+const ButtonRow = styled.div`
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+`;
+
+const SearchButton = styled.button`
+  font-size: 14px;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    border: 1px solid #dadce0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+
+const SearchBox = styled.div`
+  width: 100%;
+  max-width: 640px;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  border-radius: 50px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #2c3e50;
+
+  ::placeholder {
+    color: #7f8c8d;
+  }
+
+  @media (max-width: ${UI_CONSTANTS.BREAKPOINTS.MOBILE}px) {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.6rem;
+  }
+`;
+
+/* ──────────────────
+   기존 스타일 모두 그대로
+────────────────── */
+
 
 const PageContainer = styled.div`
 	position: relative;
