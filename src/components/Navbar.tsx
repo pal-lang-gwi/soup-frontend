@@ -13,12 +13,14 @@ const Navbar = () => {
 	const openModal = () => setIsModalOpen(true);
 	const closeModal = () => setIsModalOpen(false);
 	const navigate = useNavigate();
-	const { isAuthenticated, logout } = useAuth();
+	const { isAuthenticated, user, logout } = useAuth();
+
+	const isAdmin = user === "ADMIN";
 
 	const handleNavClick = (path: string) => {
 		navigate(path);
 		setIsMobileMenuOpen(false);
-	};
+	};	
 
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -26,7 +28,7 @@ const Navbar = () => {
 
 	const handleLogout = () => {
 		logout();
-		window.location.href = "/";
+		navigate("/");
 	};
 
 	return (
@@ -37,20 +39,23 @@ const Navbar = () => {
 				{/* 데스크톱 네비게이션 */}
 				<NavList>
 					<NavLink onClick={() => handleNavClick("/news")}>게시판</NavLink>
-					<NavLink onClick={() => handleNavClick("/todaynews")}>
-						오늘의뉴스
-					</NavLink>
-					<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
-					<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
+					<NavLink onClick={() => handleNavClick("/todaynews")}>오늘의뉴스</NavLink>
+					{isAdmin && (
+						<>
+						<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
+						<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
+						</>
+					)}
 				</NavList>
 
-				<ButtonStyle>
-					<SendButton onClick={openModal}>구독하기</SendButton>
-				</ButtonStyle>
 
-				{isAuthenticated && (
-					<LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
-				)}
+				<ButtonStyle>
+					{isAuthenticated ? (
+						<LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+					) : (
+						<SendButton onClick={openModal}>구독하기</SendButton>
+					)}
+				</ButtonStyle>
 
 				{/* 모바일 햄버거 메뉴 버튼 */}
 				<MobileMenuButton
@@ -77,29 +82,29 @@ const Navbar = () => {
 
 				<MobileNavLinks>
 					<MobileNavLink onClick={() => handleNavClick("/news")}>
-						<span>📋</span>
-						게시판
+						<span>📋</span> 게시판
 					</MobileNavLink>
 					<MobileNavLink onClick={() => handleNavClick("/todaynews")}>
-						<span>📰</span>
-						오늘의뉴스
+						<span>📰</span> 오늘의뉴스
 					</MobileNavLink>
-					<MobileNavLink onClick={() => handleNavClick("/health")}>
-						<span>💚</span>
-						헬스체크
-					</MobileNavLink>
-					<MobileNavLink onClick={() => handleNavClick("/admin")}>
-						<span>⚙️</span>
-						관리자
-					</MobileNavLink>
+					{isAdmin && (
+						<>
+						<MobileNavLink onClick={() => handleNavClick("/health")}>
+							<span>💚</span> 헬스체크
+						</MobileNavLink>
+						<MobileNavLink onClick={() => handleNavClick("/admin")}>
+							<span>⚙️</span> 관리자
+						</MobileNavLink>
+						</>
+					)}
 				</MobileNavLinks>
 
+
 				<MobileButtonWrapper>
-					<SendButton onClick={openModal}>구독하기</SendButton>
-					{isAuthenticated && (
-						<MobileLogoutButton onClick={handleLogout}>
-							로그아웃
-						</MobileLogoutButton>
+					{isAuthenticated ? (
+						<MobileLogoutButton onClick={handleLogout}>로그아웃</MobileLogoutButton>
+					) : (
+						<SendButton onClick={openModal}>구독하기</SendButton>
 					)}
 				</MobileButtonWrapper>
 			</MobileMenu>
