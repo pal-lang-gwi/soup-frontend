@@ -16,9 +16,12 @@ const AdditionalInfoGuard: React.FC<AdditionalInfoGuardProps> = ({
 
 	// 사용자 정보 조회
 	const { data: userInfo, isLoading } = useQuery({
-		queryKey: ["userInfo"],
+		queryKey: ['userInfo'],
 		queryFn: getUserInfo,
-		enabled: !!user, // user가 있을 때만 실행
+		enabled: !!user,
+		staleTime: 5 * 60 * 1000,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
 	});
 
 	// 사용자 정보 로드 후 추가 정보 확인

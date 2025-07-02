@@ -20,7 +20,7 @@ const Navbar = () => {
 	const handleNavClick = (path: string) => {
 		navigate(path);
 		setIsMobileMenuOpen(false);
-	};	
+	};
 
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -38,24 +38,25 @@ const Navbar = () => {
 
 				{/* 데스크톱 네비게이션 */}
 				<NavList>
-					<NavLink onClick={() => handleNavClick("/news")}>게시판</NavLink>
-					<NavLink onClick={() => handleNavClick("/todaynews")}>오늘의뉴스</NavLink>
+					<NavLink onClick={() => handleNavClick("/my-news")}>나의 뉴스 조회</NavLink>
 					{isAdmin && (
 						<>
-						<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
-						<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
+							<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
+							<NavLink onClick={() => handleNavClick("/admin")}>관리자</NavLink>
 						</>
 					)}
 				</NavList>
 
-
 				<ButtonStyle>
-					{isAuthenticated ? (
+					{isAuthenticated && (
+						<>
+						<NavLink onClick={() => handleNavClick("/mypage")}>마이페이지</NavLink>
 						<LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
-					) : (
-						<SendButton onClick={openModal}>구독하기</SendButton>
+						</>
 					)}
+					{!isAuthenticated && <SendButton onClick={openModal}>구독하기</SendButton>}
 				</ButtonStyle>
+
 
 				{/* 모바일 햄버거 메뉴 버튼 */}
 				<MobileMenuButton
@@ -81,24 +82,15 @@ const Navbar = () => {
 				</MobileMenuHeader>
 
 				<MobileNavLinks>
-					<MobileNavLink onClick={() => handleNavClick("/news")}>
-						<span>📋</span> 게시판
-					</MobileNavLink>
-					<MobileNavLink onClick={() => handleNavClick("/todaynews")}>
-						<span>📰</span> 오늘의뉴스
-					</MobileNavLink>
+					<MobileNavLink onClick={() => handleNavClick("/my-news")}> <span>📄</span> 나의 뉴스 조회 </MobileNavLink>
+					<MobileNavLink onClick={() => handleNavClick("/mypage")}> <span>👤</span> 마이페이지 </MobileNavLink>
 					{isAdmin && (
 						<>
-						<MobileNavLink onClick={() => handleNavClick("/health")}>
-							<span>💚</span> 헬스체크
-						</MobileNavLink>
-						<MobileNavLink onClick={() => handleNavClick("/admin")}>
-							<span>⚙️</span> 관리자
-						</MobileNavLink>
+							<MobileNavLink onClick={() => handleNavClick("/health")}> <span>💚</span> 헬스체크 </MobileNavLink>
+							<MobileNavLink onClick={() => handleNavClick("/admin")}> <span>⚙️</span> 관리자 </MobileNavLink>
 						</>
 					)}
 				</MobileNavLinks>
-
 
 				<MobileButtonWrapper>
 					{isAuthenticated ? (

@@ -17,15 +17,18 @@ import AdminPage from "./pages/AdminPage";
 import UserInit from "./pages/UserInit";
 import "./App.css";
 import "./index.css";
+import MyPage from "./pages/MyPage";
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			retry: 1,
-			refetchOnWindowFocus: false,
-		},
-	},
+  defaultOptions: {
+    queries: {
+      // 한 번 가져온 유저 정보는 5분간 유지
+      staleTime: 300000,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  },
 });
 
 const AppRoutes: React.FC = () => {
@@ -36,7 +39,8 @@ const AppRoutes: React.FC = () => {
 				<Route path="/" element={<HomePage />} />
 				<Route path="/user-init" element={<UserInit />} />
 				<Route path="/home" element={<LoggedInHomePage />} />
-				<Route path="/news" element={<NewsList />} />
+				<Route path="/my-news" element={<NewsList />} />
+				<Route path="/mypage" element={<MyPage />} />
 				<Route path="/health" element={<HealthCheck />} />
 				<Route path="/first-login" element={<FirstLogin />} />
 				<Route path="/admin" element={<AdminPage />} />
