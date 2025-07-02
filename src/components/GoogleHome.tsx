@@ -1,166 +1,391 @@
 // GoogleHome.tsx
+import React, { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
+import {
+	searchKeywords,
+	subscribeKeywords,
+	unsubscribeKeyword,
+} from "../api/keywords";
+import { searchKeywordDto } from "../types/keyword";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function GoogleHome() {
-  return (
-    <Root>
-      <Logo>
-        <span className="g">S</span>
-        <span className="o1">O</span>
-        <span className="o2">U</span>
-        <span className="g">P</span>
-      </Logo>
+	const [searchTerm, setSearchTerm] = useState("");
+	const [searchResults, setSearchResults] = useState<searchKeywordDto[]>([]);
+	const [isSearching, setIsSearching] = useState(false);
+	const [showResults, setShowResults] = useState(false);
+	const searchTimeoutRef = useRef<number | null>(null);
+	const { isAuthenticated } = useAuth();
 
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault();
-          // TODO: 검색 로직 연결
-        }}
-      >
-        <InputWrapper>
-          <SvgGlass viewBox="0 0 24 24">
-            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
-          </SvgGlass>
-          <SearchInput type="text" placeholder="검색어를 입력하세요…" />
-          <MicIcon>🎤</MicIcon>
-        </InputWrapper>
+	// 디바운스된 검색 함수
+	const debouncedSearch = (term: string) => {
+		if (searchTimeoutRef.current) {
+			clearTimeout(searchTimeoutRef.current);
+		}
 
-        <BtnRow>
-          <GButton type="submit">Soup 검색</GButton>
-          <GButton type="button">I'm Feeling Hungry</GButton>
-        </BtnRow>
-      </Form>
+		searchTimeoutRef.current = setTimeout(async () => {
+			if (term.trim().length >= 1) {
+				setIsSearching(true);
+				try {
+					const response = await searchKeywords(term, 0, 10);
+					if (response.data.success) {
+						setSearchResults(response.data.data.keywords);
+						setShowResults(true);
+					}
+				} catch (error) {
+					console.error("검색 실패:", error);
+					setSearchResults([]);
+				} finally {
+					setIsSearching(false);
+				}
+			} else {
+				setSearchResults([]);
+				setShowResults(false);
+			}
+		}, 300); // 300ms 디바운스
+	};
 
-      <Footer>대한민국</Footer>
-    </Root>
-  );
+	// 검색어 변경 시 디바운스된 검색 실행
+	useEffect(() => {
+		debouncedSearch(searchTerm);
+		return () => {
+			if (searchTimeoutRef.current) {
+				clearTimeout(searchTimeoutRef.current);
+			}
+		};
+	}, [searchTerm]);
+
+	// 검색 결과 외부 클릭 시 결과 숨기기
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const target = event.target as HTMLElement;
+			if (!target.closest(".search-container")) {
+				setShowResults(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
+	const handleSearchSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (searchTerm.trim()) {
+			// TODO: 검색 결과 페이지로 이동하거나 검색 결과를 더 자세히 표시
+			console.log("검색 실행:", searchTerm);
+		}
+	};
+
+	const handleKeywordClick = async (keyword: searchKeywordDto) => {
+		if (!isAuthenticated) {
+			alert("로그인이 필요합니다.");
+			return;
+		}
+
+		try {
+			if (keyword.isSubscribed) {
+				// 구독 해지
+				await unsubscribeKeyword(keyword.id);
+				alert(`${keyword.name} 구독을 해지했습니다.`);
+			} else {
+				// 구독
+				await subscribeKeywords([keyword.name]);
+				alert(`${keyword.name} 구독을 시작했습니다.`);
+			}
+
+			// 검색 결과 업데이트
+			const response = await searchKeywords(searchTerm, 0, 10);
+			if (response.data.success) {
+				setSearchResults(response.data.data.keywords);
+			}
+		} catch (error) {
+			console.error("키워드 구독/구독해제 실패:", error);
+			alert("키워드 구독/구독해제에 실패했습니다.");
+		}
+	};
+
+	return (
+		<Root>
+			<Logo>
+				<span className="g">S</span>
+				<span className="o1">O</span>
+				<span className="o2">U</span>
+				<span className="g">P</span>
+			</Logo>
+
+			<SearchContainer className="search-container">
+				<Form onSubmit={handleSearchSubmit}>
+					<InputWrapper>
+						<SvgGlass viewBox="0 0 24 24">
+							<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
+						</SvgGlass>
+						<SearchInput
+							type="text"
+							placeholder="키워드를 검색해보세요..."
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							onFocus={() => searchTerm.trim() && setShowResults(true)}
+						/>
+						{isSearching && <LoadingSpinner>⏳</LoadingSpinner>}
+						<MicIcon>🎤</MicIcon>
+					</InputWrapper>
+
+					<BtnRow>
+						<GButton type="submit">Soup 검색</GButton>
+						<GButton type="button">I'm Feeling Hungry</GButton>
+					</BtnRow>
+				</Form>
+
+				{/* 검색 결과 드롭다운 */}
+				{showResults && (searchResults.length > 0 || isSearching) && (
+					<SearchResults>
+						{isSearching ? (
+							<LoadingItem>검색 중...</LoadingItem>
+						) : (
+							searchResults.map((keyword) => (
+								<SearchResultItem
+									key={keyword.id}
+									onClick={() => setSearchTerm(keyword.name)}
+								>
+									<KeywordName>{keyword.name}</KeywordName>
+									<SubscribeButton
+										isSubscribed={keyword.isSubscribed}
+										onClick={(e: React.MouseEvent) => {
+											e.stopPropagation();
+											handleKeywordClick(keyword);
+										}}
+									>
+										{keyword.isSubscribed ? "구독 중" : "구독하기"}
+									</SubscribeButton>
+								</SearchResultItem>
+							))
+						)}
+					</SearchResults>
+				)}
+			</SearchContainer>
+
+			<Footer>대한민국</Footer>
+		</Root>
+	);
 }
 
 /* ─────────── 스타일 ─────────── */
 const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  font-family: "Roboto", "Noto Sans KR", sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 100vh;
+	font-family: "Roboto", "Noto Sans KR", sans-serif;
 `;
 
 const Logo = styled.h1`
-  font-size: 92px;
-  margin-top: 15vh;
-  margin-bottom: 40px;
-  font-weight: 600;
-  line-height: 1;
+	font-size: 92px;
+	margin-top: 15vh;
+	margin-bottom: 40px;
+	font-weight: 600;
+	line-height: 1;
 
-  span {
-    user-select: none;
-  }
-  .g {
-    color: #4285f4;
-  }
-  .o1 {
-    color: #db4437;
-  }
-  .o2 {
-    color: #f4b400;
-  }
+	span {
+		user-select: none;
+	}
+	.g {
+		color: #4285f4;
+	}
+	.o1 {
+		color: #db4437;
+	}
+	.o2 {
+		color: #f4b400;
+	}
+`;
+
+const SearchContainer = styled.div`
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
 `;
 
 /* ── 검색창 ─────────────────────────── */
 const InputWrapper = styled.div`
-  position: relative;
-  width: 90%;
-  max-width: 580px;
-  height: 44px;
-  border: 1px solid #dfe1e5;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
-  background: #fff; /* ← 흰색 배경 */
-  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-  transition: box-shadow 0.2s ease-in-out;
+	position: relative;
+	width: 90%;
+	max-width: 580px;
+	height: 44px;
+	border: 1px solid #dfe1e5;
+	border-radius: 22px;
+	display: flex;
+	align-items: center;
+	padding: 0 14px;
+	background: #fff;
+	box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+	transition: box-shadow 0.2s ease-in-out;
 
-  &:hover {
-    box-shadow: 0 1px 8px rgba(32, 33, 36, 0.35);
-  }
-  &:focus-within {
-    border-color: #4285f4;
-  }
+	&:hover {
+		box-shadow: 0 1px 8px rgba(32, 33, 36, 0.35);
+	}
+	&:focus-within {
+		border-color: #4285f4;
+	}
 `;
 
 const SearchInput = styled.input`
-  flex: 1;
-  height: 100%;
-  font-size: 16px;
-  line-height: 1;
-  border: none;
-  border-radius: 22px;
-  outline: none;
-  padding-left: 40px; /* ← 돋보기와 겹치지 않도록 여백 확보 */
-  padding-top: 2px;
+	flex: 1;
+	height: 100%;
+	font-size: 16px;
+	line-height: 1;
+	border: none;
+	border-radius: 22px;
+	outline: none;
+	padding-left: 40px;
+	padding-top: 2px;
 `;
 
 const iconCss = css`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
 `;
 
 const SvgGlass = styled.svg`
-  ${iconCss};
-  left: 16px;
-  width: 20px;
-  height: 20px;
-  fill: #9aa0a6;
+	${iconCss};
+	left: 16px;
+	width: 20px;
+	height: 20px;
+	fill: #9aa0a6;
 `;
 
 const MicIcon = styled.span`
-  ${iconCss};
-  right: 16px;
-  font-size: 20px;
+	${iconCss};
+	right: 16px;
+	font-size: 20px;
+`;
+
+const LoadingSpinner = styled.span`
+	${iconCss};
+	right: 50px;
+	font-size: 16px;
+	animation: spin 1s linear infinite;
+
+	@keyframes spin {
+		from {
+			transform: translateY(-50%) rotate(0deg);
+		}
+		to {
+			transform: translateY(-50%) rotate(360deg);
+		}
+	}
+`;
+
+/* ── 검색 결과 드롭다운 ────────────────── */
+const SearchResults = styled.div`
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 90%;
+	max-width: 580px;
+	background: white;
+	border: 1px solid #dfe1e5;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(32, 33, 36, 0.28);
+	max-height: 300px;
+	overflow-y: auto;
+	z-index: 1000;
+	margin-top: 8px;
+`;
+
+const SearchResultItem = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	cursor: pointer;
+	border-bottom: 1px solid #f1f3f4;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #f8f9fa;
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
+`;
+
+const KeywordName = styled.span`
+	font-size: 14px;
+	color: #202124;
+	font-weight: 500;
+`;
+
+const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 12px;
+	background-color: ${(props) => (props.isSubscribed ? "#e8f5e8" : "#f1f3f4")};
+	color: ${(props) => (props.isSubscribed ? "#137333" : "#5f6368")};
+	font-weight: 500;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	&:hover {
+		background-color: ${(props) =>
+			props.isSubscribed ? "#d4edda" : "#e9ecef"};
+	}
+`;
+
+const LoadingItem = styled.div`
+	padding: 16px;
+	text-align: center;
+	color: #5f6368;
+	font-size: 14px;
 `;
 
 /* ── 버튼 ────────────────────────────── */
 const BtnRow = styled.div`
-  margin-top: 28px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+	margin-top: 28px;
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
 `;
 
 const GButton = styled.button`
-  background: #f8f9fa;
-  border: 1px solid #f8f9fa;
-  padding: 10px 16px;
-  font-size: 14px;
-  color: #3c4043;
-  border-radius: 4px;
-  cursor: pointer;
+	background: #f8f9fa;
+	border: 1px solid #f8f9fa;
+	padding: 10px 16px;
+	font-size: 14px;
+	color: #3c4043;
+	border-radius: 4px;
+	cursor: pointer;
 
-  &:hover {
-    border: 1px solid #dadce0;
-  }
-  &:active {
-    background: #eee;
-  }
+	&:hover {
+		border: 1px solid #dadce0;
+	}
+	&:active {
+		background: #eee;
+	}
 `;
 
 /* ── 푸터 ────────────────────────────── */
 const Footer = styled.footer`
-  margin-top: auto;
-  width: 100%;
-  padding: 15px 30px;
-  font-size: 14px;
-  background: #f2f2f2;
-  color: #70757a;
-  text-align: left;
+	margin-top: auto;
+	width: 100%;
+	padding: 15px 30px;
+	font-size: 14px;
+	background: #f2f2f2;
+	color: #70757a;
+	text-align: left;
 `;

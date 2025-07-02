@@ -15,6 +15,7 @@ import HealthCheck from "./pages/HealthCheck";
 import FirstLogin from "./pages/FirstLogin";
 import AdminPage from "./pages/AdminPage";
 import UserInit from "./pages/UserInit";
+import AdditionalInfoGuard from "./components/AdditionalInfoGuard";
 import "./App.css";
 import "./index.css";
 
@@ -35,11 +36,34 @@ const AppRoutes: React.FC = () => {
 				{/* 모든 페이지에 자유롭게 접근 가능 */}
 				<Route path="/" element={<HomePage />} />
 				<Route path="/user-init" element={<UserInit />} />
-				<Route path="/home" element={<LoggedInHomePage />} />
-				<Route path="/news" element={<NewsList />} />
-				<Route path="/health" element={<HealthCheck />} />
 				<Route path="/first-login" element={<FirstLogin />} />
-				<Route path="/admin" element={<AdminPage />} />
+				<Route path="/health" element={<HealthCheck />} />
+
+				{/* 인증이 필요한 페이지들 */}
+				<Route
+					path="/home"
+					element={
+						<AdditionalInfoGuard>
+							<LoggedInHomePage />
+						</AdditionalInfoGuard>
+					}
+				/>
+				<Route
+					path="/news"
+					element={
+						<AdditionalInfoGuard>
+							<NewsList />
+						</AdditionalInfoGuard>
+					}
+				/>
+				<Route
+					path="/admin"
+					element={
+						<AdditionalInfoGuard>
+							<AdminPage />
+						</AdditionalInfoGuard>
+					}
+				/>
 
 				{/* 기본 리다이렉트 */}
 				<Route path="*" element={<Navigate to="/" replace />} />
