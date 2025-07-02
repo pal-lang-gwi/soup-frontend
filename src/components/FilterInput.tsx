@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface FilterInputProps {
     onSearch: (keyword: string) => void;
+    defaultValue?: string;
 }
 
 const FilterInput: React.FC<FilterInputProps> = ({ onSearch }) => {

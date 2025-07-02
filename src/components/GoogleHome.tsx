@@ -1,174 +1,156 @@
-// GoogleHome.tsx
 import React, { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import {
-	searchKeywords,
-	subscribeKeywords,
-	unsubscribeKeyword,
-} from "../api/keywords";
+import { searchKeywords, subscribeKeywords, unsubscribeKeyword } from "../api/keywords";
 import { searchKeywordDto } from "../types/keyword";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function GoogleHome() {
-	const [searchTerm, setSearchTerm] = useState("");
-	const [searchResults, setSearchResults] = useState<searchKeywordDto[]>([]);
-	const [isSearching, setIsSearching] = useState(false);
-	const [showResults, setShowResults] = useState(false);
-	const searchTimeoutRef = useRef<number | null>(null);
-	const { isAuthenticated } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<searchKeywordDto[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchTimeoutRef = useRef<number | null>(null);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();           // 🔑 페이지 이동용
 
-	// 디바운스된 검색 함수
-	const debouncedSearch = (term: string) => {
-		if (searchTimeoutRef.current) {
-			clearTimeout(searchTimeoutRef.current);
-		}
+  /* 디바운스된 검색 ----------------------------------------------------- */
+  const debouncedSearch = (term: string) => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
-		searchTimeoutRef.current = setTimeout(async () => {
-			if (term.trim().length >= 1) {
-				setIsSearching(true);
-				try {
-					const response = await searchKeywords(term, 0, 10);
-					if (response.data.success) {
-						setSearchResults(response.data.data.keywords);
-						setShowResults(true);
-					}
-				} catch (error) {
-					console.error("검색 실패:", error);
-					setSearchResults([]);
-				} finally {
-					setIsSearching(false);
-				}
-			} else {
-				setSearchResults([]);
-				setShowResults(false);
-			}
-		}, 300); // 300ms 디바운스
-	};
+    searchTimeoutRef.current = window.setTimeout(async () => {
+      if (term.trim().length >= 1) {
+        setIsSearching(true);
+        try {
+          const response = await searchKeywords(term, 0, 10);
+          if (response.data.success) {
+            setSearchResults(response.data.data.keywords);
+            setShowResults(true);
+          }
+        } catch (e) {
+          console.error("검색 실패", e);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 300);
+  };
 
-	// 검색어 변경 시 디바운스된 검색 실행
-	useEffect(() => {
-		debouncedSearch(searchTerm);
-		return () => {
-			if (searchTimeoutRef.current) {
-				clearTimeout(searchTimeoutRef.current);
-			}
-		};
-	}, [searchTerm]);
+  /* 입력이 바뀌면 디바운스 ------------------------------------------------ */
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    };
+  }, [searchTerm]);
 
-	// 검색 결과 외부 클릭 시 결과 숨기기
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			const target = event.target as HTMLElement;
-			if (!target.closest(".search-container")) {
-				setShowResults(false);
-			}
-		};
+  /* 외부 클릭 시 드롭다운 닫기 ------------------------------------------ */
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest(".search-container")) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, []);
+  /* 키워드 클릭(구독/해제 & 페이지 이동) ---------------------------------- */
+  const handleKeywordClick = async (keyword: searchKeywordDto) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
-	const handleSearchSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (searchTerm.trim()) {
-			// TODO: 검색 결과 페이지로 이동하거나 검색 결과를 더 자세히 표시
-			console.log("검색 실행:", searchTerm);
-		}
-	};
+    try {
+      if (keyword.isSubscribed) {
+        await unsubscribeKeyword(keyword.id);
+        alert(`${keyword.name} 구독을 해지했습니다.`);
+      } else {
+        await subscribeKeywords([keyword.name]);
+        alert(`${keyword.name} 구독을 시작했습니다.`);
+      }
 
-	const handleKeywordClick = async (keyword: searchKeywordDto) => {
-		if (!isAuthenticated) {
-			alert("로그인이 필요합니다.");
-			return;
-		}
+      // 드롭다운 데이터 새로 고침
+      const refetch = await searchKeywords(searchTerm, 0, 10);
+      if (refetch.data.success) setSearchResults(refetch.data.data.keywords);
 
-		try {
-			if (keyword.isSubscribed) {
-				// 구독 해지
-				await unsubscribeKeyword(keyword.id);
-				alert(`${keyword.name} 구독을 해지했습니다.`);
-			} else {
-				// 구독
-				await subscribeKeywords([keyword.name]);
-				alert(`${keyword.name} 구독을 시작했습니다.`);
-			}
+      /* 🔥  뉴스 페이지로 이동 + 쿼리 파라미터 전달 */
+      navigate(`/news?keyword=${encodeURIComponent(keyword.name)}`);
+    } catch (e) {
+      console.error("구독/해제 실패", e);
+      alert("키워드 구독/구독해제에 실패했습니다.");
+    }
+  };
 
-			// 검색 결과 업데이트
-			const response = await searchKeywords(searchTerm, 0, 10);
-			if (response.data.success) {
-				setSearchResults(response.data.data.keywords);
-			}
-		} catch (error) {
-			console.error("키워드 구독/구독해제 실패:", error);
-			alert("키워드 구독/구독해제에 실패했습니다.");
-		}
-	};
+  /* 제출(엔터) 동작 — 선택적으로 사용 ----------------------------------- */
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) navigate(`/news?keyword=${encodeURIComponent(searchTerm.trim())}`);
+  };
 
-	return (
-		<Root>
-			<Logo>
-				<span className="g">S</span>
-				<span className="o1">O</span>
-				<span className="o2">U</span>
-				<span className="g">P</span>
-			</Logo>
+  /* ------ JSX --------------------------------------------------------- */
+  return (
+    <Root>
+      <Logo>
+        <span className="g">S</span>
+        <span className="o1">O</span>
+        <span className="o2">U</span>
+        <span className="g">P</span>
+      </Logo>
 
-			<SearchContainer className="search-container">
-				<Form onSubmit={handleSearchSubmit}>
-					<InputWrapper>
-						<SvgGlass viewBox="0 0 24 24">
-							<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
-						</SvgGlass>
-						<SearchInput
-							type="text"
-							placeholder="키워드를 검색해보세요..."
-							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-							onFocus={() => searchTerm.trim() && setShowResults(true)}
-						/>
-						{isSearching && <LoadingSpinner>⏳</LoadingSpinner>}
-						<MicIcon>🎤</MicIcon>
-					</InputWrapper>
+      <SearchContainer className="search-container">
+        <Form onSubmit={handleSubmit}>
+          <InputWrapper>
+            <SvgGlass viewBox="0 0 24 24">
+              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
+            </SvgGlass>
 
-					<BtnRow>
-						<GButton type="submit">Soup 검색</GButton>
-						<GButton type="button">I'm Feeling Hungry</GButton>
-					</BtnRow>
-				</Form>
+            <SearchInput
+              type="text"
+              placeholder="키워드를 검색해보세요..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => searchTerm.trim() && setShowResults(true)}
+            />
 
-				{/* 검색 결과 드롭다운 */}
-				{showResults && (searchResults.length > 0 || isSearching) && (
-					<SearchResults>
-						{isSearching ? (
-							<LoadingItem>검색 중...</LoadingItem>
-						) : (
-							searchResults.map((keyword) => (
-								<SearchResultItem
-									key={keyword.id}
-									onClick={() => setSearchTerm(keyword.name)}
-								>
-									<KeywordName>{keyword.name}</KeywordName>
-									<SubscribeButton
-										isSubscribed={keyword.isSubscribed}
-										onClick={(e: React.MouseEvent) => {
-											e.stopPropagation();
-											handleKeywordClick(keyword);
-										}}
-									>
-										{keyword.isSubscribed ? "구독 중" : "구독하기"}
-									</SubscribeButton>
-								</SearchResultItem>
-							))
-						)}
-					</SearchResults>
-				)}
-			</SearchContainer>
+            {isSearching && <LoadingSpinner>⏳</LoadingSpinner>}
+            <MicIcon>🎤</MicIcon>
+          </InputWrapper>
+        </Form>
 
-			<Footer>대한민국</Footer>
-		</Root>
-	);
+        {/* 드롭다운 ------------------------------------------------------- */}
+        {showResults && (searchResults.length > 0 || isSearching) && (
+          <SearchResults>
+            {isSearching ? (
+              <LoadingItem>검색 중...</LoadingItem>
+            ) : (
+              searchResults.map((k) => (
+                <SearchResultItem key={k.id} onClick={() => setSearchTerm(k.name)}>
+                  <KeywordName>{k.name}</KeywordName>
+                  <SubscribeButton
+                    isSubscribed={k.isSubscribed}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleKeywordClick(k);
+                    }}
+                  >
+                    {k.isSubscribed ? "구독 중" : "구독하기"}
+                  </SubscribeButton>
+                </SearchResultItem>
+              ))
+            )}
+          </SearchResults>
+        )}
+      </SearchContainer>
+
+      <Footer>대한민국</Footer>
+    </Root>
+  );
 }
 
 /* ─────────── 스타일 ─────────── */

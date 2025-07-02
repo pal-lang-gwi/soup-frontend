@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { getFilteredNews, DailyNewsRequestDto } from "../api/news";
@@ -6,161 +6,150 @@ import FilterInput from "../components/FilterInput";
 import Navbar from "../components/Navbar";
 import { UI_CONSTANTS } from "../constants/ui";
 import { extractDateFromISO } from "../utils/dateUtils";
+import { useSearchParams } from "react-router-dom";
 
 function NewsList() {
-	//뉴스 조회 시에 필요한 데이터
-	//키워드, 조회 시작일자, 종료일자, 페이지
-	const [keyword, setKeyword] = useState("");
-	//TODO: 나중에 초기값 넣어주기 -> 조회하는 오늘 날짜로 해도 될듯?
-	const [startDate, setStartDate] = useState("");
-	const [endDate, setEndDate] = useState("");
-	const [page, setPage] = useState<number>(
-		UI_CONSTANTS.PAGINATION.DEFAULT_PAGE
-	);
+  /* ---------------- URL 쿼리 → 초기 키워드 ---------------------------- */
+  const [searchParams] = useSearchParams();
+  const initialKeyword = searchParams.get("keyword") ?? "";
 
-	// React Query를 사용하여 뉴스 데이터 조회
-	const { data: newsData, isLoading, error } = useQuery({
-		queryKey: ['news', keyword, startDate, endDate, page],
-		queryFn: () => {
-			const params: DailyNewsRequestDto = {};
-			if (keyword) params.keyword = keyword;
-			if (startDate) params.startDate = startDate;
-			if (endDate) params.endDate = endDate;
-			return getFilteredNews(params, page, 20);
-		},
-		enabled: true, // 항상 활성화
-	});
+  /* ---------------- 상태 --------------------------------------------- */
+  const [keyword, setKeyword] = useState(initialKeyword);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [page, setPage] = useState<number>(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
 
-	//다음페이지 이전페이지
-	const handlePrev = () => {
-		if (page > 0) setPage(page - 1);
-		else alert("첫번째 페이지에요!😉");
-	};
-	const handleNext = () => {
-		if (newsData && page + 1 < newsData.totalPages) setPage(page + 1);
-		else alert("마지막 페이지에요!🥲");
-	};
+  /* URL이 바뀌면 keyword 초기화 (뒤로가기 등) --------------------------- */
+  useEffect(() => setKeyword(initialKeyword), [initialKeyword]);
 
-	if (isLoading) {
-		return (
-			<>
-				<Navbar />
-				<Background>
-					<OuterContentWrapper>
-						<Header>✉️뉴스 조회✉️</Header>
-						<div style={{ textAlign: 'center', padding: '20px' }}>로딩 중...</div>
-					</OuterContentWrapper>
-				</Background>
-			</>
-		);
-	}
+  /* ---------------- React Query -------------------------------------- */
+  const { data: newsData, isLoading, error } = useQuery({
+    queryKey: ["news", keyword, startDate, endDate, page],
+    queryFn: () => {
+      const params: DailyNewsRequestDto = {};
+      if (keyword) params.keyword = keyword;
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      return getFilteredNews(params, page, 20);
+    },
+    enabled: true,
+  });
 
-	if (error) {
-		return (
-			<>
-				<Navbar />
-				<Background>
-					<OuterContentWrapper>
-						<Header>✉️뉴스 조회✉️</Header>
-						<div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
-							에러: {error.message}
-						</div>
-					</OuterContentWrapper>
-				</Background>
-			</>
-		);
-	}
+  /* ---------------- 페이지 이동 -------------------------------------- */
+  const handlePrev = () => {
+    if (page > 0) setPage(page - 1);
+    else alert("첫번째 페이지에요!😉");
+  };
+  const handleNext = () => {
+    if (newsData && page + 1 < newsData.totalPages) setPage(page + 1);
+    else alert("마지막 페이지에요!🥲");
+  };
 
-	return (
-		<>
-			<Navbar />
-			<Background>
-				<OuterContentWrapper>
-					<Header>✉️뉴스 조회✉️</Header>
-					<ContentWrapper>
-						<Sidebar>
-							{/* //TODO: 나의키워드 불러오는 로직 필요 */}
-							나의 키워드
-						</Sidebar>
-						<NewsListWrapper>
-							<FilterSection>
-								{/* //TODO: 키워드로 검색 */}
-								<FilterInput
-									onSearch={(value) => {
-										setKeyword(value);
-										setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
-									}}
-								/>
-								{/* //! 캘린더 UI 너무 구림 변경 필수!! */}
-								<CalendarInput>
-									<input
-										type="date"
-										value={startDate}
-										onChange={(e) => setStartDate(e.target.value)}
-										max={endDate || undefined}
-									/>
-									<input
-										type="date"
-										value={endDate}
-										onChange={(e) => setEndDate(e.target.value)}
-										min={startDate || undefined}
-									/>
-									<SearchButton
-										onClick={() => {
-											setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
-										}}
-									>
-										조회
-									</SearchButton>
-								</CalendarInput>
-							</FilterSection>
-							{/* //TODO: 페이지 조회 */}
-							<NewsSection>
-								{!newsData || newsData.newsDtos.length === 0 ? (
-									<NoData>조회된 뉴스가 없습니다.</NoData>
-								) : (
-									newsData.newsDtos.map((item, idx) => (
-										<NewsCard key={idx}>
-											<strong>{item.keyword}</strong>
-											<small>{extractDateFromISO(item.createdDate)}</small>
-											<p>{item.longSummary}</p>
-											{item.articles.map((article, i) => (
-												<a
-													key={i}
-													href={article.link}
-													target="_blank"
-													rel="noreferrer"
-												>
-													- {article.title}
-												</a>
-											))}
-										</NewsCard>
-									))
-								)}
-							</NewsSection>
-							{/* //이전, 다음 버튼 */}
-							{newsData && newsData.totalPages > 1 && (
-								<NextPrev>
-									<button onClick={handlePrev} disabled={page === 0}>
-										이전
-									</button>
-									<span>
-										{page + 1} / {newsData.totalPages}
-									</span>
-									<button onClick={handleNext} disabled={page + 1 === newsData.totalPages}>
-										다음
-									</button>
-								</NextPrev>
-							)}
-						</NewsListWrapper>
-					</ContentWrapper>
-				</OuterContentWrapper>
-			</Background>
-		</>
-	);
+  /* ---------------- 로딩/에러 --------------------------------------- */
+  if (isLoading) return <Skeleton text="로딩 중..." />;
+  if (error)    return <Skeleton text={`에러: ${error.message}`} isError />;
+
+  /* ---------------- 실제 화면 ---------------------------------------- */
+  return (
+    <>
+      <Navbar />
+      <Background>
+        <OuterContentWrapper>
+          <Header>✉️뉴스 조회✉️</Header>
+
+          <ContentWrapper>
+            <Sidebar>나의 키워드{/* TODO */}</Sidebar>
+
+            <NewsListWrapper>
+              {/* -------- 필터 입력 섹션 ------------------------------- */}
+              <FilterSection>
+                <FilterInput
+                  onSearch={(v) => {
+                    setKeyword(v);
+                    setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
+                  }}
+                  defaultValue={keyword}
+                />
+
+                <CalendarInput>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    max={endDate || undefined}
+                  />
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    min={startDate || undefined}
+                  />
+                  <SearchButton onClick={() => setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE)}>
+                    조회
+                  </SearchButton>
+                </CalendarInput>
+              </FilterSection>
+
+              {/* -------- 뉴스 카드 목록 ------------------------------- */}
+              <NewsSection>
+                {!newsData || newsData.newsDtos.length === 0 ? (
+                  <NoData>조회된 뉴스가 없습니다.</NoData>
+                ) : (
+                  newsData.newsDtos.map((item, idx) => (
+                    <NewsCard key={idx}>
+                      <strong>{item.keyword}</strong>
+                      <small>{extractDateFromISO(item.createdDate)}</small>
+                      <p>{item.longSummary}</p>
+                      {item.articles.map((a, i) => (
+                        <a key={i} href={a.link} target="_blank" rel="noreferrer">
+                          - {a.title}
+                        </a>
+                      ))}
+                    </NewsCard>
+                  ))
+                )}
+              </NewsSection>
+
+              {/* -------- 페이지 네비게이션 ---------------------------- */}
+              {newsData && newsData.totalPages > 1 && (
+                <NextPrev>
+                  <button onClick={handlePrev} disabled={page === 0}>
+                    이전
+                  </button>
+                  <span>
+                    {page + 1} / {newsData.totalPages}
+                  </span>
+                  <button onClick={handleNext} disabled={page + 1 === newsData.totalPages}>
+                    다음
+                  </button>
+                </NextPrev>
+              )}
+            </NewsListWrapper>
+          </ContentWrapper>
+        </OuterContentWrapper>
+      </Background>
+    </>
+  );
 }
 
 export default NewsList;
+
+/* ---------------- 공통 스켈레톤 ------------------------------- */
+function Skeleton({ text, isError = false }: { text: string; isError?: boolean }) {
+  return (
+    <>
+      <Navbar />
+      <Background>
+        <OuterContentWrapper>
+          <Header>✉️뉴스 조회✉️</Header>
+          <div style={{ textAlign: "center", padding: "20px", color: isError ? "red" : undefined }}>
+            {text}
+          </div>
+        </OuterContentWrapper>
+      </Background>
+    </>
+  );
+}
 
 const Background = styled.div`
 	position: relative;
