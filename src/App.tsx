@@ -23,7 +23,9 @@ import "./index.css";
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			retry: 1,
+			// 한 번 가져온 유저 정보는 5분간 유지
+			staleTime: 300000,
+			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 		},
 	},
