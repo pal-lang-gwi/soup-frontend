@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { logout as logoutApi } from "../api/auth";
 import { getUserInfo, UserResponseDto } from "../api/user";
-import { api } from "../api/axiosInstance";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -50,17 +49,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	useEffect(() => {
 		const verifyAuthStatus = async () => {
 			try {
-				// 백엔드의 보호된 엔드포인트에 요청하여 인증 상태 확인
-				// 브라우저가 HttpOnly access_token 쿠키를 자동으로 첨부합니다.
-				const response = await api.get("/users", { withCredentials: true });
+				// getUserInfo 함수를 사용하여 사용자 정보를 가져옵니다
+				const userData = await getUserInfo();
 
 				// 요청이 성공했다면 (200 OK 등), 사용자는 인증된 상태
 				setIsAuthenticated(true);
-				setUser(response.data.data.role); // 서버에서 받은 최신 사용자 정보로 업데이트
-				setUserInfo(response.data.data); // 사용자 정보도 저장
+				setUser(userData.role);
+				setUserInfo(userData);
 
 				// 중요: 인증이 확인되었으므로, 사용자 정보를 로컬 스토리지에 저장합니다.
-				localStorage.setItem("user", JSON.stringify(response.data));
+				localStorage.setItem("user", JSON.stringify(userData));
 			} catch (error) {
 				// 요청 실패 (예: 401 Unauthorized)는 인증되지 않았음을 의미
 				console.error("인증 상태 확인 실패:", error);
