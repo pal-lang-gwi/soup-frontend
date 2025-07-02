@@ -336,31 +336,6 @@ const LoadingItem = styled.div`
 	font-size: 14px;
 `;
 
-/* ── 버튼 ────────────────────────────── */
-const BtnRow = styled.div`
-	margin-top: 28px;
-	display: flex;
-	gap: 12px;
-	flex-wrap: wrap;
-`;
-
-const GButton = styled.button`
-	background: #f8f9fa;
-	border: 1px solid #f8f9fa;
-	padding: 10px 16px;
-	font-size: 14px;
-	color: #3c4043;
-	border-radius: 4px;
-	cursor: pointer;
-
-	&:hover {
-		border: 1px solid #dadce0;
-	}
-	&:active {
-		background: #eee;
-	}
-`;
-
 /* ── 푸터 ────────────────────────────── */
 const Footer = styled.footer`
 	margin-top: auto;
