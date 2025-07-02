@@ -35,37 +35,6 @@ function HomePage() {
 				)}
 
 				{isAuthenticated && <GoogleHome />}
-
-				{/* 이하 기존 FeatureSection 3개는 그대로 */}
-				<FeatureSection $variant="news">
-					<FeatureContent>
-						<FeatureIcon>📰</FeatureIcon>
-						<FeatureTitle>맞춤형 뉴스</FeatureTitle>
-						<FeatureDescription>
-							관심 있는 키워드의 최신 뉴스를 매일 받아보세요
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
-
-				<FeatureSection $variant="search">
-					<FeatureContent>
-						<FeatureIcon>🔍</FeatureIcon>
-						<FeatureTitle>키워드 검색</FeatureTitle>
-						<FeatureDescription>
-							다양한 키워드를 검색하고 구독할 수 있습니다
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
-
-				<FeatureSection $variant="email">
-					<FeatureContent>
-						<FeatureIcon>📧</FeatureIcon>
-						<FeatureTitle>이메일 발송</FeatureTitle>
-						<FeatureDescription>
-							매일 정해진 시간에 뉴스를 이메일로 발송합니다
-						</FeatureDescription>
-					</FeatureContent>
-				</FeatureSection>
 			</PageContainer>
 
 			{isModalOpen && (
