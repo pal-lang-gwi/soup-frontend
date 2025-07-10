@@ -20,7 +20,7 @@ const Logo = () => {
 export default Logo;
 
 const LogoStyle = styled.img`
-    width: 60px;
+    width: 100px;
     height: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
