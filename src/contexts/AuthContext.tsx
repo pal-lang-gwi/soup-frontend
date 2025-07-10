@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const fetchUserInfo = async () => {
 		try {
 			const userData = await getUserInfo();
+			console.log("userData", userData);
 			setUserInfo(userData);
 			setUser(userData.role);
 			return userData;
