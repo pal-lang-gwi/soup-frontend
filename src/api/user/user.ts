@@ -1,3 +1,4 @@
+import { MyKeywordListResponse } from "../../types/user";
 import { api } from "../axiosInstance";
 import { AxiosError } from "axios";
 
