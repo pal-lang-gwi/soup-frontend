@@ -86,6 +86,7 @@ export const updateUserInfo = async (
 export const getUserInfo = async (): Promise<UserResponseDto> => {
 	try {
 		const response = await api.get("/users");
+		console.log("response", response);
 		return response.data.data;
 	} catch (error) {
 		const err = error as AxiosError<{ error: { message: string } }>;

@@ -15,8 +15,11 @@ const AdditionalInfoGuard: React.FC<AdditionalInfoGuardProps> = ({
 	// 사용자 정보 로드 후 추가 정보 확인
 	useEffect(() => {
 		if (userInfo) {
+			console.log("userInfo", userInfo);
 			const hasAdditionalInfo =
-				userInfo.nickname && userInfo.gender && userInfo.birthDate;
+				Boolean(userInfo.nickname?.trim()) &&
+				Boolean(userInfo.gender) &&
+				Boolean(userInfo.birthDate);
 			if (!hasAdditionalInfo) {
 				setShowModal(true);
 			}
