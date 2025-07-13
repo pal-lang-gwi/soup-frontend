@@ -9,7 +9,7 @@ export interface DailyNewsRequestDto {
 
 export interface ArticleDto {
   title: string;
-  link: string;
+  url: string;
   summary: string;
 }
 

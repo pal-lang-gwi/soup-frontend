@@ -5,8 +5,8 @@ import { getFilteredNews, DailyNewsRequestDto } from "../api/news";
 import FilterInput from "../components/FilterInput";
 import Navbar from "../components/Navbar";
 import { UI_CONSTANTS } from "../constants/ui";
-import { extractDateFromISO } from "../utils/dateUtils";
 import { useSearchParams } from "react-router-dom";
+import ExpandableNewsCard from "../components/ExpandableCardNews";
 
 function NewsList() {
   /* ---------------- URL 쿼리 → 초기 키워드 ---------------------------- */
@@ -96,19 +96,11 @@ function NewsList() {
                   <NoData>조회된 뉴스가 없습니다.</NoData>
                 ) : (
                   newsData.newsDtos.map((item, idx) => (
-                    <NewsCard key={idx}>
-                      <strong>{item.keyword}</strong>
-                      <small>{extractDateFromISO(item.createdDate)}</small>
-                      <p>{item.longSummary}</p>
-                      {item.articles.map((a, i) => (
-                        <a key={i} href={a.link} target="_blank" rel="noreferrer">
-                          - {a.title}
-                        </a>
-                      ))}
-                    </NewsCard>
+                    <ExpandableNewsCard key={idx} data={item} />
                   ))
                 )}
               </NewsSection>
+
 
               {/* -------- 페이지 네비게이션 ---------------------------- */}
               {newsData && newsData.totalPages > 1 && (
@@ -248,37 +240,6 @@ const NoData = styled.div`
 	text-align: center;
 	color: gray;
 	margin-top: 2rem;
-`;
-
-const NewsCard = styled.div`
-	padding: 1rem;
-	border: 1px solid #eee;
-	border-radius: 8px;
-
-	strong {
-		font-size: 1.1rem;
-		color: #333;
-	}
-
-	small {
-		color: #999;
-		margin-left: 0.5rem;
-	}
-
-	p {
-		margin: 0.5rem 0;
-		color: #555;
-	}
-
-	a {
-		display: block;
-		color: #0077cc;
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
 `;
 
 const NextPrev = styled.div`
