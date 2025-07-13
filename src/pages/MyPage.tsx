@@ -1,14 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
+import { useQuery } from "@tanstack/react-query";
+import { getUserInfo, getMyKeywords } from "../api/user/user";
 
-/**
- * MyPage 기본 템플릿
- * - 상단에는 기존 Navbar 재사용
- * - Wrapper 내부에 "프로필", "구독 현황", "설정" 섹션을 더미 컨텐츠로 배치
- *   (실제 데이터 연결은 이후 단계에서 로직 추가)
- */
 const MyPage: React.FC = () => {
+  const [page, setPage] = useState(0);
+
+  const {
+    data: user,
+    isLoading: userLoading,
+    isError: userError,
+    error: userErrorObj,
+  } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: getUserInfo,
+  });
+
+  const {
+    data: keywordData,
+    isLoading: keywordsLoading,
+    isError: keywordError,
+    error: keywordErrorObj,
+  } = useQuery({
+    queryKey: ["myKeywords", page],
+    queryFn: () => getMyKeywords(page),
+  });
+
+  // 로딩
+  if (userLoading || keywordsLoading) return <p>로딩 중...</p>;
+
+  // 오류 또는 데이터 없음 처리
+  if (userError || keywordError || !user || !keywordData) {
+    return (
+      <p>
+        오류 발생:{" "}
+        {(userErrorObj as Error)?.message ||
+          (keywordErrorObj as Error)?.message ||
+          "유저 정보 또는 키워드 정보를 불러올 수 없습니다."}
+      </p>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -16,13 +49,40 @@ const MyPage: React.FC = () => {
         <Section>
           <Title>마이페이지</Title>
           <Subtitle>내 정보</Subtitle>
-          <Content>프로필 정보가 여기에 표시됩니다.</Content>
+          <Content>
+            <div>이메일: {user.email}</div>
+            <div>닉네임: {user.nickname}</div>
+            <div>성별: {user.gender}</div>
+            <div>생년월일: {user.birthDate}</div>
+          </Content>
         </Section>
 
         <Section>
           <Subtitle>나의 뉴스 구독 현황</Subtitle>
           <Content>
-            현재 구독 중인 키워드 · 카테고리 목록을 보여줄 예정입니다.
+            {keywordData.myKeywordDtos.length === 0 ? (
+              <p>구독 중인 키워드가 없습니다.</p>
+            ) : (
+              <ul>
+                {keywordData.myKeywordDtos.map((k) => (
+                  <li key={k.normalizedKeyword}>{k.keyword}</li>
+                ))}
+              </ul>
+            )}
+            <PaginationWrapper>
+              <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
+                이전
+              </button>
+              <span>
+                {keywordData.currentPage + 1} / {keywordData.totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(keywordData.totalPages - 1, p + 1))}
+                disabled={page === keywordData.totalPages - 1}
+              >
+                다음
+              </button>
+            </PaginationWrapper>
           </Content>
         </Section>
 
@@ -37,10 +97,12 @@ const MyPage: React.FC = () => {
 
 export default MyPage;
 
+
+
 /* ───────── 스타일 ───────── */
 const Wrapper = styled.main`
   max-width: 960px;
-  margin: 100px auto 40px; /* Navbar 높이 고려 여백 */
+  margin: 100px auto 40px;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
@@ -67,8 +129,37 @@ const Subtitle = styled.h2`
   margin-bottom: 8px;
 `;
 
-const Content = styled.p`
+const Content = styled.div`
   font-size: 1rem;
   color: #555;
   line-height: 1.5;
+
+  ul {
+    margin-top: 8px;
+    padding-left: 20px;
+    list-style: disc;
+  }
+`;
+
+const PaginationWrapper = styled.div`
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  button {
+    padding: 4px 12px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    font-weight: 500;
+  }
 `;

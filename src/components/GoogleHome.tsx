@@ -12,9 +12,8 @@ export default function GoogleHome() {
   const [showResults, setShowResults] = useState(false);
   const searchTimeoutRef = useRef<number | null>(null);
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();           // 🔑 페이지 이동용
+  const navigate = useNavigate();
 
-  /* 디바운스된 검색 ----------------------------------------------------- */
   const debouncedSearch = (term: string) => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
@@ -40,7 +39,6 @@ export default function GoogleHome() {
     }, 300);
   };
 
-  /* 입력이 바뀌면 디바운스 ------------------------------------------------ */
   useEffect(() => {
     debouncedSearch(searchTerm);
     return () => {
@@ -48,7 +46,6 @@ export default function GoogleHome() {
     };
   }, [searchTerm]);
 
-  /* 외부 클릭 시 드롭다운 닫기 ------------------------------------------ */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest(".search-container")) {
@@ -59,7 +56,6 @@ export default function GoogleHome() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* 키워드 클릭(구독/해제 & 페이지 이동) ---------------------------------- */
   const handleKeywordClick = async (keyword: searchKeywordDto) => {
     if (!isAuthenticated) {
       alert("로그인이 필요합니다.");
@@ -67,7 +63,12 @@ export default function GoogleHome() {
     }
 
     try {
-      if (keyword.isSubscribed) {
+      // 최신 구독 상태 확인
+      const latest = await searchKeywords(keyword.name, 0, 1);
+      const match = latest.data.data.keywords.find(k => k.id === keyword.id);
+      const isActuallySubscribed = match?.isSubscribed ?? false;
+
+      if (isActuallySubscribed) {
         await unsubscribeKeyword(keyword.id);
         alert(`${keyword.name} 구독을 해지했습니다.`);
       } else {
@@ -75,11 +76,10 @@ export default function GoogleHome() {
         alert(`${keyword.name} 구독을 시작했습니다.`);
       }
 
-      // 드롭다운 데이터 새로 고침
+      // 결과 갱신
       const refetch = await searchKeywords(searchTerm, 0, 10);
       if (refetch.data.success) setSearchResults(refetch.data.data.keywords);
 
-      /* 🔥  뉴스 페이지로 이동 + 쿼리 파라미터 전달 */
       navigate(`/news?keyword=${encodeURIComponent(keyword.name)}`);
     } catch (e) {
       console.error("구독/해제 실패", e);
@@ -87,13 +87,11 @@ export default function GoogleHome() {
     }
   };
 
-  /* 제출(엔터) 동작 — 선택적으로 사용 ----------------------------------- */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) navigate(`/news?keyword=${encodeURIComponent(searchTerm.trim())}`);
   };
 
-  /* ------ JSX --------------------------------------------------------- */
   return (
     <Root>
       <Logo>
@@ -123,15 +121,16 @@ export default function GoogleHome() {
           </InputWrapper>
         </Form>
 
-        {/* 드롭다운 ------------------------------------------------------- */}
         {showResults && (searchResults.length > 0 || isSearching) && (
           <SearchResults>
             {isSearching ? (
               <LoadingItem>검색 중...</LoadingItem>
             ) : (
               searchResults.map((k) => (
-                <SearchResultItem key={k.id} onClick={() => setSearchTerm(k.name)}>
-                  <KeywordName>{k.name}</KeywordName>
+                <SearchResultItem key={k.id}>
+                  <KeywordName onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}>
+                    {k.name}
+                  </KeywordName>
                   <SubscribeButton
                     isSubscribed={k.isSubscribed}
                     onClick={(e) => {
@@ -152,6 +151,7 @@ export default function GoogleHome() {
     </Root>
   );
 }
+
 
 /* ─────────── 스타일 ─────────── */
 const Root = styled.div`

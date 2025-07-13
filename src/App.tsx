@@ -18,6 +18,7 @@ import UserInit from "./pages/UserInit";
 import AdditionalInfoGuard from "./components/AdditionalInfoGuard";
 import "./App.css";
 import "./index.css";
+import MyPage from "./pages/MyPage";
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient({
@@ -58,6 +59,16 @@ const AppRoutes: React.FC = () => {
 						</AdditionalInfoGuard>
 					}
 				/>
+
+				<Route
+					path="/mypage"
+					element={
+						<AdditionalInfoGuard>
+						<MyPage />
+						</AdditionalInfoGuard>
+					}
+				/>
+
 				<Route
 					path="/admin"
 					element={

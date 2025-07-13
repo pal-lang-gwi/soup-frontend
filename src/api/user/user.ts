@@ -29,3 +29,29 @@ export const initFirstUser = async (body : {
         throw new Error(message);
     }
 }
+
+// 유저 기본 정보 조회
+export const getUserInfo = async () => {
+  try {
+    const response = await api.get("/users");
+    return response.data.data;
+  } catch (error) {
+    const err = error as AxiosError<{ error: { message: string } }>;
+    const message = err.response?.data?.error?.message ?? "사용자 정보를 불러올 수 없습니다.";
+    throw new Error(message);
+  }
+};
+
+// 구독 키워드 목록 조회
+export const getMyKeywords = async (page = 0): Promise<MyKeywordListResponse> => {
+  try {
+    const response = await api.get("/users/me/keywords", {
+      params: { page }, // 쿼리 파라미터로 페이지 전송
+    });
+    return response.data.data; // 전체 객체 리턴
+  } catch (error) {
+    const err = error as AxiosError<{ error: { message: string } }>;
+    const message = err.response?.data?.error?.message ?? "키워드 정보를 불러올 수 없습니다.";
+    throw new Error(message);
+  }
+};
