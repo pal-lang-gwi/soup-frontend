@@ -13,19 +13,19 @@ function NewsList() {
   const initialKeyword = searchParams.get("keyword") ?? "";
 
   const [keyword, setKeyword] = useState(initialKeyword);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  // const [startDate, setStartDate] = useState("");
+  // const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState<number>(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE);
 
   useEffect(() => setKeyword(initialKeyword), [initialKeyword]);
 
   const { data: newsData, isLoading, error } = useQuery({
-    queryKey: ["news", keyword, startDate, endDate, page],
+    queryKey: ["news", keyword, page],
     queryFn: () => {
       const params: DailyNewsRequestDto = {};
       if (keyword) params.keyword = keyword;
-      if (startDate) params.startDate = startDate;
-      if (endDate) params.endDate = endDate;
+      // if (startDate) params.startDate = startDate;
+      // if (endDate) params.endDate = endDate;
       return getFilteredNews(params, page, 20);
     },
     enabled: true,
@@ -52,8 +52,6 @@ function NewsList() {
           <Header>✉️뉴스 조회✉️</Header>
 
           <ContentWrapper>
-            <Sidebar>나의 키워드{/* TODO */}</Sidebar>
-
             <NewsListWrapper>
               <FilterSection>
                 <FilterInput
@@ -64,7 +62,7 @@ function NewsList() {
                   defaultValue={keyword}
                 />
 
-                <CalendarInput>
+                {/* <CalendarInput>
                   <input
                     type="date"
                     value={startDate}
@@ -80,7 +78,7 @@ function NewsList() {
                   <SearchButton onClick={() => setPage(UI_CONSTANTS.PAGINATION.DEFAULT_PAGE)}>
                     조회
                   </SearchButton>
-                </CalendarInput>
+                </CalendarInput> */}
               </FilterSection>
 
               <NewsSection>
@@ -190,15 +188,6 @@ const Header = styled.h1`
   color: #333;
 `;
 
-const Sidebar = styled.div`
-  width: ${UI_CONSTANTS.SIDEBAR_WIDTH}px;
-  max-height: 56.7vh;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-`;
-
 const NewsListWrapper = styled.div`
   flex: 1;
   display: flex;
@@ -219,25 +208,6 @@ const FilterSection = styled.div`
     padding: 8px;
     border: 1px solid ${({ theme }) => theme.mainGreen};
     border-radius: 6px;
-  }
-`;
-
-const SearchButton = styled.button`
-  padding: 8px 16px;
-  background-color: ${({ theme }) => theme.mainGreen};
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-`;
-
-const CalendarInput = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-
-  input {
-    width: 100px;
   }
 `;
 
