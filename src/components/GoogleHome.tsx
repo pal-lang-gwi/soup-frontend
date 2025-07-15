@@ -63,7 +63,6 @@ export default function GoogleHome() {
     }
 
     try {
-      // 최신 구독 상태 확인
       const latest = await searchKeywords(keyword.name, 0, 1);
       const match = latest.data.data.keywords.find(k => k.id === keyword.id);
       const isActuallySubscribed = match?.isSubscribed ?? false;
@@ -76,7 +75,6 @@ export default function GoogleHome() {
         alert(`${keyword.name} 구독을 시작했습니다.`);
       }
 
-      // 결과 갱신
       const refetch = await searchKeywords(searchTerm, 0, 10);
       if (refetch.data.success) setSearchResults(refetch.data.data.keywords);
 
@@ -84,6 +82,22 @@ export default function GoogleHome() {
     } catch (e) {
       console.error("구독/해제 실패", e);
       alert("키워드 구독/구독해제에 실패했습니다.");
+    }
+  };
+
+  const handleAddKeyword = async (term: string) => {
+    if (!isAuthenticated) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      await subscribeKeywords([term]);
+      alert(`"${term}" 키워드를 구독했습니다.`);
+      navigate(`/news?keyword=${encodeURIComponent(term)}`);
+    } catch (e) {
+      console.error("키워드 추가 실패", e);
+      alert("키워드 추가에 실패했습니다.");
     }
   };
 
@@ -121,11 +135,11 @@ export default function GoogleHome() {
           </InputWrapper>
         </Form>
 
-        {showResults && (searchResults.length > 0 || isSearching) && (
+        {showResults && (searchResults.length > 0 || isSearching || searchTerm.trim().length > 0) && (
           <SearchResults>
             {isSearching ? (
               <LoadingItem>검색 중...</LoadingItem>
-            ) : (
+            ) : searchResults.length > 0 ? (
               searchResults.map((k) => (
                 <SearchResultItem key={k.id}>
                   <KeywordName onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}>
@@ -142,6 +156,10 @@ export default function GoogleHome() {
                   </SubscribeButton>
                 </SearchResultItem>
               ))
+            ) : (
+              <SearchResultItem onClick={() => handleAddKeyword(searchTerm)}>
+                <KeywordName>"{searchTerm}" 직접 추가하기</KeywordName>
+              </SearchResultItem>
             )}
           </SearchResults>
         )}

@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router";
 import NewsPage from "../components/NewsPage";
-import FirstLogin from "../pages/FirstLogin";
 import HealthCheck from "../pages/HealthCheck";
 import HomePage from "../pages/HomePage";
 import NewsList from "../pages/NewsList";
@@ -20,7 +19,6 @@ const AppRoutes = () => (
 				</AdditionalInfoGuard>
 			}
 		/>
-		<Route path="/signup" element={<FirstLogin />} />
 		<Route
 			path="/news"
 			element={

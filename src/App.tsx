@@ -12,7 +12,6 @@ import HomePage from "./pages/HomePage";
 import LoggedInHomePage from "./components/LoggedInHomePage";
 import NewsList from "./pages/NewsList";
 import HealthCheck from "./pages/HealthCheck";
-import FirstLogin from "./pages/FirstLogin";
 import AdminPage from "./pages/AdminPage";
 import UserInit from "./pages/UserInit";
 import AdditionalInfoGuard from "./components/AdditionalInfoGuard";
@@ -39,7 +38,6 @@ const AppRoutes: React.FC = () => {
 				{/* 모든 페이지에 자유롭게 접근 가능 */}
 				<Route path="/" element={<HomePage />} />
 				<Route path="/user-init" element={<UserInit />} />
-				<Route path="/first-login" element={<FirstLogin />} />
 				<Route path="/health" element={<HealthCheck />} />
 
 				{/* 인증이 필요한 페이지들 */}
