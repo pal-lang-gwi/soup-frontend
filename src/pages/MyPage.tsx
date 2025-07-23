@@ -141,29 +141,6 @@ const Content = styled.div`
   }
 `;
 
-const PaginationWrapper = styled.div`
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  button {
-    padding: 4px 12px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    cursor: pointer;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  span {
-    font-weight: 500;
-  }
-`;
-
 // 스타일 추가
 const KeywordContent = styled.div`
   display: flex;
