@@ -9,7 +9,7 @@ import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes 
 import { useNavigate } from "react-router-dom";
 
 // 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
-const USE_DUMMY = true;
+const USE_DUMMY = false;
 
 // 더미 데이터 정의 (상단에 한 번만)
 const dummyUser = {
