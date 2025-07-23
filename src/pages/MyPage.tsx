@@ -3,10 +3,86 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo, getMyKeywords } from "../api/user/user";
+import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaCog, FaLeaf } from "react-icons/fa";
+
+// 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
+const USE_DUMMY = false;
+
+// 더미 데이터 정의 (상단에 한 번만)
+const dummyUser = {
+  email: "testuser@soup.com",
+  nickname: "테스트유저",
+  gender: "FEMALE",
+  birthDate: "1999-01-01",
+};
+const dummyKeywordData = {
+  myKeywordDtos: [
+    { keyword: "AI", normalizedKeyword: "ai" },
+    { keyword: "경제", normalizedKeyword: "economy" },
+    { keyword: "정치", normalizedKeyword: "politics" },
+    { keyword: "테크", normalizedKeyword: "tech" },
+  ],
+  currentPage: 0,
+  totalPages: 1,
+};
 
 const MyPage: React.FC = () => {
   const [page, setPage] = useState(0);
 
+  // 더미 데이터 강제 사용
+  if (USE_DUMMY) {
+    return (
+      <PageBackground>
+        <Navbar />
+        <MainWrapper>
+          <SectionCard>
+            <SectionTitle>마이페이지 (임시 테스트용)</SectionTitle>
+            <SectionSubtitle>내 정보</SectionSubtitle>
+            <InfoList>
+              <InfoRow><FaEnvelope className="icon" /> <Label>이메일</Label> <Value>{dummyUser.email}</Value></InfoRow>
+              <InfoRow><FaUserCircle className="icon" /> <Label>닉네임</Label> <Value>{dummyUser.nickname}</Value></InfoRow>
+              <InfoRow><FaVenusMars className="icon" /> <Label>성별</Label> <Value>{dummyUser.gender}</Value></InfoRow>
+              <InfoRow><FaBirthdayCake className="icon" /> <Label>생년월일</Label> <Value>{dummyUser.birthDate}</Value></InfoRow>
+            </InfoList>
+          </SectionCard>
+
+          <CenteredSectionCard>
+            <SectionSubtitle>나의 뉴스 구독 현황</SectionSubtitle>
+            <KeywordContent>
+              <KeywordList>
+                {dummyKeywordData.myKeywordDtos.map((k) => (
+                  <KeywordPill key={k.normalizedKeyword}>
+                    <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
+                    {k.keyword}
+                  </KeywordPill>
+                ))}
+              </KeywordList>
+              <StyledPagination>
+                <PageButton disabled>이전</PageButton>
+                <PageInfo>
+                  {dummyKeywordData.currentPage + 1} / {dummyKeywordData.totalPages}
+                </PageInfo>
+                <PageButton disabled>다음</PageButton>
+              </StyledPagination>
+            </KeywordContent>
+          </CenteredSectionCard>
+
+          {/* <SectionCard>
+            <SectionSubtitle>설정</SectionSubtitle>
+            <SettingContent>
+              <SettingRow>
+                <FaCog className="icon" />
+                <span>비밀번호 변경, 알림 설정 등 사용자가 변경할 수 있는 옵션.</span>
+              </SettingRow>
+              <SettingButton>설정 바로가기</SettingButton>
+            </SettingContent>
+          </SectionCard> */}
+        </MainWrapper>
+      </PageBackground>
+    );
+  }
+
+  // 실제 API 호출
   const {
     data: user,
     isLoading: userLoading,
@@ -34,38 +110,42 @@ const MyPage: React.FC = () => {
   if (userError || keywordError || !user || !keywordData) {
     return (
       <p>
-        오류 발생:{" "}
-        {(userErrorObj as Error)?.message ||
-          (keywordErrorObj as Error)?.message ||
-          "유저 정보 또는 키워드 정보를 불러올 수 없습니다."}
+        오류 발생: { (userErrorObj as Error)?.message || (keywordErrorObj as Error)?.message || "유저 정보 또는 키워드 정보를 불러올 수 없습니다." }
       </p>
     );
   }
 
+  // 정상 렌더링
   return (
-    <>
+    <PageBackground>
       <Navbar />
-      <Wrapper>
-        <Section>
-          <Title>마이페이지</Title>
-          <Subtitle>내 정보</Subtitle>
-          <Content>
-            <div>이메일: {user.email}</div>
-            <div>닉네임: {user.nickname}</div>
-            <div>성별: {user.gender}</div>
-            <div>생년월일: {user.birthDate}</div>
-          </Content>
-        </Section>
+      <MainWrapper>
+        <SectionCard>
+          <SectionTitle>마이페이지</SectionTitle>
+          <SectionSubtitle>내 정보</SectionSubtitle>
+          <InfoList>
+            <InfoRow><FaEnvelope className="icon" /> <Label>이메일</Label> <Value>{user.email}</Value></InfoRow>
+            <InfoRow><FaUserCircle className="icon" /> <Label>닉네임</Label> <Value>{user.nickname}</Value></InfoRow>
+            <InfoRow><FaVenusMars className="icon" /> <Label>성별</Label> <Value>{user.gender}</Value></InfoRow>
+            <InfoRow><FaBirthdayCake className="icon" /> <Label>생년월일</Label> <Value>{user.birthDate}</Value></InfoRow>
+          </InfoList>
+        </SectionCard>
 
-        <Section>
-          <Subtitle>나의 뉴스 구독 현황</Subtitle>
+        <CenteredSectionCard>
+          <SectionSubtitle>나의 뉴스 구독 현황</SectionSubtitle>
           <KeywordContent>
             {keywordData.myKeywordDtos.length === 0 ? (
-              <NoKeywordMsg>구독 중인 키워드가 없습니다.</NoKeywordMsg>
+              <NoKeywordMsg>
+                <FaLeaf style={{ fontSize: "2rem", color: "#48BB78", marginBottom: 8 }} />
+                구독 중인 키워드가 없습니다.
+              </NoKeywordMsg>
             ) : (
               <KeywordList>
                 {keywordData.myKeywordDtos.map((k) => (
-                  <KeywordPill key={k.normalizedKeyword}>{k.keyword}</KeywordPill>
+                  <KeywordPill key={k.normalizedKeyword}>
+                    <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
+                    {k.keyword}
+                  </KeywordPill>
                 ))}
               </KeywordList>
             )}
@@ -84,14 +164,20 @@ const MyPage: React.FC = () => {
               </PageButton>
             </StyledPagination>
           </KeywordContent>
-        </Section>
+        </CenteredSectionCard>
 
-        <Section>
-          <Subtitle>설정</Subtitle>
-          <Content>비밀번호 변경, 알림 설정 등 사용자가 변경할 수 있는 옵션.</Content>
-        </Section>
-      </Wrapper>
-    </>
+        {/* <SectionCard>
+          <SectionSubtitle>설정</SectionSubtitle>
+          <SettingContent>
+            <SettingRow>
+              <FaCog className="icon" />
+              <span>비밀번호 변경, 알림 설정 등 사용자가 변경할 수 있는 옵션.</span>
+            </SettingRow>
+            <SettingButton>설정 바로가기</SettingButton>
+          </SettingContent>
+        </SectionCard> */}
+      </MainWrapper>
+    </PageBackground>
   );
 };
 
@@ -99,56 +185,94 @@ export default MyPage;
 
 
 
-/* ───────── 스타일 ───────── */
-const Wrapper = styled.main`
-  max-width: 960px;
-  margin: 100px auto 40px;
-  padding: 0 20px;
+/* ───────── 스타일 개선 ───────── */
+const PageBackground = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e6f4ea 100%);
+  padding-top: 80px;
+`;
+
+const MainWrapper = styled.main`
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 36px;
 `;
 
-const Section = styled.section`
-  background: #ffffff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 32px 28px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-`;
-
-const Title = styled.h1`
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-`;
-
-const Subtitle = styled.h2`
-  font-size: 1.25rem;
-  font-weight: 500;
-  margin-bottom: 8px;
-`;
-
-const Content = styled.div`
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-
-  ul {
-    margin-top: 8px;
-    padding-left: 20px;
-    list-style: disc;
+const SectionCard = styled.section`
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(72, 187, 120, 0.08);
+  padding: 36px 32px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  @media (max-width: 600px) {
+    padding: 20px 8px;
   }
 `;
 
-// 스타일 추가
+// '나의 뉴스 구독 현황'만 중앙 정렬 스타일 적용
+const CenteredSectionCard = styled(SectionCard)`
+  align-items: center;
+  text-align: center;
+`;
+
+const SectionTitle = styled.h1`
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.mainColor};
+  margin-bottom: 10px;
+  text-align: left;
+`;
+
+const SectionSubtitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.mainGreen};
+  margin-bottom: 18px;
+`;
+
+const InfoList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`;
+
+const InfoRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.08rem;
+  background: #f6fdf8;
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.04);
+  .icon {
+    font-size: 1.2em;
+    color: ${({ theme }) => theme.mainGreen};
+    min-width: 24px;
+  }
+`;
+const Label = styled.span`
+  font-weight: 600;
+  color: #333;
+  min-width: 70px;
+`;
+const Value = styled.span`
+  color: #555;
+  font-weight: 400;
+`;
+
 const KeywordContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
 `;
-
 const KeywordList = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -156,8 +280,9 @@ const KeywordList = styled.div`
   justify-content: center;
   margin-top: 0.5rem;
 `;
-
 const KeywordPill = styled.div`
+  display: flex;
+  align-items: center;
   background: ${({ theme }) => theme.mainGreen};
   color: white;
   font-weight: 500;
@@ -169,14 +294,15 @@ const KeywordPill = styled.div`
   transition: background 0.2s;
   cursor: default;
 `;
-
 const NoKeywordMsg = styled.div`
   color: #aaa;
   font-size: 1.1rem;
   margin: 1.5rem 0 0.5rem 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
-
 const StyledPagination = styled.div`
   display: flex;
   justify-content: center;
@@ -184,7 +310,6 @@ const StyledPagination = styled.div`
   gap: 1.2rem;
   margin-top: 1.2rem;
 `;
-
 const PageButton = styled.button`
   padding: 0.5rem 1.2rem;
   background-color: ${({ theme }) => theme.mainGreen};
@@ -196,7 +321,6 @@ const PageButton = styled.button`
   cursor: pointer;
   transition: background 0.2s;
   box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
-
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.buttonColor};
   }
@@ -205,9 +329,43 @@ const PageButton = styled.button`
     cursor: not-allowed;
   }
 `;
-
 const PageInfo = styled.span`
   font-size: 1rem;
   color: #666;
   font-weight: 500;
+`;
+const SettingContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+`;
+const SettingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.08rem;
+  color: #555;
+  .icon {
+    font-size: 1.2em;
+    color: ${({ theme }) => theme.buttonColor};
+    min-width: 24px;
+  }
+`;
+const SettingButton = styled.button`
+  margin-top: 8px;
+  padding: 0.7em 1.5em;
+  background: ${({ theme }) => theme.buttonColor};
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(72, 87, 120, 0.08);
+  transition: background 0.2s;
+  &:hover {
+    background: ${({ theme }) => theme.mainGreen};
+  }
 `;
