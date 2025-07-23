@@ -59,31 +59,31 @@ const MyPage: React.FC = () => {
 
         <Section>
           <Subtitle>나의 뉴스 구독 현황</Subtitle>
-          <Content>
+          <KeywordContent>
             {keywordData.myKeywordDtos.length === 0 ? (
-              <p>구독 중인 키워드가 없습니다.</p>
+              <NoKeywordMsg>구독 중인 키워드가 없습니다.</NoKeywordMsg>
             ) : (
-              <ul>
+              <KeywordList>
                 {keywordData.myKeywordDtos.map((k) => (
-                  <li key={k.normalizedKeyword}>{k.keyword}</li>
+                  <KeywordPill key={k.normalizedKeyword}>{k.keyword}</KeywordPill>
                 ))}
-              </ul>
+              </KeywordList>
             )}
-            <PaginationWrapper>
-              <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
+            <StyledPagination>
+              <PageButton onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
                 이전
-              </button>
-              <span>
+              </PageButton>
+              <PageInfo>
                 {keywordData.currentPage + 1} / {keywordData.totalPages}
-              </span>
-              <button
+              </PageInfo>
+              <PageButton
                 onClick={() => setPage((p) => Math.min(keywordData.totalPages - 1, p + 1))}
                 disabled={page === keywordData.totalPages - 1}
               >
                 다음
-              </button>
-            </PaginationWrapper>
-          </Content>
+              </PageButton>
+            </StyledPagination>
+          </KeywordContent>
         </Section>
 
         <Section>
@@ -162,4 +162,75 @@ const PaginationWrapper = styled.div`
   span {
     font-weight: 500;
   }
+`;
+
+// 스타일 추가
+const KeywordContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+`;
+
+const KeywordList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+`;
+
+const KeywordPill = styled.div`
+  background: ${({ theme }) => theme.mainGreen};
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5em 1.2em;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+  cursor: default;
+`;
+
+const NoKeywordMsg = styled.div`
+  color: #aaa;
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem 0;
+  text-align: center;
+`;
+
+const StyledPagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+`;
+
+const PageButton = styled.button`
+  padding: 0.5rem 1.2rem;
+  background-color: ${({ theme }) => theme.mainGreen};
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
+
+  &:hover:not(:disabled) {
+    background-color: ${({ theme }) => theme.buttonColor};
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const PageInfo = styled.span`
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
 `;

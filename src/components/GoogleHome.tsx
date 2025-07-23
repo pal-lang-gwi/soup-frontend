@@ -265,11 +265,6 @@ const SvgGlass = styled.svg`
 	fill: #9aa0a6;
 `;
 
-const MicIcon = styled.span`
-	${iconCss};
-	right: 16px;
-	font-size: 20px;
-`;
 
 const LoadingSpinner = styled.span`
 	${iconCss};
