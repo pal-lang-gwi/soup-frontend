@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo, getMyKeywords } from "../api/user/user";
-import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaCog, FaLeaf } from "react-icons/fa";
+import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf } from "react-icons/fa";
 
 // 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
 const USE_DUMMY = false;
@@ -333,39 +333,4 @@ const PageInfo = styled.span`
   font-size: 1rem;
   color: #666;
   font-weight: 500;
-`;
-const SettingContent = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  align-items: flex-start;
-`;
-const SettingRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.08rem;
-  color: #555;
-  .icon {
-    font-size: 1.2em;
-    color: ${({ theme }) => theme.buttonColor};
-    min-width: 24px;
-  }
-`;
-const SettingButton = styled.button`
-  margin-top: 8px;
-  padding: 0.7em 1.5em;
-  background: ${({ theme }) => theme.buttonColor};
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(72, 87, 120, 0.08);
-  transition: background 0.2s;
-  &:hover {
-    background: ${({ theme }) => theme.mainGreen};
-  }
 `;
