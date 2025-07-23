@@ -3,10 +3,13 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo, getMyKeywords } from "../api/user/user";
-import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf } from "react-icons/fa";
+import { unsubscribeKeyword } from "../api/keywords";
+import { useQueryClient } from "@tanstack/react-query";
+import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 // 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
-const USE_DUMMY = false;
+const USE_DUMMY = true;
 
 // 더미 데이터 정의 (상단에 한 번만)
 const dummyUser = {
@@ -17,10 +20,10 @@ const dummyUser = {
 };
 const dummyKeywordData = {
   myKeywordDtos: [
-    { keyword: "AI", normalizedKeyword: "ai" },
-    { keyword: "경제", normalizedKeyword: "economy" },
-    { keyword: "정치", normalizedKeyword: "politics" },
-    { keyword: "테크", normalizedKeyword: "tech" },
+    { keywordId: 1, keyword: "AI", normalizedKeyword: "ai" },
+    { keywordId: 2, keyword: "경제", normalizedKeyword: "economy" },
+    { keywordId: 3, keyword: "정치", normalizedKeyword: "politics" },
+    { keywordId: 4, keyword: "테크", normalizedKeyword: "tech" },
   ],
   currentPage: 0,
   totalPages: 1,
@@ -28,6 +31,23 @@ const dummyKeywordData = {
 
 const MyPage: React.FC = () => {
   const [page, setPage] = useState(0);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // 구독 해지 핸들러 (더미/실제 모두 대응)
+  const handleUnsubscribe = async (keywordId: number) => {
+    if (USE_DUMMY) {
+      alert(`ID: ${keywordId} 키워드 구독을 해지합니다.`);
+      return;
+    }
+    try {
+      await unsubscribeKeyword(keywordId);
+      alert("구독 해지 완료");
+      queryClient.invalidateQueries({ queryKey: ["myKeywords"] });
+    } catch (e: any) {
+      alert(e.message || "구독 해지 실패");
+    }
+  };
 
   // 더미 데이터 강제 사용
   if (USE_DUMMY) {
@@ -51,9 +71,18 @@ const MyPage: React.FC = () => {
             <KeywordContent>
               <KeywordList>
                 {dummyKeywordData.myKeywordDtos.map((k) => (
-                  <KeywordPill key={k.normalizedKeyword}>
+                  <KeywordPill key={k.keywordId}>
                     <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
                     {k.keyword}
+                    <UnsubscribeButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleUnsubscribe(k.keywordId);
+                      }}
+                      title="구독 해지"
+                    >
+                      <FaTimes />
+                    </UnsubscribeButton>
                   </KeywordPill>
                 ))}
               </KeywordList>
@@ -142,9 +171,21 @@ const MyPage: React.FC = () => {
             ) : (
               <KeywordList>
                 {keywordData.myKeywordDtos.map((k) => (
-                  <KeywordPill key={k.normalizedKeyword}>
+                  <KeywordPill
+                    key={k.keywordId}
+                    onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.keyword)}`)}
+                  >
                     <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
                     {k.keyword}
+                    <UnsubscribeButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleUnsubscribe(k.keywordId);
+                      }}
+                      title="구독 해지"
+                    >
+                      <FaTimes />
+                    </UnsubscribeButton>
                   </KeywordPill>
                 ))}
               </KeywordList>
@@ -292,7 +333,8 @@ const KeywordPill = styled.div`
   box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
   letter-spacing: 0.5px;
   transition: background 0.2s;
-  cursor: default;
+  cursor: pointer;
+  position: relative; /* Added for UnsubscribeButton positioning */
 `;
 const NoKeywordMsg = styled.div`
   color: #aaa;
@@ -333,4 +375,20 @@ const PageInfo = styled.span`
   font-size: 1rem;
   color: #666;
   font-weight: 500;
+`;
+
+// 스타일 추가
+const UnsubscribeButton = styled.button`
+  background: transparent;
+  border: none;
+  color: #fff;
+  margin-left: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+  &:hover {
+    color: #ff6b6b;
+  }
 `;

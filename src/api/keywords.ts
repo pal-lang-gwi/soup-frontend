@@ -59,7 +59,7 @@ export const subscribeKeywords = async (
 	}
 };
 
-// 키워드 구독 해지
+// 키워드 구독 해지 (ID 기반)
 export const unsubscribeKeyword = async (keywordId: number): Promise<void> => {
 	try {
 		await api.post(`/keywords/${keywordId}`);
@@ -70,6 +70,17 @@ export const unsubscribeKeyword = async (keywordId: number): Promise<void> => {
 		throw new Error(message);
 	}
 };
+
+// 더 이상 사용하지 않음: 이름 기반 해지 함수
+// export const unsubscribeKeywordByName = async (keyword: string): Promise<void> => {
+//   try {
+//     await api.post(`/keywords/unsubscribe`, { keyword });
+//   } catch (error) {
+//     const err = error as AxiosError<{ error: { message: string } }>;
+//     const message = err.response?.data?.error?.message ?? "키워드 구독 해지 실패";
+//     throw new Error(message);
+//   }
+// };
 
 // 키워드 요청 등록
 export const requestKeyword = async (

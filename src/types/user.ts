@@ -1,5 +1,6 @@
 export interface MyKeywordDto {
   userId: number;
+  keywordId: number; // 추가: 키워드 고유 ID
   keyword: string;
   normalizedKeyword: string;
   registeredDate: string;
