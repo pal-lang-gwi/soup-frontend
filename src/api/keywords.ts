@@ -42,10 +42,7 @@ export const searchKeywords = async (
 				size,
 			},
 		}
-	).then((res) => {
-		console.log(res.data);
-		return res.data;
-	});
+	)
 	return response;
 };
 

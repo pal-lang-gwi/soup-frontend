@@ -23,6 +23,7 @@ export default function GoogleHome() {
         try {
           const response = await searchKeywords(term, 0, 10);
           if (response.data.success) {
+            console.log(response.data.data.keywords);
             setSearchResults(response.data.data.keywords);
             setShowResults(true);
           }
