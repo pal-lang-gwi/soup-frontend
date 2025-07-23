@@ -131,7 +131,6 @@ export default function GoogleHome() {
             />
 
             {isSearching && <LoadingSpinner>⏳</LoadingSpinner>}
-            <MicIcon>🎤</MicIcon>
           </InputWrapper>
         </Form>
 

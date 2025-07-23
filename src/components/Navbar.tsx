@@ -38,7 +38,7 @@ const Navbar = () => {
 
 				{/* 데스크톱 네비게이션 */}
 				<NavList>
-					<NavLink onClick={() => handleNavClick("/my-news")}>나의 뉴스 조회</NavLink>
+					{/* <NavLink onClick={() => handleNavClick("/my-news")}>나의 뉴스 조회</NavLink> */}
 					{isAdmin && (
 						<>
 							<NavLink onClick={() => handleNavClick("/health")}>헬스체크</NavLink>
