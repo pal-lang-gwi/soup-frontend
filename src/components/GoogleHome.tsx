@@ -93,8 +93,8 @@ export default function GoogleHome() {
     }
 
     try {
-      await subscribeKeywords([term]);
-      alert(`"${term}" 키워드를 구독했습니다.`);
+      await requestKeyword([term]);
+      alert(`"${term}" 키워드를 등록을 요철.`);
       navigate(`/news?keyword=${encodeURIComponent(term)}`);
     } catch (e) {
       console.error("키워드 추가 실패", e);

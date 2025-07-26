@@ -84,11 +84,10 @@ export const unsubscribeKeyword = async (keywordId: number): Promise<void> => {
 
 // 키워드 요청 등록
 export const requestKeyword = async (
-	userId: string,
 	keyword: string
 ): Promise<void> => {
 	try {
-		await api.post("/keywords/request", { userId, keyword });
+		await api.post("/keywords/request", keyword);
 	} catch (error) {
 		const err = error as AxiosError<{ error: { message: string } }>;
 		const message = err.response?.data?.error?.message ?? "키워드 요청 실패";
