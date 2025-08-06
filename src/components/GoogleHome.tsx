@@ -9,8 +9,7 @@ import {
   showLoginRequired,
   showKeywordSubscribed,
   showKeywordUnsubscribed,
-  showKeywordRequested,
-  showNoKeywordResults
+  showKeywordRequested
 } from "../utils/sweetAlert";
 
 export default function GoogleHome() {
@@ -34,16 +33,11 @@ export default function GoogleHome() {
             console.log(response.data.data.keywords);
             setSearchResults(response.data.data.keywords);
             setShowResults(true);
-            
-            // 검색 결과가 없을 때
-            if (response.data.data.keywords.length === 0) {
-              showNoKeywordResults(term);
-            }
           }
         } catch (e) {
           console.error("검색 실패", e);
           setSearchResults([]);
-          showNoKeywordResults(term);
+          setShowResults(true);
         } finally {
           setIsSearching(false);
         }
@@ -135,7 +129,7 @@ export default function GoogleHome() {
         <Form onSubmit={handleSubmit}>
           <InputWrapper>
             <SvgGlass viewBox="0 0 24 24">
-              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
+              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 6.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
             </SvgGlass>
 
             <SearchInput
@@ -177,6 +171,7 @@ export default function GoogleHome() {
             ) : (
               <SearchResultItem onClick={() => handleAddKeyword(searchTerm)}>
                 <KeywordName>"{searchTerm}" 직접 추가하기</KeywordName>
+                <AddIcon>➕</AddIcon>
               </SearchResultItem>
             )}
           </SearchResults>
@@ -194,6 +189,7 @@ const Root = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	min-height: 100vh;
 	font-family: "Roboto", "Noto Sans KR", sans-serif;
 `;
@@ -209,6 +205,7 @@ const SubCopy = styled.p`
 	font-size: 16px;
 	color: ${({ theme }) => theme.text.secondary};
 	text-align: center;
+	margin-bottom: 40px;
 `;
 
 const SearchContainer = styled.div`
@@ -217,6 +214,7 @@ const SearchContainer = styled.div`
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	max-width: 580px;
 `;
 
 const Form = styled.form`
@@ -229,8 +227,7 @@ const Form = styled.form`
 /* ── 검색창 ─────────────────────────── */
 const InputWrapper = styled.div`
 	position: relative;
-	width: 90%;
-	max-width: 580px;
+	width: 100%;
 	height: 44px;
 	border: 1px solid ${({ theme }) => theme.border.primary};
 	border-radius: 22px;
@@ -307,6 +304,7 @@ const SearchResults = styled.div`
 	overflow-y: auto;
 	z-index: 1000;
 	margin-top: 8px;
+	width: 100%;
 `;
 
 const SearchResultItem = styled.div`
@@ -353,19 +351,24 @@ const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
 `;
 
 const LoadingItem = styled.div`
-	padding: 16px;
-	text-align: center;
-	color: #5f6368;
+	padding: 12px 16px;
+	color: ${({ theme }) => theme.text.secondary};
 	font-size: 14px;
+`;
+
+const AddIcon = styled.span`
+	margin-left: 8px;
+	font-size: 16px;
+	color: ${({ theme }) => theme.icon.primary};
 `;
 
 /* ── 푸터 ────────────────────────────── */
 const Footer = styled.footer`
-	margin-top: auto;
-	width: 100%;
-	padding: 15px 30px;
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: ${({ theme }) => theme.text.tertiary};
 	font-size: 14px;
-	background: #f2f2f2;
-	color: #70757a;
-	text-align: left;
+	text-align: center;
 `;
