@@ -249,7 +249,7 @@ function ErrorState({ error }: { error: any }) {
 /* ───────── 개선된 스타일 ───────── */
 const PageBackground = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: ${({ theme }) => theme.background.gradient.primary};
   padding-top: 80px;
   position: relative;
   
@@ -285,7 +285,7 @@ const HeaderSection = styled.div`
 const HeaderTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: ${({ theme }) => theme.text.inverse};
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -295,7 +295,7 @@ const HeaderTitle = styled.h1`
   
   .header-icon {
     font-size: 2rem;
-    color: #ffd700;
+    color: ${({ theme }) => theme.icon.accent};
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
   
@@ -321,7 +321,7 @@ const StatsBadge = styled.div`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  color: ${({ theme }) => theme.text.inverse};
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -329,7 +329,7 @@ const StatsBadge = styled.div`
   
   .stats-icon {
     font-size: 0.8rem;
-    color: #ffd700;
+    color: ${({ theme }) => theme.icon.accent};
   }
 `;
 
@@ -355,20 +355,20 @@ const FilterSection = styled.div`
   flex-direction: column;
   gap: 16px;
   padding-bottom: 24px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid ${({ theme }) => theme.border.primary};
 `;
 
 const FilterLabel = styled.label`
   font-size: 1.2rem;
   font-weight: 700;
-  color: #333;
+  color: ${({ theme }) => theme.text.primary};
   display: flex;
   align-items: center;
   gap: 10px;
   
   .filter-icon {
     font-size: 1.1rem;
-    color: ${({ theme }) => theme.mainGreen};
+    color: ${({ theme }) => theme.icon.primary};
   }
 `;
 
@@ -379,7 +379,7 @@ const NewsSection = styled.div`
 
 const NoDataMessage = styled.div`
   text-align: center;
-  color: #666;
+  color: ${({ theme }) => theme.text.secondary};
   padding: 80px 20px;
   display: flex;
   flex-direction: column;
@@ -389,7 +389,7 @@ const NoDataMessage = styled.div`
   .no-data-icon-wrapper {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    background: linear-gradient(135deg, ${({ theme }) => theme.skeleton.primary}, ${({ theme }) => theme.skeleton.secondary});
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -399,20 +399,20 @@ const NoDataMessage = styled.div`
   
   .no-data-icon {
     font-size: 2.5rem;
-    color: #ccc;
+    color: ${({ theme }) => theme.text.muted};
   }
 `;
 
 const NoDataTitle = styled.h3`
   font-size: 1.3rem;
   font-weight: 600;
-  color: #333;
+  color: ${({ theme }) => theme.text.primary};
   margin: 0;
 `;
 
 const NoDataSubtext = styled.p`
   font-size: 1rem;
-  color: #888;
+  color: ${({ theme }) => theme.text.tertiary};
   margin: 0;
 `;
 
@@ -433,7 +433,7 @@ const PaginationSection = styled.div`
   align-items: center;
   gap: 20px;
   padding-top: 32px;
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid ${({ theme }) => theme.border.primary};
 `;
 
 const PaginationButton = styled.button`
@@ -441,8 +441,8 @@ const PaginationButton = styled.button`
   align-items: center;
   gap: 8px;
   padding: 14px 24px;
-  background: linear-gradient(135deg, ${({ theme }) => theme.mainGreen}, #4ade80);
-  color: white;
+  background: linear-gradient(135deg, ${({ theme }) => theme.mainGreen}, ${({ theme }) => theme.lightGreen});
+  color: ${({ theme }) => theme.text.inverse};
   border: none;
   border-radius: 16px;
   font-weight: 600;
@@ -460,7 +460,7 @@ const PaginationButton = styled.button`
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-    background: #ccc;
+    background: ${({ theme }) => theme.text.muted};
     transform: none;
     box-shadow: none;
   }
@@ -471,31 +471,31 @@ const PageInfo = styled.div`
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #333;
+  color: ${({ theme }) => theme.text.primary};
   font-size: 1.1rem;
   min-width: 80px;
   justify-content: center;
 `;
 
 const PageNumber = styled.span`
-  color: ${({ theme }) => theme.mainGreen};
+  color: ${({ theme }) => theme.icon.primary};
   font-size: 1.2rem;
 `;
 
 const PageDivider = styled.span`
-  color: #ccc;
+  color: ${({ theme }) => theme.text.muted};
 `;
 
 const TotalPages = styled.span`
-  color: #666;
+  color: ${({ theme }) => theme.text.secondary};
 `;
 
 // 스켈레톤 스타일
 const SkeletonCardWrapper = styled.div`
-  background: #f8f9fa;
+  background: ${({ theme }) => theme.background.secondary};
   border-radius: 16px;
   padding: 20px;
-  border: 1px solid #e9ecef;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   animation: ${pulse} 1.5s ease-in-out infinite;
 `;
 
@@ -509,7 +509,7 @@ const SkeletonHeader = styled.div`
 const SkeletonBadge = styled.div`
   width: 80px;
   height: 24px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.skeleton.primary} 25%, ${({ theme }) => theme.skeleton.secondary} 50%, ${({ theme }) => theme.skeleton.primary} 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 12px;
@@ -518,7 +518,7 @@ const SkeletonBadge = styled.div`
 const SkeletonDate = styled.div`
   width: 60px;
   height: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.skeleton.primary} 25%, ${({ theme }) => theme.skeleton.secondary} 50%, ${({ theme }) => theme.skeleton.primary} 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 8px;
@@ -533,7 +533,7 @@ const SkeletonContent = styled.div`
 const SkeletonLine = styled.div<{ width: string }>`
   height: 12px;
   width: ${props => props.width};
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.skeleton.primary} 25%, ${({ theme }) => theme.skeleton.secondary} 50%, ${({ theme }) => theme.skeleton.primary} 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 6px;
@@ -541,7 +541,7 @@ const SkeletonLine = styled.div<{ width: string }>`
 
 const SkeletonInputWrapper = styled.div`
   height: 48px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, ${({ theme }) => theme.skeleton.primary} 25%, ${({ theme }) => theme.skeleton.secondary} 50%, ${({ theme }) => theme.skeleton.primary} 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 12px;
@@ -576,13 +576,13 @@ const ErrorIcon = styled.div`
 const ErrorTitle = styled.h3`
   font-size: 1.3rem;
   font-weight: 600;
-  color: #dc2626;
+  color: ${({ theme }) => theme.error};
   margin: 0;
 `;
 
 const ErrorMessage = styled.p`
   font-size: 1rem;
-  color: #666;
+  color: ${({ theme }) => theme.text.secondary};
   margin: 0;
   max-width: 400px;
 `;

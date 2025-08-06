@@ -206,12 +206,12 @@ export default MyPage;
 /* ───────── 스타일 개선 ───────── */
 const PageBackground = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e6f4ea 100%);
+  background: ${({ theme }) => theme.background.gradient.secondary};
   padding-top: 80px;
 `;
 
 const MainWrapper = styled.main`
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto 40px;
   padding: 0 16px;
   display: flex;
@@ -220,21 +220,20 @@ const MainWrapper = styled.main`
 `;
 
 const SectionCard = styled.section`
-  background: #fff;
+  background: ${({ theme }) => theme.background.primary};
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(72, 187, 120, 0.08);
   padding: 36px 32px 32px 32px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 24px;
+  
   @media (max-width: 600px) {
-    padding: 20px 8px;
+    padding: 24px 16px;
   }
 `;
 
-// '나의 뉴스 구독 현황'만 중앙 정렬 스타일 적용
 const CenteredSectionCard = styled(SectionCard)`
-  align-items: center;
   text-align: center;
 `;
 
@@ -243,98 +242,103 @@ const SectionTitle = styled.h1`
   font-weight: 700;
   color: ${({ theme }) => theme.mainColor};
   margin-bottom: 10px;
-  text-align: left;
+  text-align: center;
 `;
 
 const SectionSubtitle = styled.h2`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: ${({ theme }) => theme.mainGreen};
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 `;
 
 const InfoList = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 `;
 
 const InfoRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 1.08rem;
-  background: #f6fdf8;
+  gap: 12px;
+  padding: 16px;
+  background: ${({ theme }) => theme.background.tertiary};
   border-radius: 12px;
-  padding: 12px 18px;
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.04);
+  border-left: 4px solid ${({ theme }) => theme.mainGreen};
+  
   .icon {
-    font-size: 1.2em;
     color: ${({ theme }) => theme.mainGreen};
-    min-width: 24px;
+    font-size: 1.2rem;
   }
 `;
+
 const Label = styled.span`
   font-weight: 600;
-  color: #333;
-  min-width: 70px;
+  color: ${({ theme }) => theme.text.primary};
+  min-width: 80px;
 `;
+
 const Value = styled.span`
-  color: #555;
-  font-weight: 400;
+  color: ${({ theme }) => theme.text.secondary};
+  flex: 1;
 `;
 
 const KeywordContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
+  gap: 20px;
 `;
+
 const KeywordList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.7rem;
+  gap: 12px;
   justify-content: center;
-  margin-top: 0.5rem;
 `;
+
 const KeywordPill = styled.div`
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.mainGreen};
-  color: white;
+  gap: 8px;
+  background: ${({ theme }) => theme.background.tertiary};
+  color: ${({ theme }) => theme.text.primary};
+  padding: 8px 16px;
+  border-radius: 20px;
   font-weight: 500;
-  font-size: 1rem;
-  padding: 0.5em 1.2em;
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
-  letter-spacing: 0.5px;
-  transition: background 0.2s;
-  cursor: pointer;
-  position: relative; /* Added for UnsubscribeButton positioning */
-`;
-const NoKeywordMsg = styled.div`
-  color: #aaa;
-  font-size: 1.1rem;
-  margin: 1.5rem 0 0.5rem 0;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-size: 0.9rem;
+  border: 1px solid ${({ theme }) => theme.border.accent};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${({ theme }) => theme.background.secondary};
+    transform: translateY(-1px);
+  }
 `;
 
-// 스타일 추가
 const UnsubscribeButton = styled.button`
-  background: transparent;
+  background: ${({ theme }) => theme.error};
+  color: ${({ theme }) => theme.text.inverse};
   border: none;
-  color: #fff;
-  margin-left: 8px;
-  font-size: 1.1em;
-  cursor: pointer;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
-  transition: color 0.2s;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+  
   &:hover {
-    color: #ff6b6b;
+    background: ${({ theme }) => theme.error};
+    transform: scale(1.1);
   }
+`;
+
+const NoKeywordMsg = styled.div`
+  color: ${({ theme }) => theme.text.muted};
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1rem;
 `;

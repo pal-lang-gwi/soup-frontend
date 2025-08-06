@@ -1,5 +1,23 @@
 import Swal from 'sweetalert2';
 
+// 테마 색상 접근 함수
+const getThemeColors = () => {
+  // styled-components의 theme에 접근하기 위해 document에서 CSS 변수나 다른 방법을 사용
+  // 임시로 하드코딩된 색상들을 테마 색상으로 정의
+  return {
+    success: '#48BB78',
+    error: '#E53E3E',
+    warning: '#ED8936',
+    info: '#4299E1',
+    neutral: '#A0AEC0',
+    background: '#ffffff',
+    text: {
+      primary: '#2D3748',
+      secondary: '#4A5568',
+    }
+  };
+};
+
 // 공통 스타일 설정
 const commonStyle = {
   customClass: {
@@ -25,15 +43,16 @@ const commonStyle = {
 
 // 성공 알림
 export const showSuccess = (message: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '🎉 완료되었어요!',
     text: message,
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 3000,
     timerProgressBar: true,
   });
@@ -41,43 +60,46 @@ export const showSuccess = (message: string) => {
 
 // 에러 알림
 export const showError = (message: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'error',
     title: '😅 잠깐만요!',
     text: message,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#E53E3E',
-    background: '#ffffff',
+    confirmButtonColor: colors.error,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#E53E3E',
+    iconColor: colors.error,
   });
 };
 
 // 경고 알림
 export const showWarning = (message: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'warning',
     title: '⚠️ 주의해주세요',
     text: message,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#ED8936',
-    background: '#ffffff',
+    confirmButtonColor: colors.warning,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#ED8936',
+    iconColor: colors.warning,
   });
 };
 
 // 정보 알림
 export const showInfo = (message: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '💡 안내드려요',
     text: message,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#4299E1',
-    background: '#ffffff',
+    confirmButtonColor: colors.info,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#4299E1',
+    iconColor: colors.info,
     timer: 2500,
     timerProgressBar: true,
   });
@@ -85,6 +107,7 @@ export const showInfo = (message: string) => {
 
 // 확인 다이얼로그
 export const showConfirm = (message: string): Promise<boolean> => {
+  const colors = getThemeColors();
   return Swal.fire({
     title: '🤔 확인해주세요',
     text: message,
@@ -92,11 +115,11 @@ export const showConfirm = (message: string): Promise<boolean> => {
     showCancelButton: true,
     confirmButtonText: '네, 할게요',
     cancelButtonText: '아니요, 취소할게요',
-    confirmButtonColor: '#48BB78',
-    cancelButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    cancelButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     reverseButtons: true,
   }).then((result: any) => {
     return result.isConfirmed;
@@ -105,10 +128,11 @@ export const showConfirm = (message: string): Promise<boolean> => {
 
 // 로딩 표시
 export const showLoading = (message: string = '잠시만 기다려주세요...') => {
+  const colors = getThemeColors();
   Swal.fire({
     title: message,
     allowOutsideClick: false,
-    background: '#ffffff',
+    background: colors.background,
     ...commonStyle,
     didOpen: () => {
       Swal.showLoading();
@@ -123,57 +147,61 @@ export const closeLoading = () => {
 
 // 로그인 필요 알림
 export const showLoginRequired = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '🔐 로그인이 필요해요!',
     text: '이 기능을 이용하려면 로그인해주세요.',
     confirmButtonText: '로그인하러 가기',
-    confirmButtonColor: '#4299E1',
-    background: '#ffffff',
+    confirmButtonColor: colors.info,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#4299E1',
+    iconColor: colors.info,
   });
 };
 
 // 네트워크 오류 알림
 export const showNetworkError = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'error',
     title: '📡 연결에 실패했어요!',
     text: '인터넷 연결을 확인하고 다시 시도해주세요.',
     confirmButtonText: '다시 시도',
-    confirmButtonColor: '#E53E3E',
-    background: '#ffffff',
+    confirmButtonColor: colors.error,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#E53E3E',
+    iconColor: colors.error,
   });
 };
 
 // 데이터 없음 알림
 export const showNoData = (message: string = '데이터가 없어요!') => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '📭 아직 없어요!',
     text: message,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#A0AEC0',
+    iconColor: colors.neutral,
   });
 };
 
 // 저장 완료 알림
 export const showSaved = (message: string = '저장되었어요!') => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '💾 저장 완료!',
     text: message,
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 2000,
     timerProgressBar: true,
   });
@@ -181,6 +209,7 @@ export const showSaved = (message: string = '저장되었어요!') => {
 
 // 삭제 확인 다이얼로그
 export const showDeleteConfirm = (itemName: string): Promise<boolean> => {
+  const colors = getThemeColors();
   return Swal.fire({
     title: '🗑️ 정말 삭제할까요?',
     text: `"${itemName}"을(를) 삭제하면 되돌릴 수 없어요.`,
@@ -188,11 +217,11 @@ export const showDeleteConfirm = (itemName: string): Promise<boolean> => {
     showCancelButton: true,
     confirmButtonText: '네, 삭제할게요',
     cancelButtonText: '아니요, 취소할게요',
-    confirmButtonColor: '#E53E3E',
-    cancelButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.error,
+    cancelButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#ED8936',
+    iconColor: colors.warning,
     reverseButtons: true,
   }).then((result: any) => {
     return result.isConfirmed;
@@ -203,15 +232,16 @@ export const showDeleteConfirm = (itemName: string): Promise<boolean> => {
 
 // 키워드 구독 시작
 export const showKeywordSubscribed = (keywordName: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '📰 뉴스 구독 시작!',
     text: `"${keywordName}" 관련 뉴스를 받아보실 수 있어요!`,
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 3000,
     timerProgressBar: true,
   });
@@ -219,15 +249,16 @@ export const showKeywordSubscribed = (keywordName: string) => {
 
 // 키워드 구독 해지
 export const showKeywordUnsubscribed = (keywordName: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '👋 구독 해지 완료',
     text: `"${keywordName}" 뉴스 알림을 더 이상 받지 않아요.`,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#A0AEC0',
+    iconColor: colors.neutral,
     timer: 2500,
     timerProgressBar: true,
   });
@@ -235,15 +266,16 @@ export const showKeywordUnsubscribed = (keywordName: string) => {
 
 // 키워드 등록 요청
 export const showKeywordRequested = (keywordName: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '📝 키워드 등록 요청!',
     text: `"${keywordName}" 키워드 등록을 요청했어요. 검토 후 추가될 예정이에요!`,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 4000,
     timerProgressBar: true,
   });
@@ -251,6 +283,7 @@ export const showKeywordRequested = (keywordName: string) => {
 
 // 뉴스 없음
 export const showNoNews = (keywordName?: string) => {
+  const colors = getThemeColors();
   const message = keywordName 
     ? `"${keywordName}" 관련 뉴스가 아직 없어요. 조금만 기다려주세요!`
     : '해당 키워드의 뉴스가 아직 없어요. 다른 키워드로 검색해보세요!';
@@ -260,20 +293,21 @@ export const showNoNews = (keywordName?: string) => {
     title: '📭 뉴스가 없어요',
     text: message,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#A0AEC0',
+    iconColor: colors.neutral,
   });
 };
 
 // 뉴스 로딩
 export const showNewsLoading = () => {
+  const colors = getThemeColors();
   Swal.fire({
     title: '📰 뉴스를 가져오는 중...',
     text: '잠시만 기다려주세요!',
     allowOutsideClick: false,
-    background: '#ffffff',
+    background: colors.background,
     ...commonStyle,
     didOpen: () => {
       Swal.showLoading();
@@ -283,15 +317,16 @@ export const showNewsLoading = () => {
 
 // 뉴스 새로고침
 export const showNewsRefreshed = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '🔄 뉴스 새로고침 완료!',
     text: '최신 뉴스로 업데이트되었어요!',
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 2000,
     timerProgressBar: true,
   });
@@ -299,29 +334,31 @@ export const showNewsRefreshed = () => {
 
 // 키워드 검색 결과 없음
 export const showNoKeywordResults = (searchTerm: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '🔍 검색 결과가 없어요',
     text: `"${searchTerm}" 관련 키워드를 찾을 수 없어요. 다른 키워드로 검색해보세요!`,
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#A0AEC0',
+    iconColor: colors.neutral,
   });
 };
 
 // 뉴스 필터 적용
 export const showFilterApplied = (filterName: string) => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '🔍 필터 적용 완료!',
     text: `${filterName} 필터가 적용되었어요.`,
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 2000,
     timerProgressBar: true,
   });
@@ -329,15 +366,16 @@ export const showFilterApplied = (filterName: string) => {
 
 // 뉴스 공유
 export const showNewsShared = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '📤 공유 완료!',
     text: '뉴스가 성공적으로 공유되었어요!',
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 2000,
     timerProgressBar: true,
   });
@@ -345,15 +383,16 @@ export const showNewsShared = () => {
 
 // 뉴스 북마크 추가
 export const showNewsBookmarked = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'success',
     title: '🔖 북마크 추가!',
     text: '뉴스를 북마크에 추가했어요!',
     confirmButtonText: '좋아요',
-    confirmButtonColor: '#48BB78',
-    background: '#ffffff',
+    confirmButtonColor: colors.success,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#48BB78',
+    iconColor: colors.success,
     timer: 2000,
     timerProgressBar: true,
   });
@@ -361,15 +400,16 @@ export const showNewsBookmarked = () => {
 
 // 뉴스 북마크 제거
 export const showNewsUnbookmarked = () => {
+  const colors = getThemeColors();
   Swal.fire({
     icon: 'info',
     title: '🔖 북마크 제거',
     text: '뉴스를 북마크에서 제거했어요.',
     confirmButtonText: '알겠어요',
-    confirmButtonColor: '#A0AEC0',
-    background: '#ffffff',
+    confirmButtonColor: colors.neutral,
+    background: colors.background,
     ...commonStyle,
-    iconColor: '#A0AEC0',
+    iconColor: colors.neutral,
     timer: 2000,
     timerProgressBar: true,
   });

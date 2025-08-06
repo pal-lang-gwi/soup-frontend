@@ -200,14 +200,14 @@ const Root = styled.div`
 
 const MainCopy = styled.p`
 	font-size: 20px;
-	color: #3c4043;
+	color: ${({ theme }) => theme.text.primary};
 	text-align: center;
 	margin-bottom: 10px;
 `;
 
 const SubCopy = styled.p`
 	font-size: 16px;
-	color: #5f6368;
+	color: ${({ theme }) => theme.text.secondary};
 	text-align: center;
 `;
 
@@ -232,12 +232,12 @@ const InputWrapper = styled.div`
 	width: 90%;
 	max-width: 580px;
 	height: 44px;
-	border: 1px solid #dfe1e5;
+	border: 1px solid ${({ theme }) => theme.border.primary};
 	border-radius: 22px;
 	display: flex;
 	align-items: center;
 	padding: 0 14px;
-	background: #fff;
+	background: ${({ theme }) => theme.background.primary};
 	box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
 	transition: box-shadow 0.2s ease-in-out;
 
@@ -245,7 +245,7 @@ const InputWrapper = styled.div`
 		box-shadow: 0 1px 8px rgba(32, 33, 36, 0.35);
 	}
 	&:focus-within {
-		border-color: #4285f4;
+		border-color: ${({ theme }) => theme.icon.primary};
 	}
 `;
 
@@ -259,6 +259,11 @@ const SearchInput = styled.input`
 	outline: none;
 	padding-left: 40px;
 	padding-top: 2px;
+	color: ${({ theme }) => theme.text.primary};
+	
+	&::placeholder {
+		color: ${({ theme }) => theme.text.muted};
+	}
 `;
 
 const iconCss = css`
@@ -269,27 +274,22 @@ const iconCss = css`
 `;
 
 const SvgGlass = styled.svg`
-	${iconCss};
+	${iconCss}
 	left: 16px;
 	width: 20px;
 	height: 20px;
-	fill: #9aa0a6;
+	fill: ${({ theme }) => theme.text.muted};
 `;
 
-
-const LoadingSpinner = styled.span`
-	${iconCss};
-	right: 50px;
+const LoadingSpinner = styled.div`
+	${iconCss}
+	right: 16px;
 	font-size: 16px;
 	animation: spin 1s linear infinite;
-
+	
 	@keyframes spin {
-		from {
-			transform: translateY(-50%) rotate(0deg);
-		}
-		to {
-			transform: translateY(-50%) rotate(360deg);
-		}
+		from { transform: translateY(-50%) rotate(0deg); }
+		to { transform: translateY(-50%) rotate(360deg); }
 	}
 `;
 
@@ -297,14 +297,12 @@ const LoadingSpinner = styled.span`
 const SearchResults = styled.div`
 	position: absolute;
 	top: 100%;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 90%;
-	max-width: 580px;
-	background: white;
-	border: 1px solid #dfe1e5;
-	border-radius: 8px;
-	box-shadow: 0 4px 12px rgba(32, 33, 36, 0.28);
+	left: 0;
+	right: 0;
+	background: ${({ theme }) => theme.background.primary};
+	border: 1px solid ${({ theme }) => theme.border.primary};
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	max-height: 300px;
 	overflow-y: auto;
 	z-index: 1000;
@@ -313,17 +311,17 @@ const SearchResults = styled.div`
 
 const SearchResultItem = styled.div`
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	justify-content: space-between;
 	padding: 12px 16px;
 	cursor: pointer;
-	border-bottom: 1px solid #f1f3f4;
-	transition: background-color 0.2s;
-
+	border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+	transition: background-color 0.2s ease;
+	
 	&:hover {
-		background-color: #f8f9fa;
+		background-color: ${({ theme }) => theme.background.secondary};
 	}
-
+	
 	&:last-child {
 		border-bottom: none;
 	}
@@ -331,24 +329,26 @@ const SearchResultItem = styled.div`
 
 const KeywordName = styled.span`
 	font-size: 14px;
-	color: #202124;
+	color: ${({ theme }) => theme.text.primary};
 	font-weight: 500;
 `;
 
 const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
-	font-size: 12px;
+	background-color: ${(props) => (props.isSubscribed ? props.theme.background.tertiary : props.theme.background.secondary)};
+	color: ${(props) => (props.isSubscribed ? props.theme.success : props.theme.text.secondary)};
+	border: 1px solid ${(props) => 
+		props.isSubscribed ? props.theme.success : props.theme.border.secondary};
+	border-radius: 6px;
 	padding: 4px 8px;
-	border-radius: 12px;
-	background-color: ${(props) => (props.isSubscribed ? "#e8f5e8" : "#f1f3f4")};
-	color: ${(props) => (props.isSubscribed ? "#137333" : "#5f6368")};
+	font-size: 12px;
 	font-weight: 500;
-	border: none;
 	cursor: pointer;
-	transition: all 0.2s;
-
+	transition: all 0.2s ease;
+	
 	&:hover {
-		background-color: ${(props) =>
-			props.isSubscribed ? "#d4edda" : "#e9ecef"};
+		background-color: ${(props) => 
+			props.isSubscribed ? props.theme.success : props.theme.background.tertiary};
+		color: ${(props) => (props.isSubscribed ? props.theme.text.inverse : props.theme.text.primary)};
 	}
 `;
 
