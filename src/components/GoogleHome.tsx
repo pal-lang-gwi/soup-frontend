@@ -4,6 +4,7 @@ import { searchKeywords, subscribeKeywords, unsubscribeKeyword, requestKeyword }
 import { searchKeywordDto } from "../types/keyword";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { showSuccess, showError, showInfo } from "../utils/sweetAlert";
 
 export default function GoogleHome() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,7 +60,7 @@ export default function GoogleHome() {
 
   const handleKeywordClick = async (keyword: searchKeywordDto) => {
     if (!isAuthenticated) {
-      alert("로그인이 필요합니다.");
+      showInfo("로그인이 필요합니다.");
       return;
     }
 
@@ -70,10 +71,10 @@ export default function GoogleHome() {
 
       if (isActuallySubscribed) {
         await unsubscribeKeyword(keyword.id);
-        alert(`${keyword.name} 구독을 해지했습니다.`);
+        showSuccess(`${keyword.name} 구독을 해지했습니다.`);
       } else {
         await subscribeKeywords([keyword.name]);
-        alert(`${keyword.name} 구독을 시작했습니다.`);
+        showSuccess(`${keyword.name} 구독을 시작했습니다.`);
       }
 
       const refetch = await searchKeywords(searchTerm, 0, 10);
@@ -82,23 +83,23 @@ export default function GoogleHome() {
       navigate(`/news?keyword=${encodeURIComponent(keyword.name)}`);
     } catch (e) {
       console.error("구독/해제 실패", e);
-      alert("키워드 구독/구독해제에 실패했습니다.");
+      showError("키워드 구독/구독해제에 실패했습니다.");
     }
   };
 
   const handleAddKeyword = async (term: string) => {
     if (!isAuthenticated) {
-      alert("로그인이 필요합니다.");
+      showInfo("로그인이 필요합니다.");
       return;
     }
 
     try {
       await requestKeyword(term);
-      alert(`"${term}" 키워드 등록을 요청했습니다.`);
+      showSuccess(`"${term}" 키워드 등록을 요청했습니다.`);
       navigate(`/news?keyword=${encodeURIComponent(term)}`);
     } catch (e) {
       console.error("키워드 추가 실패", e);
-      alert("키워드 추가에 실패했습니다.");
+      showError("키워드 추가에 실패했습니다.");
     }
   };
 
