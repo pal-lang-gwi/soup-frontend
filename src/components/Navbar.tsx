@@ -119,7 +119,7 @@ export default Navbar;
 
 const Nav = styled.nav`
 	height: ${UI_CONSTANTS.MOBILE_NAVBAR_HEIGHT}px;
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: white;
 	display: flex;
 	position: fixed;
 	align-items: center;
