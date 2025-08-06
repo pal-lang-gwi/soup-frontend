@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +30,6 @@ const dummyKeywordData = {
 };
 
 const MyPage: React.FC = () => {
-  const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -72,7 +71,6 @@ const MyPage: React.FC = () => {
               <KeywordList>
                 {dummyKeywordData.myKeywordDtos.map((k) => (
                   <KeywordPill key={k.keywordId}>
-                    <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
                     {k.keyword}
                     <UnsubscribeButton
                       onClick={e => {
@@ -86,13 +84,6 @@ const MyPage: React.FC = () => {
                   </KeywordPill>
                 ))}
               </KeywordList>
-              <StyledPagination>
-                <PageButton disabled>이전</PageButton>
-                <PageInfo>
-                  {dummyKeywordData.currentPage + 1} / {dummyKeywordData.totalPages}
-                </PageInfo>
-                <PageButton disabled>다음</PageButton>
-              </StyledPagination>
             </KeywordContent>
           </CenteredSectionCard>
 
@@ -128,8 +119,8 @@ const MyPage: React.FC = () => {
     isError: keywordError,
     error: keywordErrorObj,
   } = useQuery({
-    queryKey: ["myKeywords", page],
-    queryFn: () => getMyKeywords(page),
+    queryKey: ["myKeywords"],
+    queryFn: () => getMyKeywords(),
   });
 
   // 로딩
@@ -175,7 +166,6 @@ const MyPage: React.FC = () => {
                     key={k.keywordId}
                     onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.keyword)}`)}
                   >
-                    <FaLeaf style={{ marginRight: 6, color: "#fff" }} />
                     {k.keyword}
                     <UnsubscribeButton
                       onClick={e => {
@@ -190,20 +180,6 @@ const MyPage: React.FC = () => {
                 ))}
               </KeywordList>
             )}
-            <StyledPagination>
-              <PageButton onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
-                이전
-              </PageButton>
-              <PageInfo>
-                {keywordData.currentPage + 1} / {keywordData.totalPages}
-              </PageInfo>
-              <PageButton
-                onClick={() => setPage((p) => Math.min(keywordData.totalPages - 1, p + 1))}
-                disabled={page === keywordData.totalPages - 1}
-              >
-                다음
-              </PageButton>
-            </StyledPagination>
           </KeywordContent>
         </CenteredSectionCard>
 
@@ -344,37 +320,6 @@ const NoKeywordMsg = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-const StyledPagination = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.2rem;
-  margin-top: 1.2rem;
-`;
-const PageButton = styled.button`
-  padding: 0.5rem 1.2rem;
-  background-color: ${({ theme }) => theme.mainGreen};
-  color: white;
-  border: none;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.08);
-  &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.buttonColor};
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-const PageInfo = styled.span`
-  font-size: 1rem;
-  color: #666;
-  font-weight: 500;
 `;
 
 // 스타일 추가
