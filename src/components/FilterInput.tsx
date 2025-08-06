@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { FaSearch } from 'react-icons/fa';
 
 interface FilterInputProps {
     onSearch: (keyword: string) => void;
     defaultValue?: string;
 }
 
-const FilterInput: React.FC<FilterInputProps> = ({ onSearch }) => {
-    const [keyword, setKeyword] = useState('');
+const FilterInput: React.FC<FilterInputProps> = ({ onSearch, defaultValue = '' }) => {
+    const [keyword, setKeyword] = useState(defaultValue);
 
     //엔터누르면 검색
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -15,84 +16,96 @@ const FilterInput: React.FC<FilterInputProps> = ({ onSearch }) => {
             onSearch(keyword);
         }
     };
-return (
-    <StyledWrapper>
-    <div className="InputContainer">
-        <input placeholder="키워드를 입력해주세요" id="input" className="input" name="text" type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} onClick={() => onSearch(keyword)} onKeyDown={handleKeyDown}/>
-        <label className="labelforsearch" onClick={() => onSearch(keyword)} htmlFor="input">
-        <svg className="searchIcon" viewBox="0 0 512 512">
-            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-        </svg>
-        </label>
-    </div>
-    </StyledWrapper>
-);
+
+    const handleSearch = () => {
+        onSearch(keyword);
+    };
+
+    return (
+        <StyledWrapper>
+            <InputContainer>
+                <SearchIcon>
+                    <FaSearch />
+                </SearchIcon>
+                <StyledInput 
+                    placeholder="키워드를 입력해주세요" 
+                    value={keyword} 
+                    onChange={(e) => setKeyword(e.target.value)} 
+                    onKeyDown={handleKeyDown}
+                />
+                <SearchButton onClick={handleSearch}>
+                    검색
+                </SearchButton>
+            </InputContainer>
+        </StyledWrapper>
+    );
 }
 
 const StyledWrapper = styled.div`
-.InputContainer {
-    height: 40px;
-    width: 150%;
+    width: 100%;
+`;
+
+const InputContainer = styled.div`
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    padding-left: 15px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.075);
-}
+    background: #fff;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(72, 187, 120, 0.04);
+    transition: all 0.2s ease;
+    
+    &:focus-within {
+        border-color: ${({ theme }) => theme.mainGreen};
+        box-shadow: 0 4px 16px rgba(72, 187, 120, 0.12);
+    }
+`;
 
-.input {
-    width: 100%;
-    height: 100%;
+const SearchIcon = styled.div`
+    color: ${({ theme }) => theme.mainGreen};
+    font-size: 1rem;
+    margin: 0 12px;
+    opacity: 0.7;
+`;
+
+const StyledInput = styled.input`
+    flex: 1;
     border: none;
     outline: none;
-    font-size: 0.9em;
-    caret-color: ${({theme}) => theme.mainGreen};
-}
+    font-size: 1rem;
+    padding: 12px 8px;
+    background: transparent;
+    color: #333;
+    
+    &::placeholder {
+        color: #aaa;
+    }
+    
+    &:focus {
+        outline: none;
+    }
+`;
 
-.labelforsearch {
-    cursor: pointer;
-    padding: 0px 12px;
-}
-
-.searchIcon {
-    cursor: pointer;
-    width: 13px;
-}
-
-.border {
-    height: 40%;
-    width: 1.3px;
-    background-color: rgb(223, 223, 223);
-}
-
-.micIcon {
-    width: 12px;
-}
-
-.micButton {
-    padding: 0px 15px 0px 12px;
+const SearchButton = styled.button`
+    background: ${({ theme }) => theme.mainGreen};
+    color: white;
     border: none;
-    background-color: transparent;
-    height: 40px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition-duration: 0.3s;
-}
-
-.searchIcon path {
-    fill: rgb(114, 114, 114);
-}
-
-.micIcon path {
-    fill: rgb(255, 81, 0);
-}
-
-.micButton:hover {
-    background-color: rgb(255, 230, 230);
-    transition-duration: 0.3s;
-}`;
+    transition: all 0.2s ease;
+    margin-right: 4px;
+    
+    &:hover {
+        background: ${({ theme }) => theme.mainColor};
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+`;
 
 export default FilterInput;
