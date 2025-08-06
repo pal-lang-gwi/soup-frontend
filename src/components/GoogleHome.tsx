@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import { searchKeywords, subscribeKeywords, unsubscribeKeyword } from "../api/keywords";
+import { searchKeywords, subscribeKeywords, unsubscribeKeyword, requestKeyword } from "../api/keywords";
 import { searchKeywordDto } from "../types/keyword";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -93,8 +93,8 @@ export default function GoogleHome() {
     }
 
     try {
-      await subscribeKeywords([term]);
-      alert(`"${term}" 키워드를 구독했습니다.`);
+      await requestKeyword(term);
+      alert(`"${term}" 키워드 등록을 요청했습니다.`);
       navigate(`/news?keyword=${encodeURIComponent(term)}`);
     } catch (e) {
       console.error("키워드 추가 실패", e);
