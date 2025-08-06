@@ -274,18 +274,38 @@ const MainWrapper = styled.main`
   gap: 36px;
   position: relative;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 12px;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
 `;
 
 const HeaderSection = styled.div`
   text-align: center;
   margin-bottom: 20px;
   animation: ${fadeInUp} 0.6s ease-out;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 12px;
+  }
 `;
 
 const HeaderTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 800;
-  color: ${({ theme }) => theme.text.inverse};
+  color: white;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -295,14 +315,27 @@ const HeaderTitle = styled.h1`
   
   .header-icon {
     font-size: 2rem;
-    color: ${({ theme }) => theme.icon.accent};
+    color: #ffd700;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
   
   @media (max-width: 768px) {
     font-size: 2rem;
+    gap: 12px;
+    margin-bottom: 10px;
+    
     .header-icon {
       font-size: 1.6rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+    gap: 10px;
+    margin-bottom: 8px;
+    
+    .header-icon {
+      font-size: 1.4rem;
     }
   }
 `;
@@ -312,6 +345,16 @@ const HeaderSubtitle = styled.p`
   color: rgba(255, 255, 255, 0.9);
   margin: 0 0 16px 0;
   font-weight: 400;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
 `;
 
 const StatsBadge = styled.div`
@@ -321,7 +364,7 @@ const StatsBadge = styled.div`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: ${({ theme }) => theme.text.inverse};
+  color: white;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -329,7 +372,25 @@ const StatsBadge = styled.div`
   
   .stats-icon {
     font-size: 0.8rem;
-    color: ${({ theme }) => theme.icon.accent};
+    color: #ffd700;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    
+    .stats-icon {
+      font-size: 0.7rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    
+    .stats-icon {
+      font-size: 0.65rem;
+    }
   }
 `;
 
@@ -345,8 +406,16 @@ const ContentCard = styled.section`
   gap: 32px;
   animation: ${fadeInUp} 0.8s ease-out 0.2s both;
   
-  @media (max-width: 600px) {
-    padding: 24px 16px;
+  @media (max-width: 768px) {
+    padding: 24px 20px 20px 20px;
+    gap: 24px;
+    border-radius: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 16px 16px 16px;
+    gap: 20px;
+    border-radius: 16px;
   }
 `;
 
@@ -355,31 +424,67 @@ const FilterSection = styled.div`
   flex-direction: column;
   gap: 16px;
   padding-bottom: 24px;
-  border-bottom: 2px solid ${({ theme }) => theme.border.primary};
+  border-bottom: 2px solid #f0f0f0;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 10px;
+    padding-bottom: 16px;
+  }
 `;
 
 const FilterLabel = styled.label`
   font-size: 1.2rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.text.primary};
+  color: #333;
   display: flex;
   align-items: center;
   gap: 10px;
   
   .filter-icon {
     font-size: 1.1rem;
-    color: ${({ theme }) => theme.icon.primary};
+    color: ${({ theme }) => theme.mainGreen};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    gap: 8px;
+    
+    .filter-icon {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    gap: 6px;
+    
+    .filter-icon {
+      font-size: 0.9rem;
+    }
   }
 `;
 
 const NewsSection = styled.div`
   flex: 1;
   min-height: 400px;
+  
+  @media (max-width: 768px) {
+    min-height: 300px;
+  }
+  
+  @media (max-width: 480px) {
+    min-height: 250px;
+  }
 `;
 
 const NoDataMessage = styled.div`
   text-align: center;
-  color: ${({ theme }) => theme.text.secondary};
+  color: #666;
   padding: 80px 20px;
   display: flex;
   flex-direction: column;
@@ -389,7 +494,7 @@ const NoDataMessage = styled.div`
   .no-data-icon-wrapper {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, ${({ theme }) => theme.skeleton.primary}, ${({ theme }) => theme.skeleton.secondary});
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -399,21 +504,65 @@ const NoDataMessage = styled.div`
   
   .no-data-icon {
     font-size: 2.5rem;
-    color: ${({ theme }) => theme.text.muted};
+    color: #ccc;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 60px 16px;
+    gap: 12px;
+    
+    .no-data-icon-wrapper {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .no-data-icon {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 40px 12px;
+    gap: 10px;
+    
+    .no-data-icon-wrapper {
+      width: 50px;
+      height: 50px;
+    }
+    
+    .no-data-icon {
+      font-size: 1.8rem;
+    }
   }
 `;
 
 const NoDataTitle = styled.h3`
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${({ theme }) => theme.text.primary};
+  color: #333;
   margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const NoDataSubtext = styled.p`
   font-size: 1rem;
-  color: ${({ theme }) => theme.text.tertiary};
+  color: #888;
   margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const NewsCardGrid = styled.div`
@@ -425,6 +574,10 @@ const NewsCardGrid = styled.div`
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
 `;
 
 const PaginationSection = styled.div`
@@ -433,7 +586,17 @@ const PaginationSection = styled.div`
   align-items: center;
   gap: 20px;
   padding-top: 32px;
-  border-top: 2px solid ${({ theme }) => theme.border.primary};
+  border-top: 2px solid #f0f0f0;
+  
+  @media (max-width: 768px) {
+    gap: 16px;
+    padding-top: 24px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    padding-top: 20px;
+  }
 `;
 
 const PaginationButton = styled.button`
@@ -464,6 +627,18 @@ const PaginationButton = styled.button`
     transform: none;
     box-shadow: none;
   }
+  
+  @media (max-width: 768px) {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    gap: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    gap: 4px;
+  }
 `;
 
 const PageInfo = styled.div`
@@ -471,23 +646,43 @@ const PageInfo = styled.div`
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text.primary};
+  color: #333;
   font-size: 1.1rem;
   min-width: 80px;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    min-width: 70px;
+    gap: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    min-width: 60px;
+    gap: 4px;
+  }
 `;
 
 const PageNumber = styled.span`
   color: ${({ theme }) => theme.icon.primary};
   font-size: 1.2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 const PageDivider = styled.span`
-  color: ${({ theme }) => theme.text.muted};
+  color: #ccc;
 `;
 
 const TotalPages = styled.span`
-  color: ${({ theme }) => theme.text.secondary};
+  color: #666;
 `;
 
 // 스켈레톤 스타일

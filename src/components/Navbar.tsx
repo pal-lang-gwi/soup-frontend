@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import LoginForm from "../components/LoginForm";
-import Logo from "./Logo";
 import SendButton from "./SendButton";
 import { UI_CONSTANTS } from "../constants/ui";
 import { useAuth } from "../contexts/AuthContext";
@@ -101,9 +100,7 @@ const Navbar = () => {
 				</MobileButtonWrapper>
 			</MobileMenu>
 
-			{/* 모바일 메뉴 오버레이 */}
-			<MobileOverlay $isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
-
+			{/* 로그인 모달 */}
 			{isModalOpen && (
 				<ModalOverlay onClick={closeModal}>
 					<ModalContent onClick={(e) => e.stopPropagation()}>
@@ -118,30 +115,54 @@ const Navbar = () => {
 export default Navbar;
 
 const Nav = styled.nav`
-	height: ${UI_CONSTANTS.MOBILE_NAVBAR_HEIGHT}px;
-	background-color: white;
-	display: flex;
 	position: fixed;
-	align-items: center;
-	top: 0px;
-	width: 100%;
-	padding: 0 2rem;
-	box-sizing: border-box;
-	z-index: ${UI_CONSTANTS.Z_INDEX.NAVBAR};
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	top: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	padding: 0 24px;
+	
+	@media (max-width: 768px) {
+		padding: 0 16px;
+	}
+	
+	@media (max-width: 480px) {
+		padding: 0 12px;
+	}
 `;
 
 const NavContainer = styled.div`
-	display: flex;
-	align-items: center;
-	width: 100%;
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 0 20px;
-	box-sizing: border-box;
-
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 80px;
+	
 	@media (max-width: 768px) {
-		padding: 0 16px;
+		height: 60px;
+	}
+	
+	@media (max-width: 480px) {
+		height: 50px;
+	}
+`;
+
+const Logo = styled.div`
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: ${({ theme }) => theme.mainGreen};
+	cursor: pointer;
+	
+	@media (max-width: 768px) {
+		font-size: 1.3rem;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 1.2rem;
 	}
 `;
 
@@ -164,9 +185,34 @@ const NavLink = styled.button`
 	cursor: pointer;
 	padding: 8px 12px;
 	transition: background-color 0.2s ease;
-
+	position: relative;
+	
 	&:hover {
 		color: ${({ theme }) => theme.mainGreen};
+	}
+	
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: ${({ theme }) => theme.mainGreen};
+		transform: scaleX(0);
+		transition: transform 0.3s ease;
+	}
+	
+	&:hover::after {
+		transform: scaleX(1);
+	}
+	
+	@media (max-width: 768px) {
+		font-size: 0.9rem;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 0.85rem;
 	}
 `;
 
@@ -180,6 +226,26 @@ const ButtonStyle = styled.div`
 
 	@media (max-width: 768px) {
 		display: none;
+	}
+`;
+
+const LogoutButton = styled.button`
+	background-color: ${({ theme }) => theme.mainGreen};
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.buttonColor};
+	}
+
+	@media (max-width: ${UI_CONSTANTS.BREAKPOINTS.MOBILE}px) {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.8rem;
 	}
 `;
 
@@ -226,43 +292,18 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean }>`
 	}
 `;
 
-const MobileOverlay = styled.div<{ $isOpen: boolean }>`
+const MobileMenu = styled.div<{ $isOpen: boolean }>`
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.5);
-	z-index: 998;
-	opacity: ${(props) => (props.$isOpen ? "1" : "0")};
-	visibility: ${(props) => (props.$isOpen ? "visible" : "hidden")};
-	transition: all 0.3s ease;
-
-	@media (min-width: 769px) {
-		display: none;
-	}
-`;
-
-const MobileMenu = styled.div<{ $isOpen: boolean }>`
-	position: fixed;
-	top: 0;
-	right: ${(props) => (props.$isOpen ? "0" : "-100%")};
-	width: 280px;
-	height: 100vh;
-	background: rgba(255, 255, 255, 0.18);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
-	border-left: 1.5px solid rgba(255, 255, 255, 0.25);
-	box-shadow: -2px 0 10px rgba(0, 0, 0, 0.08);
+	background-color: white;
+	z-index: 1001;
+	transform: ${(props) => (props.$isOpen ? "translateX(0)" : "translateX(100%)")};
+	transition: transform 0.3s ease-in-out;
 	display: flex;
 	flex-direction: column;
-	box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-	transition: right 0.3s ease;
-	z-index: 999;
-
-	@media (min-width: 769px) {
-		display: none;
-	}
 `;
 
 const MobileMenuHeader = styled.div`
@@ -274,37 +315,34 @@ const MobileMenuHeader = styled.div`
 `;
 
 const MobileLogo = styled.div`
-	display: flex;
-	align-items: center;
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: ${({ theme }) => theme.mainGreen};
 `;
 
 const MobileCloseButton = styled.button`
 	background: none;
 	border: none;
-	font-size: 24px;
-	color: #666;
+	font-size: 2rem;
 	cursor: pointer;
+	color: #666;
 	padding: 0;
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	transition: all 0.2s ease;
+	transition: background-color 0.2s ease;
 
 	&:hover {
 		background-color: #f5f5f5;
-		color: #333;
 	}
 `;
 
 const MobileNavLinks = styled.div`
 	flex: 1;
 	padding: 20px 0;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
 `;
 
 const MobileNavLink = styled.button`
@@ -319,6 +357,7 @@ const MobileNavLink = styled.button`
 	display: flex;
 	align-items: center;
 	gap: 12px;
+	width: 100%;
 
 	span:first-child {
 		font-size: 1.2rem;
@@ -370,26 +409,6 @@ const ModalContent = styled.div`
 	max-width: 60vw;
 	max-height: 80vh;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-`;
-
-const LogoutButton = styled.button`
-	background-color: ${({ theme }) => theme.mainGreen};
-	color: white;
-	border: none;
-	padding: 0.5rem 1rem;
-	border-radius: 6px;
-	cursor: pointer;
-	font-size: 0.9rem;
-	transition: background-color 0.2s;
-
-	&:hover {
-		background-color: ${({ theme }) => theme.buttonColor};
-	}
-
-	@media (max-width: ${UI_CONSTANTS.BREAKPOINTS.MOBILE}px) {
-		padding: 0.4rem 0.8rem;
-		font-size: 0.8rem;
-	}
 `;
 
 const MobileLogoutButton = styled.button`

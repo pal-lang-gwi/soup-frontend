@@ -208,6 +208,14 @@ const PageBackground = styled.div`
   min-height: 100vh;
   background: ${({ theme }) => theme.background.gradient.secondary};
   padding-top: 80px;
+  
+  @media (max-width: 768px) {
+    padding-top: 60px;
+  }
+  
+  @media (max-width: 480px) {
+    padding-top: 50px;
+  }
 `;
 
 const MainWrapper = styled.main`
@@ -217,6 +225,18 @@ const MainWrapper = styled.main`
   display: flex;
   flex-direction: column;
   gap: 36px;
+  
+  @media (max-width: 768px) {
+    padding: 0 12px;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SectionCard = styled.section`
@@ -228,8 +248,16 @@ const SectionCard = styled.section`
   flex-direction: column;
   gap: 24px;
   
-  @media (max-width: 600px) {
-    padding: 24px 16px;
+  @media (max-width: 768px) {
+    padding: 24px 20px 20px 20px;
+    gap: 20px;
+    border-radius: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 16px 16px 16px;
+    gap: 16px;
+    border-radius: 14px;
   }
 `;
 
@@ -243,6 +271,16 @@ const SectionTitle = styled.h1`
   color: ${({ theme }) => theme.mainColor};
   margin-bottom: 10px;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
 `;
 
 const SectionSubtitle = styled.h2`
@@ -250,12 +288,30 @@ const SectionSubtitle = styled.h2`
   font-weight: 600;
   color: ${({ theme }) => theme.mainGreen};
   margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
 `;
 
 const InfoList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
 `;
 
 const InfoRow = styled.div`
@@ -271,23 +327,67 @@ const InfoRow = styled.div`
     color: ${({ theme }) => theme.mainGreen};
     font-size: 1.2rem;
   }
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+    padding: 12px;
+    
+    .icon {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+    padding: 10px;
+    
+    .icon {
+      font-size: 1rem;
+    }
+  }
 `;
 
 const Label = styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text.primary};
   min-width: 80px;
+  
+  @media (max-width: 768px) {
+    min-width: 70px;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 60px;
+    font-size: 0.85rem;
+  }
 `;
 
 const Value = styled.span`
   color: ${({ theme }) => theme.text.secondary};
   flex: 1;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const KeywordContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
 `;
 
 const KeywordList = styled.div`
@@ -295,6 +395,14 @@ const KeywordList = styled.div`
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 `;
 
 const KeywordPill = styled.div`
@@ -313,6 +421,18 @@ const KeywordPill = styled.div`
   &:hover {
     background: ${({ theme }) => theme.background.secondary};
     transform: translateY(-1px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    gap: 4px;
   }
 `;
 
@@ -334,6 +454,18 @@ const UnsubscribeButton = styled.button`
     background: ${({ theme }) => theme.error};
     transform: scale(1.1);
   }
+  
+  @media (max-width: 768px) {
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+  }
 `;
 
 const NoKeywordMsg = styled.div`
@@ -341,4 +473,14 @@ const NoKeywordMsg = styled.div`
   font-size: 0.9rem;
   text-align: center;
   margin-top: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    margin-top: 0.6rem;
+  }
 `;

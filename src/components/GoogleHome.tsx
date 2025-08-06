@@ -192,6 +192,11 @@ const Root = styled.div`
 	justify-content: center;
 	min-height: 100vh;
 	font-family: "Roboto", "Noto Sans KR", sans-serif;
+	padding: 0 16px;
+	
+	@media (max-width: 768px) {
+		padding: 0 12px;
+	}
 `;
 
 const MainCopy = styled.p`
@@ -199,6 +204,15 @@ const MainCopy = styled.p`
 	color: ${({ theme }) => theme.text.primary};
 	text-align: center;
 	margin-bottom: 10px;
+	
+	@media (max-width: 768px) {
+		font-size: 18px;
+		margin-bottom: 8px;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 16px;
+	}
 `;
 
 const SubCopy = styled.p`
@@ -206,6 +220,16 @@ const SubCopy = styled.p`
 	color: ${({ theme }) => theme.text.secondary};
 	text-align: center;
 	margin-bottom: 40px;
+	
+	@media (max-width: 768px) {
+		font-size: 14px;
+		margin-bottom: 30px;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 13px;
+		margin-bottom: 25px;
+	}
 `;
 
 const SearchContainer = styled.div`
@@ -215,6 +239,10 @@ const SearchContainer = styled.div`
 	align-items: center;
 	width: 100%;
 	max-width: 580px;
+	
+	@media (max-width: 768px) {
+		max-width: 100%;
+	}
 `;
 
 const Form = styled.form`
@@ -244,6 +272,16 @@ const InputWrapper = styled.div`
 	&:focus-within {
 		border-color: ${({ theme }) => theme.icon.primary};
 	}
+	
+	@media (max-width: 768px) {
+		height: 40px;
+		padding: 0 12px;
+	}
+	
+	@media (max-width: 480px) {
+		height: 38px;
+		padding: 0 10px;
+	}
 `;
 
 const SearchInput = styled.input`
@@ -261,6 +299,16 @@ const SearchInput = styled.input`
 	&::placeholder {
 		color: ${({ theme }) => theme.text.muted};
 	}
+	
+	@media (max-width: 768px) {
+		font-size: 15px;
+		padding-left: 36px;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 14px;
+		padding-left: 32px;
+	}
 `;
 
 const iconCss = css`
@@ -276,6 +324,18 @@ const SvgGlass = styled.svg`
 	width: 20px;
 	height: 20px;
 	fill: ${({ theme }) => theme.text.muted};
+	
+	@media (max-width: 768px) {
+		left: 14px;
+		width: 18px;
+		height: 18px;
+	}
+	
+	@media (max-width: 480px) {
+		left: 12px;
+		width: 16px;
+		height: 16px;
+	}
 `;
 
 const LoadingSpinner = styled.div`
@@ -287,6 +347,16 @@ const LoadingSpinner = styled.div`
 	@keyframes spin {
 		from { transform: translateY(-50%) rotate(0deg); }
 		to { transform: translateY(-50%) rotate(360deg); }
+	}
+	
+	@media (max-width: 768px) {
+		right: 14px;
+		font-size: 14px;
+	}
+	
+	@media (max-width: 480px) {
+		right: 12px;
+		font-size: 12px;
 	}
 `;
 
@@ -305,6 +375,16 @@ const SearchResults = styled.div`
 	z-index: 1000;
 	margin-top: 8px;
 	width: 100%;
+	
+	@media (max-width: 768px) {
+		max-height: 250px;
+		margin-top: 6px;
+	}
+	
+	@media (max-width: 480px) {
+		max-height: 200px;
+		margin-top: 4px;
+	}
 `;
 
 const SearchResultItem = styled.div`
@@ -323,12 +403,28 @@ const SearchResultItem = styled.div`
 	&:last-child {
 		border-bottom: none;
 	}
+	
+	@media (max-width: 768px) {
+		padding: 10px 14px;
+	}
+	
+	@media (max-width: 480px) {
+		padding: 8px 12px;
+	}
 `;
 
 const KeywordName = styled.span`
 	font-size: 14px;
 	color: ${({ theme }) => theme.text.primary};
 	font-weight: 500;
+	
+	@media (max-width: 768px) {
+		font-size: 13px;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 12px;
+	}
 `;
 
 const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
@@ -348,18 +444,48 @@ const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
 			props.isSubscribed ? props.theme.success : props.theme.background.tertiary};
 		color: ${(props) => (props.isSubscribed ? props.theme.text.inverse : props.theme.text.primary)};
 	}
+	
+	@media (max-width: 768px) {
+		padding: 3px 6px;
+		font-size: 11px;
+	}
+	
+	@media (max-width: 480px) {
+		padding: 2px 5px;
+		font-size: 10px;
+	}
 `;
 
 const LoadingItem = styled.div`
 	padding: 12px 16px;
 	color: ${({ theme }) => theme.text.secondary};
 	font-size: 14px;
+	
+	@media (max-width: 768px) {
+		padding: 10px 14px;
+		font-size: 13px;
+	}
+	
+	@media (max-width: 480px) {
+		padding: 8px 12px;
+		font-size: 12px;
+	}
 `;
 
 const AddIcon = styled.span`
 	margin-left: 8px;
 	font-size: 16px;
 	color: ${({ theme }) => theme.icon.primary};
+	
+	@media (max-width: 768px) {
+		margin-left: 6px;
+		font-size: 14px;
+	}
+	
+	@media (max-width: 480px) {
+		margin-left: 4px;
+		font-size: 12px;
+	}
 `;
 
 /* ── 푸터 ────────────────────────────── */
@@ -371,4 +497,14 @@ const Footer = styled.footer`
 	color: ${({ theme }) => theme.text.tertiary};
 	font-size: 14px;
 	text-align: center;
+	
+	@media (max-width: 768px) {
+		bottom: 15px;
+		font-size: 12px;
+	}
+	
+	@media (max-width: 480px) {
+		bottom: 10px;
+		font-size: 11px;
+	}
 `;

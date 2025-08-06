@@ -119,6 +119,14 @@ const NewsCard = styled.div`
   }
   
   animation: ${fadeIn} 0.4s ease-out;
+  
+  @media (max-width: 768px) {
+    border-radius: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    border-radius: 14px;
+  }
 `;
 
 const CardHeader = styled.div`
@@ -151,6 +159,14 @@ const CardHeader = styled.div`
   &:hover::after {
     opacity: 1;
   }
+  
+  @media (max-width: 768px) {
+    padding: 20px 24px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px 20px;
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -158,6 +174,14 @@ const HeaderContent = styled.div`
   flex-direction: column;
   gap: 12px;
   flex: 1;
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 `;
 
 const KeywordBadge = styled.span`
@@ -182,6 +206,26 @@ const KeywordBadge = styled.span`
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
   }
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    gap: 4px;
+    
+    .badge-icon {
+      font-size: 0.75rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    gap: 3px;
+    
+    .badge-icon {
+      font-size: 0.7rem;
+    }
+  }
 `;
 
 const DateText = styled.span`
@@ -195,6 +239,24 @@ const DateText = styled.span`
   .date-icon {
     font-size: 0.8rem;
     color: ${({ theme }) => theme.mainGreen};
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    gap: 4px;
+    
+    .date-icon {
+      font-size: 0.75rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    gap: 3px;
+    
+    .date-icon {
+      font-size: 0.7rem;
+    }
   }
 `;
 
@@ -219,6 +281,18 @@ const ExpandIcon = styled.div<{ isOpen: boolean }>`
     transform: rotate(180deg);
     background: rgba(72, 187, 120, 0.2);
   `}
+  
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
 `;
 
 const CardContent = styled.div`
@@ -228,12 +302,30 @@ const CardContent = styled.div`
   gap: 28px;
   animation: ${slideDown} 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  
+  @media (max-width: 768px) {
+    padding: 24px;
+    gap: 24px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px;
+    gap: 20px;
+  }
 `;
 
 const SummarySection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  
+  @media (max-width: 768px) {
+    gap: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
 `;
 
 const SummaryTitle = styled.h3`
@@ -247,6 +339,24 @@ const SummaryTitle = styled.h3`
   
   .summary-icon {
     font-size: 1.1rem;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    gap: 8px;
+    
+    .summary-icon {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    gap: 6px;
+    
+    .summary-icon {
+      font-size: 0.9rem;
+    }
   }
 `;
 
@@ -273,12 +383,32 @@ const SummaryText = styled.p`
     border-radius: 16px;
     pointer-events: none;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 0.95rem;
+    padding: 16px;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    padding: 14px;
+    line-height: 1.5;
+  }
 `;
 
 const ArticlesSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 14px;
+  }
 `;
 
 const ArticlesTitle = styled.h4`
@@ -297,6 +427,24 @@ const ArticlesTitle = styled.h4`
     background: linear-gradient(135deg, ${({ theme }) => theme.mainGreen}, #4ade80);
     border-radius: 2px;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    gap: 6px;
+    
+    &::before {
+      height: 18px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    gap: 4px;
+    
+    &::before {
+      height: 16px;
+    }
+  }
 `;
 
 const ArticlesList = styled.ul`
@@ -306,6 +454,14 @@ const ArticlesList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 `;
 
 const ArticleItem = styled.li`
@@ -347,6 +503,14 @@ const ArticleLink = styled.a`
       left: 100%;
     }
   }
+  
+  @media (max-width: 768px) {
+    padding: 14px 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px 14px;
+  }
 `;
 
 const ArticleTitle = styled.span`
@@ -355,6 +519,14 @@ const ArticleTitle = styled.span`
   line-height: 1.5;
   flex: 1;
   color: #2d3748;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const ExternalLinkIcon = styled.span`
@@ -367,5 +539,15 @@ const ExternalLinkIcon = styled.span`
   ${ArticleLink}:hover & {
     opacity: 1;
     transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-left: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    margin-left: 8px;
   }
 `;
