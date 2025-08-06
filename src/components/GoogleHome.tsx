@@ -116,6 +116,14 @@ export default function GoogleHome() {
         <span className="g">P</span>
       </Logo>
 
+      <MainCopy>
+        관심 키워드로 나만의 뉴스 큐레이션을 만들어보세요
+      </MainCopy>
+      
+      <SubCopy>
+        구독한 키워드의 핫한 뉴스를 놓치지 마세요
+      </SubCopy>
+
       <SearchContainer className="search-container">
         <Form onSubmit={handleSubmit}>
           <InputWrapper>
@@ -165,7 +173,7 @@ export default function GoogleHome() {
         )}
       </SearchContainer>
 
-      <Footer>대한민국</Footer>
+      <Footer>SOUP - 나만의 뉴스 큐레이션</Footer>
     </Root>
   );
 }
@@ -199,6 +207,19 @@ const Logo = styled.h1`
 	.o2 {
 		color: #f4b400;
 	}
+`;
+
+const MainCopy = styled.p`
+	font-size: 20px;
+	color: #3c4043;
+	text-align: center;
+	margin-bottom: 10px;
+`;
+
+const SubCopy = styled.p`
+	font-size: 16px;
+	color: #5f6368;
+	text-align: center;
 `;
 
 const SearchContainer = styled.div`
