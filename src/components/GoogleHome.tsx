@@ -110,13 +110,6 @@ export default function GoogleHome() {
 
   return (
     <Root>
-      <Logo>
-        <span className="g">S</span>
-        <span className="o1">O</span>
-        <span className="o2">U</span>
-        <span className="g">P</span>
-      </Logo>
-
       <MainCopy>
         관심 키워드로 나만의 뉴스 큐레이션을 만들어보세요
       </MainCopy>
