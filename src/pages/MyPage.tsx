@@ -7,7 +7,7 @@ import { unsubscribeKeyword } from "../api/keywords";
 import { useQueryClient } from "@tanstack/react-query";
 import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { showSuccess, showError, showInfo } from "../utils/sweetAlert";
+import { showError, showInfo, showKeywordUnsubscribed } from "../utils/sweetAlert";
 
 // 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
 const USE_DUMMY = false;
@@ -37,15 +37,15 @@ const MyPage: React.FC = () => {
   // 구독 해지 핸들러 (더미/실제 모두 대응)
   const handleUnsubscribe = async (keywordId: number) => {
     if (USE_DUMMY) {
-      showInfo(`ID: ${keywordId} 키워드 구독을 해지합니다.`);
+      showInfo(`ID: ${keywordId} 키워드 구독을 해지할게요! 👋`);
       return;
     }
     try {
       await unsubscribeKeyword(keywordId);
-      showSuccess("구독 해지 완료");
+      showKeywordUnsubscribed("키워드"); // 실제로는 키워드 이름을 가져와야 함
       queryClient.invalidateQueries({ queryKey: ["myKeywords"] });
     } catch (e: any) {
-      showError(e.message || "구독 해지 실패");
+      showError(e.message || "구독 해지에 실패했어요. 다시 시도해주세요! 😅");
     }
   };
 

@@ -4,7 +4,14 @@ import { searchKeywords, subscribeKeywords, unsubscribeKeyword, requestKeyword }
 import { searchKeywordDto } from "../types/keyword";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { showSuccess, showError, showInfo } from "../utils/sweetAlert";
+import { 
+  showError, 
+  showLoginRequired,
+  showKeywordSubscribed,
+  showKeywordUnsubscribed,
+  showKeywordRequested,
+  showNoKeywordResults
+} from "../utils/sweetAlert";
 
 export default function GoogleHome() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,10 +34,16 @@ export default function GoogleHome() {
             console.log(response.data.data.keywords);
             setSearchResults(response.data.data.keywords);
             setShowResults(true);
+            
+            // 검색 결과가 없을 때
+            if (response.data.data.keywords.length === 0) {
+              showNoKeywordResults(term);
+            }
           }
         } catch (e) {
           console.error("검색 실패", e);
           setSearchResults([]);
+          showNoKeywordResults(term);
         } finally {
           setIsSearching(false);
         }
@@ -60,7 +73,7 @@ export default function GoogleHome() {
 
   const handleKeywordClick = async (keyword: searchKeywordDto) => {
     if (!isAuthenticated) {
-      showInfo("로그인이 필요합니다.");
+      showLoginRequired();
       return;
     }
 
@@ -71,10 +84,10 @@ export default function GoogleHome() {
 
       if (isActuallySubscribed) {
         await unsubscribeKeyword(keyword.id);
-        showSuccess(`${keyword.name} 구독을 해지했습니다.`);
+        showKeywordUnsubscribed(keyword.name);
       } else {
         await subscribeKeywords([keyword.name]);
-        showSuccess(`${keyword.name} 구독을 시작했습니다.`);
+        showKeywordSubscribed(keyword.name);
       }
 
       const refetch = await searchKeywords(searchTerm, 0, 10);
@@ -83,23 +96,23 @@ export default function GoogleHome() {
       navigate(`/news?keyword=${encodeURIComponent(keyword.name)}`);
     } catch (e) {
       console.error("구독/해제 실패", e);
-      showError("키워드 구독/구독해제에 실패했습니다.");
+      showError("키워드 구독 설정에 실패했어요. 다시 시도해주세요! 😅");
     }
   };
 
   const handleAddKeyword = async (term: string) => {
     if (!isAuthenticated) {
-      showInfo("로그인이 필요합니다.");
+      showLoginRequired();
       return;
     }
 
     try {
       await requestKeyword(term);
-      showSuccess(`"${term}" 키워드 등록을 요청했습니다.`);
+      showKeywordRequested(term);
       navigate(`/news?keyword=${encodeURIComponent(term)}`);
     } catch (e) {
       console.error("키워드 추가 실패", e);
-      showError("키워드 추가에 실패했습니다.");
+      showError("키워드 등록 요청에 실패했어요. 다시 시도해주세요! 😅");
     }
   };
 
@@ -183,27 +196,6 @@ const Root = styled.div`
 	align-items: center;
 	min-height: 100vh;
 	font-family: "Roboto", "Noto Sans KR", sans-serif;
-`;
-
-const Logo = styled.h1`
-	font-size: 92px;
-	margin-top: 15vh;
-	margin-bottom: 40px;
-	font-weight: 600;
-	line-height: 1;
-
-	span {
-		user-select: none;
-	}
-	.g {
-		color: #4285f4;
-	}
-	.o1 {
-		color: #db4437;
-	}
-	.o2 {
-		color: #f4b400;
-	}
 `;
 
 const MainCopy = styled.p`

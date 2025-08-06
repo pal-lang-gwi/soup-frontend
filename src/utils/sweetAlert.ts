@@ -27,9 +27,9 @@ const commonStyle = {
 export const showSuccess = (message: string) => {
   Swal.fire({
     icon: 'success',
-    title: '성공!',
+    title: '🎉 완료되었어요!',
     text: message,
-    confirmButtonText: '확인',
+    confirmButtonText: '좋아요',
     confirmButtonColor: '#48BB78',
     background: '#ffffff',
     ...commonStyle,
@@ -43,9 +43,9 @@ export const showSuccess = (message: string) => {
 export const showError = (message: string) => {
   Swal.fire({
     icon: 'error',
-    title: '오류 발생',
+    title: '😅 잠깐만요!',
     text: message,
-    confirmButtonText: '확인',
+    confirmButtonText: '알겠어요',
     confirmButtonColor: '#E53E3E',
     background: '#ffffff',
     ...commonStyle,
@@ -57,9 +57,9 @@ export const showError = (message: string) => {
 export const showWarning = (message: string) => {
   Swal.fire({
     icon: 'warning',
-    title: '주의',
+    title: '⚠️ 주의해주세요',
     text: message,
-    confirmButtonText: '확인',
+    confirmButtonText: '알겠어요',
     confirmButtonColor: '#ED8936',
     background: '#ffffff',
     ...commonStyle,
@@ -71,9 +71,9 @@ export const showWarning = (message: string) => {
 export const showInfo = (message: string) => {
   Swal.fire({
     icon: 'info',
-    title: '알림',
+    title: '💡 안내드려요',
     text: message,
-    confirmButtonText: '확인',
+    confirmButtonText: '알겠어요',
     confirmButtonColor: '#4299E1',
     background: '#ffffff',
     ...commonStyle,
@@ -86,25 +86,25 @@ export const showInfo = (message: string) => {
 // 확인 다이얼로그
 export const showConfirm = (message: string): Promise<boolean> => {
   return Swal.fire({
-    title: '확인',
+    title: '🤔 확인해주세요',
     text: message,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonText: '확인',
-    cancelButtonText: '취소',
+    confirmButtonText: '네, 할게요',
+    cancelButtonText: '아니요, 취소할게요',
     confirmButtonColor: '#48BB78',
     cancelButtonColor: '#A0AEC0',
     background: '#ffffff',
     ...commonStyle,
     iconColor: '#48BB78',
     reverseButtons: true,
-  }).then((result) => {
+  }).then((result: any) => {
     return result.isConfirmed;
   });
 };
 
 // 로딩 표시
-export const showLoading = (message: string = '처리 중...') => {
+export const showLoading = (message: string = '잠시만 기다려주세요...') => {
   Swal.fire({
     title: message,
     allowOutsideClick: false,
@@ -119,6 +119,260 @@ export const showLoading = (message: string = '처리 중...') => {
 // 로딩 닫기
 export const closeLoading = () => {
   Swal.close();
+};
+
+// 로그인 필요 알림
+export const showLoginRequired = () => {
+  Swal.fire({
+    icon: 'info',
+    title: '🔐 로그인이 필요해요!',
+    text: '이 기능을 이용하려면 로그인해주세요.',
+    confirmButtonText: '로그인하러 가기',
+    confirmButtonColor: '#4299E1',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#4299E1',
+  });
+};
+
+// 네트워크 오류 알림
+export const showNetworkError = () => {
+  Swal.fire({
+    icon: 'error',
+    title: '📡 연결에 실패했어요!',
+    text: '인터넷 연결을 확인하고 다시 시도해주세요.',
+    confirmButtonText: '다시 시도',
+    confirmButtonColor: '#E53E3E',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#E53E3E',
+  });
+};
+
+// 데이터 없음 알림
+export const showNoData = (message: string = '데이터가 없어요!') => {
+  Swal.fire({
+    icon: 'info',
+    title: '📭 아직 없어요!',
+    text: message,
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#A0AEC0',
+  });
+};
+
+// 저장 완료 알림
+export const showSaved = (message: string = '저장되었어요!') => {
+  Swal.fire({
+    icon: 'success',
+    title: '💾 저장 완료!',
+    text: message,
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 2000,
+    timerProgressBar: true,
+  });
+};
+
+// 삭제 확인 다이얼로그
+export const showDeleteConfirm = (itemName: string): Promise<boolean> => {
+  return Swal.fire({
+    title: '🗑️ 정말 삭제할까요?',
+    text: `"${itemName}"을(를) 삭제하면 되돌릴 수 없어요.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: '네, 삭제할게요',
+    cancelButtonText: '아니요, 취소할게요',
+    confirmButtonColor: '#E53E3E',
+    cancelButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#ED8936',
+    reverseButtons: true,
+  }).then((result: any) => {
+    return result.isConfirmed;
+  });
+};
+
+// 뉴스 큐레이션 서비스 특화 메시지들
+
+// 키워드 구독 시작
+export const showKeywordSubscribed = (keywordName: string) => {
+  Swal.fire({
+    icon: 'success',
+    title: '📰 뉴스 구독 시작!',
+    text: `"${keywordName}" 관련 뉴스를 받아보실 수 있어요!`,
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 3000,
+    timerProgressBar: true,
+  });
+};
+
+// 키워드 구독 해지
+export const showKeywordUnsubscribed = (keywordName: string) => {
+  Swal.fire({
+    icon: 'info',
+    title: '👋 구독 해지 완료',
+    text: `"${keywordName}" 뉴스 알림을 더 이상 받지 않아요.`,
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#A0AEC0',
+    timer: 2500,
+    timerProgressBar: true,
+  });
+};
+
+// 키워드 등록 요청
+export const showKeywordRequested = (keywordName: string) => {
+  Swal.fire({
+    icon: 'success',
+    title: '📝 키워드 등록 요청!',
+    text: `"${keywordName}" 키워드 등록을 요청했어요. 검토 후 추가될 예정이에요!`,
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 4000,
+    timerProgressBar: true,
+  });
+};
+
+// 뉴스 없음
+export const showNoNews = (keywordName?: string) => {
+  const message = keywordName 
+    ? `"${keywordName}" 관련 뉴스가 아직 없어요. 조금만 기다려주세요!`
+    : '해당 키워드의 뉴스가 아직 없어요. 다른 키워드로 검색해보세요!';
+    
+  Swal.fire({
+    icon: 'info',
+    title: '📭 뉴스가 없어요',
+    text: message,
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#A0AEC0',
+  });
+};
+
+// 뉴스 로딩
+export const showNewsLoading = () => {
+  Swal.fire({
+    title: '📰 뉴스를 가져오는 중...',
+    text: '잠시만 기다려주세요!',
+    allowOutsideClick: false,
+    background: '#ffffff',
+    ...commonStyle,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+};
+
+// 뉴스 새로고침
+export const showNewsRefreshed = () => {
+  Swal.fire({
+    icon: 'success',
+    title: '🔄 뉴스 새로고침 완료!',
+    text: '최신 뉴스로 업데이트되었어요!',
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 2000,
+    timerProgressBar: true,
+  });
+};
+
+// 키워드 검색 결과 없음
+export const showNoKeywordResults = (searchTerm: string) => {
+  Swal.fire({
+    icon: 'info',
+    title: '🔍 검색 결과가 없어요',
+    text: `"${searchTerm}" 관련 키워드를 찾을 수 없어요. 다른 키워드로 검색해보세요!`,
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#A0AEC0',
+  });
+};
+
+// 뉴스 필터 적용
+export const showFilterApplied = (filterName: string) => {
+  Swal.fire({
+    icon: 'success',
+    title: '🔍 필터 적용 완료!',
+    text: `${filterName} 필터가 적용되었어요.`,
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 2000,
+    timerProgressBar: true,
+  });
+};
+
+// 뉴스 공유
+export const showNewsShared = () => {
+  Swal.fire({
+    icon: 'success',
+    title: '📤 공유 완료!',
+    text: '뉴스가 성공적으로 공유되었어요!',
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 2000,
+    timerProgressBar: true,
+  });
+};
+
+// 뉴스 북마크 추가
+export const showNewsBookmarked = () => {
+  Swal.fire({
+    icon: 'success',
+    title: '🔖 북마크 추가!',
+    text: '뉴스를 북마크에 추가했어요!',
+    confirmButtonText: '좋아요',
+    confirmButtonColor: '#48BB78',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#48BB78',
+    timer: 2000,
+    timerProgressBar: true,
+  });
+};
+
+// 뉴스 북마크 제거
+export const showNewsUnbookmarked = () => {
+  Swal.fire({
+    icon: 'info',
+    title: '🔖 북마크 제거',
+    text: '뉴스를 북마크에서 제거했어요.',
+    confirmButtonText: '알겠어요',
+    confirmButtonColor: '#A0AEC0',
+    background: '#ffffff',
+    ...commonStyle,
+    iconColor: '#A0AEC0',
+    timer: 2000,
+    timerProgressBar: true,
+  });
 };
 
 // 커스텀 스타일 CSS 추가

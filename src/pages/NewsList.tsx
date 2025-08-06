@@ -1,13 +1,43 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { getFilteredNews, DailyNewsRequestDto } from "../api/news";
 import FilterInput from "../components/FilterInput";
 import Navbar from "../components/Navbar";
 import { UI_CONSTANTS } from "../constants/ui";
 import { useSearchParams } from "react-router-dom";
 import ExpandableNewsCard from "../components/ExpandableCardNews";
-import { FaNewspaper, FaSearch, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaNewspaper, FaSearch, FaChevronLeft, FaChevronRight, FaRss } from "react-icons/fa";
+
+// 애니메이션 정의
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`;
 
 function NewsList() {
   /* ---------------- URL 쿼리 → 초기 키워드 ---------------------------- */
@@ -43,8 +73,8 @@ function NewsList() {
   };
 
   /* ---------------- 로딩/에러 --------------------------------------- */
-  if (isLoading) return <Skeleton text="로딩 중..." />;
-  if (error)    return <Skeleton text={`에러: ${error.message}`} isError />;
+  if (isLoading) return <LoadingSkeleton />;
+  if (error)    return <ErrorState error={error} />;
 
   /* ---------------- 실제 화면 ---------------------------------------- */
   return (
@@ -58,6 +88,10 @@ function NewsList() {
               뉴스 조회
             </HeaderTitle>
             <HeaderSubtitle>관심 키워드의 최신 뉴스를 확인해보세요</HeaderSubtitle>
+            <StatsBadge>
+              <FaRss className="stats-icon" />
+              {newsData ? `${newsData.totalElements}개의 뉴스` : '뉴스 로딩 중...'}
+            </StatsBadge>
           </HeaderSection>
 
           <ContentCard>
@@ -80,16 +114,18 @@ function NewsList() {
             <NewsSection>
               {!newsData || newsData.newsDtos.length === 0 ? (
                 <NoDataMessage>
-                  <FaNewspaper className="no-data-icon" />
-                  조회된 뉴스가 없습니다.
+                  <div className="no-data-icon-wrapper">
+                    <FaNewspaper className="no-data-icon" />
+                  </div>
+                  <NoDataTitle>조회된 뉴스가 없습니다</NoDataTitle>
                   <NoDataSubtext>다른 키워드로 검색해보세요</NoDataSubtext>
                 </NoDataMessage>
               ) : (
-                <NewsCardList>
+                <NewsCardGrid>
                   {newsData.newsDtos.map((item, idx) => (
                     <ExpandableNewsCard key={idx} data={item} />
                   ))}
-                </NewsCardList>
+                </NewsCardGrid>
               )}
             </NewsSection>
 
@@ -105,7 +141,9 @@ function NewsList() {
                   이전
                 </PaginationButton>
                 <PageInfo>
-                  {page + 1} / {newsData.totalPages}
+                  <PageNumber>{page + 1}</PageNumber>
+                  <PageDivider>/</PageDivider>
+                  <TotalPages>{newsData.totalPages}</TotalPages>
                 </PageInfo>
                 <PaginationButton 
                   onClick={handleNext} 
@@ -126,8 +164,64 @@ function NewsList() {
 
 export default NewsList;
 
-/* ---------------- 공통 스켈레톤 ------------------------------- */
-function Skeleton({ text, isError = false }: { text: string; isError?: boolean }) {
+/* ---------------- 개선된 로딩 스켈레톤 ------------------------------- */
+function LoadingSkeleton() {
+  return (
+    <>
+      <Navbar />
+      <PageBackground>
+        <MainWrapper>
+          <HeaderSection>
+            <HeaderTitle>
+              <FaNewspaper className="header-icon" />
+              뉴스 조회
+            </HeaderTitle>
+            <HeaderSubtitle>관심 키워드의 최신 뉴스를 확인해보세요</HeaderSubtitle>
+          </HeaderSection>
+          <ContentCard>
+            <FilterSection>
+              <FilterLabel>
+                <FaSearch className="filter-icon" />
+                키워드 검색
+              </FilterLabel>
+              <SkeletonInput />
+            </FilterSection>
+            <NewsSection>
+              <SkeletonGrid>
+                {[...Array(6)].map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </SkeletonGrid>
+            </NewsSection>
+          </ContentCard>
+        </MainWrapper>
+      </PageBackground>
+    </>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <SkeletonCardWrapper>
+      <SkeletonHeader>
+        <SkeletonBadge />
+        <SkeletonDate />
+      </SkeletonHeader>
+      <SkeletonContent>
+        <SkeletonLine width="100%" />
+        <SkeletonLine width="80%" />
+        <SkeletonLine width="60%" />
+      </SkeletonContent>
+    </SkeletonCardWrapper>
+  );
+}
+
+function SkeletonInput() {
+  return <SkeletonInputWrapper />;
+}
+
+/* ---------------- 에러 상태 ------------------------------- */
+function ErrorState({ error }: { error: any }) {
   return (
     <>
       <Navbar />
@@ -140,14 +234,11 @@ function Skeleton({ text, isError = false }: { text: string; isError?: boolean }
             </HeaderTitle>
           </HeaderSection>
           <ContentCard>
-            <div style={{ 
-              textAlign: "center", 
-              padding: "40px", 
-              color: isError ? "#e53e3e" : "#666",
-              fontSize: "1.1rem"
-            }}>
-              {text}
-            </div>
+            <ErrorContainer>
+              <ErrorIcon>⚠️</ErrorIcon>
+              <ErrorTitle>오류가 발생했습니다</ErrorTitle>
+              <ErrorMessage>{error.message}</ErrorMessage>
+            </ErrorContainer>
           </ContentCard>
         </MainWrapper>
       </PageBackground>
@@ -155,57 +246,104 @@ function Skeleton({ text, isError = false }: { text: string; isError?: boolean }
   );
 }
 
-/* ───────── 마이페이지 테마 기반 스타일 ───────── */
+/* ───────── 개선된 스타일 ───────── */
 const PageBackground = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e6f4ea 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding-top: 80px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+  }
 `;
 
 const MainWrapper = styled.main`
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto 40px;
   padding: 0 16px;
   display: flex;
   flex-direction: column;
   gap: 36px;
+  position: relative;
+  z-index: 1;
 `;
 
 const HeaderSection = styled.div`
   text-align: center;
   margin-bottom: 20px;
+  animation: ${fadeInUp} 0.6s ease-out;
 `;
 
 const HeaderTitle = styled.h1`
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.mainColor};
-  margin-bottom: 10px;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   .header-icon {
-    font-size: 1.8rem;
-    color: ${({ theme }) => theme.mainGreen};
+    font-size: 2rem;
+    color: #ffd700;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    .header-icon {
+      font-size: 1.6rem;
+    }
   }
 `;
 
 const HeaderSubtitle = styled.p`
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 16px 0;
+  font-weight: 400;
+`;
+
+const StatsBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  .stats-icon {
+    font-size: 0.8rem;
+    color: #ffd700;
+  }
 `;
 
 const ContentCard = styled.section`
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(72, 187, 120, 0.08);
-  padding: 36px 32px 32px 32px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 40px 32px 32px 32px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+  animation: ${fadeInUp} 0.8s ease-out 0.2s both;
   
   @media (max-width: 600px) {
     padding: 24px 16px;
@@ -215,21 +353,22 @@ const ContentCard = styled.section`
 const FilterSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0;
 `;
 
 const FilterLabel = styled.label`
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.mainGreen};
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   
   .filter-icon {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    color: ${({ theme }) => theme.mainGreen};
   }
 `;
 
@@ -240,73 +379,210 @@ const NewsSection = styled.div`
 
 const NoDataMessage = styled.div`
   text-align: center;
-  color: #888;
-  padding: 60px 20px;
+  color: #666;
+  padding: 80px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  
+  .no-data-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
   
   .no-data-icon {
-    font-size: 3rem;
-    color: #ddd;
-    margin-bottom: 8px;
+    font-size: 2.5rem;
+    color: #ccc;
   }
 `;
 
-const NoDataSubtext = styled.p`
-  font-size: 0.9rem;
-  color: #aaa;
+const NoDataTitle = styled.h3`
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
   margin: 0;
 `;
 
-const NewsCardList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+const NoDataSubtext = styled.p`
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+`;
+
+const NewsCardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 `;
 
 const PaginationSection = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
+  gap: 20px;
+  padding-top: 32px;
+  border-top: 2px solid #f0f0f0;
 `;
 
 const PaginationButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
-  background: ${({ theme }) => theme.mainGreen};
+  padding: 14px 24px;
+  background: linear-gradient(135deg, ${({ theme }) => theme.mainGreen}, #4ade80);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-weight: 500;
-  font-size: 0.95rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.15);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
 
   &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.mainColor};
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+    background: linear-gradient(135deg, ${({ theme }) => theme.mainColor}, ${({ theme }) => theme.mainGreen});
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
   }
 
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
     background: #ccc;
+    transform: none;
+    box-shadow: none;
   }
 `;
 
-const PageInfo = styled.span`
+const PageInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
   color: #333;
-  font-size: 1rem;
-  min-width: 60px;
+  font-size: 1.1rem;
+  min-width: 80px;
+  justify-content: center;
+`;
+
+const PageNumber = styled.span`
+  color: ${({ theme }) => theme.mainGreen};
+  font-size: 1.2rem;
+`;
+
+const PageDivider = styled.span`
+  color: #ccc;
+`;
+
+const TotalPages = styled.span`
+  color: #666;
+`;
+
+// 스켈레톤 스타일
+const SkeletonCardWrapper = styled.div`
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+  animation: ${pulse} 1.5s ease-in-out infinite;
+`;
+
+const SkeletonHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const SkeletonBadge = styled.div`
+  width: 80px;
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.5s infinite;
+  border-radius: 12px;
+`;
+
+const SkeletonDate = styled.div`
+  width: 60px;
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.5s infinite;
+  border-radius: 8px;
+`;
+
+const SkeletonContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const SkeletonLine = styled.div<{ width: string }>`
+  height: 12px;
+  width: ${props => props.width};
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.5s infinite;
+  border-radius: 6px;
+`;
+
+const SkeletonInputWrapper = styled.div`
+  height: 48px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.5s infinite;
+  border-radius: 12px;
+`;
+
+const SkeletonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+`;
+
+// 에러 상태 스타일
+const ErrorContainer = styled.div`
   text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
+
+const ErrorIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 8px;
+`;
+
+const ErrorTitle = styled.h3`
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0;
+`;
+
+const ErrorMessage = styled.p`
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+  max-width: 400px;
 `;
