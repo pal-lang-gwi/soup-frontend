@@ -149,8 +149,11 @@ export default function GoogleHome() {
               <LoadingItem>검색 중...</LoadingItem>
             ) : searchResults.length > 0 ? (
               searchResults.map((k) => (
-                <SearchResultItem key={k.id}>
-                  <KeywordName onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}>
+                <SearchResultItem 
+                  key={k.id}
+                  onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}
+                >
+                  <KeywordName>
                     {k.name}
                   </KeywordName>
                   <SubscribeButton
