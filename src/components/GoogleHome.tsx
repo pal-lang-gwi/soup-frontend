@@ -110,6 +110,13 @@ export default function GoogleHome() {
 
   return (
     <Root>
+      <Logo>
+        <span className="g">S</span>
+        <span className="o1">O</span>
+        <span className="o2">U</span>
+        <span className="g">P</span>
+      </Logo>
+
       <MainCopy>
         관심 키워드로 나만의 뉴스 큐레이션을 만들어보세요
       </MainCopy>
@@ -185,7 +192,26 @@ const Root = styled.div`
 	font-family: "Roboto", "Noto Sans KR", sans-serif;
 `;
 
+const Logo = styled.h1`
+	font-size: 92px;
+	margin-top: 15vh;
+	margin-bottom: 40px;
+	font-weight: 600;
+	line-height: 1;
 
+	span {
+		user-select: none;
+	}
+	.g {
+		color: #4285f4;
+	}
+	.o1 {
+		color: #db4437;
+	}
+	.o2 {
+		color: #f4b400;
+	}
+`;
 
 const MainCopy = styled.p`
 	font-size: 20px;
