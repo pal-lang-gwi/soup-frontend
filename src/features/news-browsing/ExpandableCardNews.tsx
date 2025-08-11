@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { extractDateFromISO } from "../../shared/lib/dateUtils";
 import { NewsDto } from "../../shared/api/news";
@@ -19,16 +19,41 @@ const fadeIn = keyframes`
 const modalFadeIn = keyframes`
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.85) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 `;
 
 const ExpandableNewsCard = ({ data }: { data: NewsDto }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 모달 열릴 때 body 스크롤 비활성화 및 뷰포트 상단으로 스크롤
+  useEffect(() => {
+    if (isModalOpen) {
+      // 현재 스크롤 위치 저장
+      const scrollY = window.scrollY;
+      
+      // body 스크롤 비활성화
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      
+      // cleanup 함수: 모달 닫힐 때 원래 스크롤 위치로 복원
+      return () => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isModalOpen]);
 
   const truncateText = (text: string, maxLength: number = 100) => {
     if (text.length <= maxLength) return text;
@@ -37,7 +62,11 @@ const ExpandableNewsCard = ({ data }: { data: NewsDto }) => {
 
   return (
     <>
-      <NewsCard onClick={() => setIsModalOpen(true)}>
+      <NewsCard onClick={() => {
+        // 부드럽게 페이지 상단으로 스크롤 후 모달 열기
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => setIsModalOpen(true), 300);
+      }}>
         <CardHeader>
           <HeaderContent>
             <KeywordBadge>
@@ -129,12 +158,15 @@ const ExpandableNewsCard = ({ data }: { data: NewsDto }) => {
 export default ExpandableNewsCard;
 
 const NewsCard = styled.div`
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   cursor: pointer;
   
@@ -145,17 +177,39 @@ const NewsCard = styled.div`
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, ${({ theme }) => theme.mainGreen}, #4ade80);
+    background: linear-gradient(90deg, ${({ theme }) => theme.primaryBlue}, ${({ theme }) => theme.mainGreen});
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all 0.4s ease;
+    transform: translateX(-100%);
   }
   
   &:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      0 4px 20px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-6px) scale(1.02);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
     
     &::before {
       opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    border-radius: 20px;
+    
+    &:hover {
+      transform: translateY(-3px) scale(1.01);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    border-radius: 16px;
+    
+    &:hover {
+      transform: translateY(-2px);
     }
   }
   
@@ -429,14 +483,14 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 20px;
-  animation: ${modalFadeIn} 0.3s ease-out;
+  animation: ${modalFadeIn} 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   
   @media (max-width: 768px) {
     padding: 16px;
@@ -444,29 +498,38 @@ const ModalOverlay = styled.div`
   
   @media (max-width: 480px) {
     padding: 12px;
+    align-items: flex-start;
+    padding-top: 20px;
   }
 `;
 
 const ModalContent = styled.div`
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  max-width: 800px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  max-width: 900px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: ${modalFadeIn} 0.3s ease-out;
+  animation: ${modalFadeIn} 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
   
   @media (max-width: 768px) {
-    border-radius: 16px;
-    max-height: 95vh;
+    border-radius: 20px;
+    max-height: 90vh;
   }
   
   @media (max-width: 480px) {
-    border-radius: 14px;
-    max-height: 98vh;
+    border-radius: 16px;
+    max-height: 95vh;
+    max-width: 100%;
   }
 `;
 

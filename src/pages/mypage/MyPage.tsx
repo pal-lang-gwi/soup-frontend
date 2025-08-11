@@ -1,15 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Navigation from "../../shared/ui/Navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo, getMyKeywords } from "../../shared/api/user/user";
 import { unsubscribeKeyword } from "../../shared/api/keywords";
 import { useQueryClient } from "@tanstack/react-query";
-import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes } from "react-icons/fa";
+import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes, FaNewspaper } from "react-icons/fa";
 import { showError, showKeywordUnsubscribed } from "../../shared/lib/sweetAlert";
 
 const MyPage: React.FC = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // 키워드 클릭 시 뉴스 페이지로 이동
+  const handleKeywordClick = (keyword: string) => {
+    navigate(`/news?keyword=${encodeURIComponent(keyword)}`);
+  };
 
   // 구독 해지 핸들러
   const handleUnsubscribe = async (keywordId: number) => {
@@ -92,19 +99,24 @@ const MyPage: React.FC = () => {
         </SectionCard>
 
         <SectionCard>
-          <SectionTitle>구독 중인 키워드</SectionTitle>
+          <SectionTitle>🔖 구독 중인 키워드</SectionTitle>
+          <SectionSubtitle>키워드를 클릭하면 해당 뉴스를 확인할 수 있어요</SectionSubtitle>
           <KeywordContent>
             {keywordData?.myKeywordDtos && keywordData.myKeywordDtos.length > 0 ? (
               <KeywordList>
                 {keywordData.myKeywordDtos.map((keyword) => (
-                  <KeywordPill key={keyword.keywordId}>
+                  <KeywordPill 
+                    key={keyword.keywordId}
+                    onClick={() => handleKeywordClick(keyword.keyword)}
+                  >
                     <FaLeaf className="keyword-icon" />
-                    {keyword.keyword}
+                    <KeywordText>{keyword.keyword}</KeywordText>
                     <UnsubscribeButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleUnsubscribe(keyword.keywordId);
                       }}
+                      title="구독 해지"
                     >
                       <FaTimes />
                     </UnsubscribeButton>
@@ -112,7 +124,15 @@ const MyPage: React.FC = () => {
                 ))}
               </KeywordList>
             ) : (
-              <NoKeywordMsg>구독 중인 키워드가 없습니다.</NoKeywordMsg>
+              <NoKeywordMsg>
+                <NoKeywordIcon>🔍</NoKeywordIcon>
+                <NoKeywordTitle>구독 중인 키워드가 없습니다</NoKeywordTitle>
+                <NoKeywordSubtext>키워드를 구독하여 맞춤 뉴스를 받아보세요!</NoKeywordSubtext>
+                <NewsLinkButton onClick={() => navigate('/news')}>
+                  <FaNewspaper />
+                  뉴스 페이지로 이동
+                </NewsLinkButton>
+              </NoKeywordMsg>
             )}
           </KeywordContent>
         </SectionCard>
@@ -128,11 +148,23 @@ export default MyPage;
 /* ───────── 스타일 개선 ───────── */
 const PageBackground = styled.div`
   min-height: 100vh;
-  background: ${({ theme }) => theme.background.gradient.secondary};
-  padding-top: 72px;
+  background: ${({ theme }) => theme.background.gradient.primary};
+  padding-top: 80px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+  }
   
   @media (max-width: 768px) {
-    padding-top: 64px;
+    padding-top: 72px;
   }
 `;
 
@@ -158,42 +190,59 @@ const MainWrapper = styled.main`
 `;
 
 const SectionCard = styled.section`
-  background: ${({ theme }) => theme.background.primary};
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(72, 187, 120, 0.08);
-  padding: 36px 32px 32px 32px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 40px 32px 32px 32px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
   
   @media (max-width: 768px) {
+    padding: 32px 24px 24px 24px;
+    gap: 24px;
+    border-radius: 20px;
+  }
+  
+  @media (max-width: 480px) {
     padding: 24px 20px 20px 20px;
     gap: 20px;
     border-radius: 16px;
   }
-  
-  @media (max-width: 480px) {
-    padding: 20px 16px 16px 16px;
-    gap: 16px;
-    border-radius: 14px;
-  }
 `;
 
 const SectionTitle = styled.h1`
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.mainColor};
-  margin-bottom: 10px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: ${({ theme }) => theme.primaryBlue};
+  margin-bottom: 12px;
   text-align: center;
+  background: linear-gradient(135deg, ${({ theme }) => theme.primaryBlue}, ${({ theme }) => theme.mainGreen});
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   
   @media (max-width: 768px) {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
+    font-size: 2rem;
+    margin-bottom: 10px;
   }
   
   @media (max-width: 480px) {
-    font-size: 1.6rem;
-    margin-bottom: 6px;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
   }
 `;
 
@@ -231,32 +280,58 @@ const InfoList = styled.div`
 const InfoRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: ${({ theme }) => theme.background.tertiary};
-  border-radius: 12px;
-  border-left: 4px solid ${({ theme }) => theme.mainGreen};
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, ${({ theme }) => theme.primaryBlue}, ${({ theme }) => theme.mainGreen});
+  }
+  
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+  }
   
   .icon {
-    color: ${({ theme }) => theme.mainGreen};
-    font-size: 1.2rem;
+    color: ${({ theme }) => theme.primaryBlue};
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover .icon {
+    transform: scale(1.1);
   }
   
   @media (max-width: 768px) {
-    gap: 10px;
-    padding: 12px;
+    gap: 12px;
+    padding: 16px;
     
     .icon {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
   }
   
   @media (max-width: 480px) {
-    gap: 8px;
-    padding: 10px;
+    gap: 10px;
+    padding: 14px;
     
     .icon {
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
   }
 `;
@@ -322,31 +397,68 @@ const KeywordList = styled.div`
 const KeywordPill = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: ${({ theme }) => theme.background.tertiary};
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+  backdrop-filter: blur(10px);
   color: ${({ theme }) => theme.text.primary};
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid ${({ theme }) => theme.border.accent};
-  transition: all 0.2s ease;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, ${({ theme }) => theme.primaryBlue}, ${({ theme }) => theme.mainGreen});
+    border-radius: 24px 24px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
-    background: ${({ theme }) => theme.background.secondary};
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      0 4px 16px rgba(72, 187, 120, 0.1);
+    transform: translateY(-3px) scale(1.02);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  .keyword-icon {
+    color: ${({ theme }) => theme.primaryBlue};
+    font-size: 1.1rem;
   }
   
   @media (max-width: 768px) {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    gap: 6px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    gap: 8px;
+    
+    .keyword-icon {
+      font-size: 1rem;
+    }
   }
   
   @media (max-width: 480px) {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    gap: 4px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    gap: 6px;
+    
+    .keyword-icon {
+      font-size: 0.9rem;
+    }
   }
 `;
 
@@ -382,19 +494,124 @@ const UnsubscribeButton = styled.button`
   }
 `;
 
+const KeywordText = styled.span`
+  flex: 1;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text.primary};
+`;
+
 const NoKeywordMsg = styled.div`
-  color: ${({ theme }) => theme.text.muted};
-  font-size: 0.9rem;
   text-align: center;
-  margin-top: 1rem;
+  color: ${({ theme }) => theme.text.secondary};
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  
+  @media (max-width: 768px) {
+    padding: 50px 16px;
+    gap: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 40px 12px;
+    gap: 10px;
+  }
+`;
+
+const NoKeywordIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 8px;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 4px;
+  }
+`;
+
+const NoKeywordTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text.primary};
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
+`;
+
+const NoKeywordSubtext = styled.p`
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.text.muted};
+  margin: 0;
+  line-height: 1.5;
   
   @media (max-width: 768px) {
     font-size: 0.85rem;
-    margin-top: 0.8rem;
   }
   
   @media (max-width: 480px) {
     font-size: 0.8rem;
-    margin-top: 0.6rem;
+  }
+`;
+
+const NewsLinkButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, ${({ theme }) => theme.primaryBlue}, ${({ theme }) => theme.mainGreen});
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(49, 130, 246, 0.3);
+  margin-top: 16px;
+
+  &:hover {
+    background: linear-gradient(135deg, ${({ theme }) => theme.hoverBlue}, ${({ theme }) => theme.primaryBlue});
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(49, 130, 246, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0) scale(1);
+  }
+
+  svg {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    gap: 8px;
+    
+    svg {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    gap: 6px;
+    
+    svg {
+      font-size: 0.85rem;
+    }
   }
 `;
