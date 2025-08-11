@@ -5,7 +5,7 @@ import {
 	initUserAdditionalInfo,
 	UserAdditionalInfoRequestDto,
 } from "../api/user";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../features/auth";
 
 interface AdditionalInfoModalProps {
 	isOpen: boolean;

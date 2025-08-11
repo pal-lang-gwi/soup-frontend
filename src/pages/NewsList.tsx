@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import styled, { keyframes } from "styled-components";
-import { getFilteredNews, DailyNewsRequestDto } from "../api/news";
-import FilterInput from "../components/FilterInput";
-import Navbar from "../components/Navbar";
+import { getFilteredNews, DailyNewsRequestDto } from "../shared/api/news";
+import FilterInput from "../features/news-browsing/FilterInput";
+import Navbar from "../widgets/header/Navbar";
 import { UI_CONSTANTS } from "../constants/ui";
 import { useSearchParams } from "react-router-dom";
-import ExpandableNewsCard from "../components/ExpandableCardNews";
+import ExpandableNewsCard from "../features/news-browsing/ExpandableCardNews";
 import { FaNewspaper, FaSearch, FaChevronLeft, FaChevronRight, FaRss } from "react-icons/fa";
 
 // 애니메이션 정의
@@ -168,7 +168,6 @@ export default NewsList;
 function LoadingSkeleton() {
   return (
     <>
-      <Navbar />
       <PageBackground>
         <MainWrapper>
           <HeaderSection>
@@ -224,7 +223,6 @@ function SkeletonInput() {
 function ErrorState({ error }: { error: any }) {
   return (
     <>
-      <Navbar />
       <PageBackground>
         <MainWrapper>
           <HeaderSection>

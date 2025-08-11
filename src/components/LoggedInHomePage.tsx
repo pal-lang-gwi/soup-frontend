@@ -72,8 +72,8 @@ const LoggedInHomePage: React.FC = () => {
 								<SubscribeButton
 									isSubscribed={keyword.isSubscribed}
 									onClick={() => {
-										// TODO: 구독/구독 해제 API 호출
-										console.log("구독 토글:", keyword.id);
+										// TODO: 구독/구독 해제 API 호출 구현 필요
+										// 현재는 더미 데이터이므로 실제 API 연동 필요
 									}}
 								>
 									{keyword.isSubscribed ? "구독 중" : "구독하기"}

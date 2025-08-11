@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { 
+  FiSearch, 
+  FiTrendingUp, 
+  FiPlus, 
+  FiCheck, 
+  FiClock,
+  FiTag,
+  FiArrowRight,
+  FiStar
+} from "react-icons/fi";
 import { searchKeywords, subscribeKeywords, unsubscribeKeyword, requestKeyword } from "../api/keywords";
 import { searchKeywordDto } from "../types/keyword";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../features/auth";
 import { useNavigate } from "react-router-dom";
 import { 
   showError, 
@@ -11,6 +21,8 @@ import {
   showKeywordUnsubscribed,
   showKeywordRequested
 } from "../utils/sweetAlert";
+import Button from "./ui/Button";
+import Navigation from "./ui/Navigation";
 
 export default function GoogleHome() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,12 +42,10 @@ export default function GoogleHome() {
         try {
           const response = await searchKeywords(term, 0, 10);
           if (response.data.success) {
-            console.log(response.data.data.keywords);
             setSearchResults(response.data.data.keywords);
             setShowResults(true);
           }
-        } catch (e) {
-          console.error("검색 실패", e);
+        } catch (error) {
           setSearchResults([]);
           setShowResults(true);
         } finally {
@@ -117,68 +127,108 @@ export default function GoogleHome() {
 
   return (
     <Root>
-      <MainCopy>
-        관심 키워드로 나만의 뉴스 큐레이션을 만들어보세요
-      </MainCopy>
+      <Navigation />
       
-      <SubCopy>
-        구독한 키워드의 핫한 뉴스를 놓치지 마세요
-      </SubCopy>
+      <MainContent>
+        <HeroSection>
+          <HeroTitle>
+            관심 키워드로 나만의 뉴스를 발견하세요
+          </HeroTitle>
+          
+          <HeroSubtitle>
+            구독한 키워드의 최신 뉴스를 놓치지 마세요
+          </HeroSubtitle>
 
-      <SearchContainer className="search-container">
-        <Form onSubmit={handleSubmit}>
-          <InputWrapper>
-            <SvgGlass viewBox="0 0 24 24">
-              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM4 9.5a5.5 6.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z" />
-            </SvgGlass>
+          <SearchContainer className="search-container">
+            <SearchForm onSubmit={handleSubmit}>
+              <SearchInputWrapper>
+                <FiSearch size={20} />
+                <ModernSearchInput
+                  type="text"
+                  placeholder="키워드를 검색해보세요..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => searchTerm.trim() && setShowResults(true)}
+                />
+                {isSearching && (
+                  <LoadingIndicator>
+                    <FiClock className="spin" />
+                  </LoadingIndicator>
+                )}
+              </SearchInputWrapper>
+            </SearchForm>
 
-            <SearchInput
-              type="text"
-              placeholder="키워드를 검색해보세요..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => searchTerm.trim() && setShowResults(true)}
-            />
-
-            {isSearching && <LoadingSpinner>⏳</LoadingSpinner>}
-          </InputWrapper>
-        </Form>
-
-        {showResults && (searchResults.length > 0 || isSearching || searchTerm.trim().length > 0) && (
-          <SearchResults>
-            {isSearching ? (
-              <LoadingItem>검색 중...</LoadingItem>
-            ) : searchResults.length > 0 ? (
-              searchResults.map((k) => (
-                <SearchResultItem 
-                  key={k.id}
-                  onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}
-                >
-                  <KeywordName>
-                    {k.name}
-                  </KeywordName>
-                  <SubscribeButton
-                    isSubscribed={k.isSubscribed}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleKeywordClick(k);
-                    }}
-                  >
-                    {k.isSubscribed ? "구독 중" : "구독하기"}
-                  </SubscribeButton>
-                </SearchResultItem>
-              ))
-            ) : (
-              <SearchResultItem onClick={() => handleAddKeyword(searchTerm)}>
-                <KeywordName>"{searchTerm}" 직접 추가하기</KeywordName>
-                <AddIcon>➕</AddIcon>
-              </SearchResultItem>
+            {showResults && (searchResults.length > 0 || isSearching || searchTerm.trim().length > 0) && (
+              <ModernSearchResults>
+                {isSearching ? (
+                  <ResultsCard>
+                    <LoadingState>
+                      <FiClock className="spin" />
+                      <span>검색 중...</span>
+                    </LoadingState>
+                  </ResultsCard>
+                ) : searchResults.length > 0 ? (
+                  <ResultsCard>
+                    {searchResults.map((k) => (
+                      <KeywordResultItem 
+                        key={k.id}
+                        onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.name)}`)}
+                      >
+                        <KeywordInfo>
+                          <FiTag size={16} />
+                          <KeywordText>{k.name}</KeywordText>
+                        </KeywordInfo>
+                        <Button
+                          variant={k.isSubscribed ? "secondary" : "outline"}
+                          size="sm"
+                          leftIcon={k.isSubscribed ? <FiCheck size={14} /> : <FiPlus size={14} />}
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            handleKeywordClick(k);
+                          }}
+                        >
+                          {k.isSubscribed ? "구독 중" : "구독하기"}
+                        </Button>
+                      </KeywordResultItem>
+                    ))}
+                  </ResultsCard>
+                ) : (
+                  <ResultsCard>
+                    <AddKeywordItem onClick={() => handleAddKeyword(searchTerm)}>
+                      <KeywordInfo>
+                        <FiPlus size={16} />
+                        <KeywordText>"{searchTerm}" 직접 추가하기</KeywordText>
+                      </KeywordInfo>
+                      <FiArrowRight size={16} />
+                    </AddKeywordItem>
+                  </ResultsCard>
+                )}
+              </ModernSearchResults>
             )}
-          </SearchResults>
-        )}
-      </SearchContainer>
+          </SearchContainer>
+        </HeroSection>
 
-      <Footer>SOUP - 나만의 뉴스 큐레이션</Footer>
+        <QuickActions>
+          <SectionTitle>빠른 바로가기</SectionTitle>
+          <ActionGrid>
+            <ActionCard onClick={() => navigate('/news')}>
+              <ActionIcon>
+                <FiTrendingUp size={24} />
+              </ActionIcon>
+              <ActionTitle>인기 뉴스</ActionTitle>
+              <ActionDescription>지금 가장 핫한 뉴스를 확인하세요</ActionDescription>
+            </ActionCard>
+            
+            <ActionCard onClick={() => navigate('/mypage')}>
+              <ActionIcon>
+                <FiStar size={24} />
+              </ActionIcon>
+              <ActionTitle>내 구독</ActionTitle>
+              <ActionDescription>구독한 키워드를 관리하세요</ActionDescription>
+            </ActionCard>
+          </ActionGrid>
+        </QuickActions>
+      </MainContent>
     </Root>
   );
 }
@@ -186,325 +236,296 @@ export default function GoogleHome() {
 
 /* ─────────── 스타일 ─────────── */
 const Root = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	font-family: "Roboto", "Noto Sans KR", sans-serif;
-	padding: 0 16px;
-	
-	@media (max-width: 768px) {
-		padding: 0 12px;
-	}
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    ${({ theme }) => theme.colors.background.primary} 0%, 
+    ${({ theme }) => theme.colors.secondary[50]} 100%
+  );
 `;
 
-const MainCopy = styled.p`
-	font-size: 20px;
-	color: ${({ theme }) => theme.text.primary};
-	text-align: center;
-	margin-bottom: 10px;
-	
-	@media (max-width: 768px) {
-		font-size: 18px;
-		margin-bottom: 8px;
-	}
-	
-	@media (max-width: 480px) {
-		font-size: 16px;
-	}
+const MainContent = styled.main`
+  max-width: ${({ theme }) => theme.layout.container.maxWidth};
+  margin: 0 auto;
+  padding: ${({ theme }) => theme.spacing[8]} ${({ theme }) => theme.spacing[4]};
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing[6]} ${({ theme }) => theme.spacing[4]};
+  }
 `;
 
-const SubCopy = styled.p`
-	font-size: 16px;
-	color: ${({ theme }) => theme.text.secondary};
-	text-align: center;
-	margin-bottom: 40px;
-	
-	@media (max-width: 768px) {
-		font-size: 14px;
-		margin-bottom: 30px;
-	}
-	
-	@media (max-width: 480px) {
-		font-size: 13px;
-		margin-bottom: 25px;
-	}
+const HeroSection = styled.section`
+  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing[12]};
+`;
+
+const HeroTitle = styled.h1`
+  font-family: ${({ theme }) => theme.typography.fontFamily.display.join(', ')};
+  font-size: ${({ theme }) => theme.typography.fontSize['4xl']};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin-bottom: ${({ theme }) => theme.spacing[4]};
+  line-height: ${({ theme }) => theme.typography.lineHeight.tight};
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.typography.fontSize['3xl']};
+  }
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    font-size: ${({ theme }) => theme.typography.fontSize['2xl']};
+  }
+`;
+
+const HeroSubtitle = styled.p`
+  font-size: ${({ theme }) => theme.typography.fontSize.xl};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  margin-bottom: ${({ theme }) => theme.spacing[8]};
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.typography.fontSize.lg};
+    margin-bottom: ${({ theme }) => theme.spacing[6]};
+  }
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    font-size: ${({ theme }) => theme.typography.fontSize.base};
+  }
 `;
 
 const SearchContainer = styled.div`
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
-	max-width: 580px;
-	
-	@media (max-width: 768px) {
-		max-width: 100%;
-	}
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
 `;
 
-const Form = styled.form`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
+const SearchForm = styled.form`
+  width: 100%;
 `;
 
-/* ── 검색창 ─────────────────────────── */
-const InputWrapper = styled.div`
-	position: relative;
-	width: 100%;
-	height: 44px;
-	border: 1px solid ${({ theme }) => theme.border.primary};
-	border-radius: 22px;
-	display: flex;
-	align-items: center;
-	padding: 0 14px;
-	background: ${({ theme }) => theme.background.primary};
-	box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-	transition: box-shadow 0.2s ease-in-out;
-
-	&:hover {
-		box-shadow: 0 1px 8px rgba(32, 33, 36, 0.35);
-	}
-	&:focus-within {
-		border-color: ${({ theme }) => theme.icon.primary};
-	}
-	
-	@media (max-width: 768px) {
-		height: 40px;
-		padding: 0 12px;
-	}
-	
-	@media (max-width: 480px) {
-		height: 38px;
-		padding: 0 10px;
-	}
+const SearchInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: ${({ theme }) => theme.colors.background.elevated};
+  border: 2px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
+  padding: ${({ theme }) => theme.spacing[4]} ${({ theme }) => theme.spacing[6]};
+  gap: ${({ theme }) => theme.spacing[3]};
+  box-shadow: ${({ theme }) => theme.boxShadow.lg};
+  transition: all ${({ theme }) => theme.transition.duration.normal} ${({ theme }) => theme.transition.timing.ease};
+  
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary[200]};
+    box-shadow: ${({ theme }) => theme.boxShadow.xl};
+  }
+  
+  &:focus-within {
+    border-color: ${({ theme }) => theme.colors.primary[400]};
+    box-shadow: 0 0 0 4px ${({ theme }) => theme.colors.primary[100]};
+  }
+  
+  svg {
+    color: ${({ theme }) => theme.colors.text.tertiary};
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    padding: ${({ theme }) => theme.spacing[3]} ${({ theme }) => theme.spacing[4]};
+  }
 `;
 
-const SearchInput = styled.input`
-	flex: 1;
-	height: 100%;
-	font-size: 16px;
-	line-height: 1;
-	border: none;
-	border-radius: 22px;
-	outline: none;
-	padding-left: 40px;
-	padding-top: 2px;
-	color: ${({ theme }) => theme.text.primary};
-	
-	&::placeholder {
-		color: ${({ theme }) => theme.text.muted};
-	}
-	
-	@media (max-width: 768px) {
-		font-size: 15px;
-		padding-left: 36px;
-	}
-	
-	@media (max-width: 480px) {
-		font-size: 14px;
-		padding-left: 32px;
-	}
+const ModernSearchInput = styled.input`
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: ${({ theme }) => theme.typography.fontSize.lg};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  color: ${({ theme }) => theme.colors.text.primary};
+  
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.text.tertiary};
+    font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
+  }
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.typography.fontSize.base};
+  }
 `;
 
-const iconCss = css`
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	pointer-events: none;
+const LoadingIndicator = styled.div`
+  color: ${({ theme }) => theme.colors.primary[500]};
+  
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 `;
 
-const SvgGlass = styled.svg`
-	${iconCss}
-	left: 16px;
-	width: 20px;
-	height: 20px;
-	fill: ${({ theme }) => theme.text.muted};
-	
-	@media (max-width: 768px) {
-		left: 14px;
-		width: 18px;
-		height: 18px;
-	}
-	
-	@media (max-width: 480px) {
-		left: 12px;
-		width: 16px;
-		height: 16px;
-	}
+const ModernSearchResults = styled.div`
+  position: absolute;
+  top: calc(100% + ${({ theme }) => theme.spacing[2]});
+  left: 0;
+  right: 0;
+  z-index: 1000;
 `;
 
-const LoadingSpinner = styled.div`
-	${iconCss}
-	right: 16px;
-	font-size: 16px;
-	animation: spin 1s linear infinite;
-	
-	@keyframes spin {
-		from { transform: translateY(-50%) rotate(0deg); }
-		to { transform: translateY(-50%) rotate(360deg); }
-	}
-	
-	@media (max-width: 768px) {
-		right: 14px;
-		font-size: 14px;
-	}
-	
-	@media (max-width: 480px) {
-		right: 12px;
-		font-size: 12px;
-	}
+const ResultsCard = styled.div`
+  background: ${({ theme }) => theme.colors.background.elevated};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
+  box-shadow: ${({ theme }) => theme.boxShadow.xl};
+  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
 `;
 
-/* ── 검색 결과 드롭다운 ────────────────── */
-const SearchResults = styled.div`
-	position: absolute;
-	top: 100%;
-	left: 0;
-	right: 0;
-	background: ${({ theme }) => theme.background.primary};
-	border: 1px solid ${({ theme }) => theme.border.primary};
-	border-radius: 12px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	max-height: 300px;
-	overflow-y: auto;
-	z-index: 1000;
-	margin-top: 8px;
-	width: 100%;
-	
-	@media (max-width: 768px) {
-		max-height: 250px;
-		margin-top: 6px;
-	}
-	
-	@media (max-width: 480px) {
-		max-height: 200px;
-		margin-top: 4px;
-	}
+const KeywordResultItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing[4]};
+  cursor: pointer;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.light};
+  transition: all ${({ theme }) => theme.transition.duration.normal} ${({ theme }) => theme.transition.timing.ease};
+  
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.secondary[50]};
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
-const SearchResultItem = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 12px 16px;
-	cursor: pointer;
-	border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-	transition: background-color 0.2s ease;
-	
-	&:hover {
-		background-color: ${({ theme }) => theme.background.secondary};
-	}
-	
-	&:last-child {
-		border-bottom: none;
-	}
-	
-	@media (max-width: 768px) {
-		padding: 10px 14px;
-	}
-	
-	@media (max-width: 480px) {
-		padding: 8px 12px;
-	}
+const KeywordInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[2]};
+  
+  svg {
+    color: ${({ theme }) => theme.colors.primary[500]};
+  }
 `;
 
-const KeywordName = styled.span`
-	font-size: 14px;
-	color: ${({ theme }) => theme.text.primary};
-	font-weight: 500;
-	
-	@media (max-width: 768px) {
-		font-size: 13px;
-	}
-	
-	@media (max-width: 480px) {
-		font-size: 12px;
-	}
+const KeywordText = styled.span`
+  font-size: ${({ theme }) => theme.typography.fontSize.base};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
+  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
-const SubscribeButton = styled.button<{ isSubscribed: boolean }>`
-	background-color: ${(props) => (props.isSubscribed ? props.theme.background.tertiary : props.theme.background.secondary)};
-	color: ${(props) => (props.isSubscribed ? props.theme.success : props.theme.text.secondary)};
-	border: 1px solid ${(props) => 
-		props.isSubscribed ? props.theme.success : props.theme.border.secondary};
-	border-radius: 6px;
-	padding: 4px 8px;
-	font-size: 12px;
-	font-weight: 500;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	
-	&:hover {
-		background-color: ${(props) => 
-			props.isSubscribed ? props.theme.success : props.theme.background.tertiary};
-		color: ${(props) => (props.isSubscribed ? props.theme.text.inverse : props.theme.text.primary)};
-	}
-	
-	@media (max-width: 768px) {
-		padding: 3px 6px;
-		font-size: 11px;
-	}
-	
-	@media (max-width: 480px) {
-		padding: 2px 5px;
-		font-size: 10px;
-	}
+const LoadingState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing[2]};
+  padding: ${({ theme }) => theme.spacing[6]};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 `;
 
-const LoadingItem = styled.div`
-	padding: 12px 16px;
-	color: ${({ theme }) => theme.text.secondary};
-	font-size: 14px;
-	
-	@media (max-width: 768px) {
-		padding: 10px 14px;
-		font-size: 13px;
-	}
-	
-	@media (max-width: 480px) {
-		padding: 8px 12px;
-		font-size: 12px;
-	}
+const AddKeywordItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing[4]};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transition.duration.normal} ${({ theme }) => theme.transition.timing.ease};
+  
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primary[50]};
+    
+    svg {
+      color: ${({ theme }) => theme.colors.primary[600]};
+    }
+  }
+  
+  svg {
+    color: ${({ theme }) => theme.colors.text.tertiary};
+    transition: color ${({ theme }) => theme.transition.duration.normal} ${({ theme }) => theme.transition.timing.ease};
+  }
 `;
 
-const AddIcon = styled.span`
-	margin-left: 8px;
-	font-size: 16px;
-	color: ${({ theme }) => theme.icon.primary};
-	
-	@media (max-width: 768px) {
-		margin-left: 6px;
-		font-size: 14px;
-	}
-	
-	@media (max-width: 480px) {
-		margin-left: 4px;
-		font-size: 12px;
-	}
+const QuickActions = styled.section`
+  margin-top: ${({ theme }) => theme.spacing[16]};
 `;
 
-/* ── 푸터 ────────────────────────────── */
-const Footer = styled.footer`
-	position: fixed;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	color: ${({ theme }) => theme.text.tertiary};
-	font-size: 14px;
-	text-align: center;
-	
-	@media (max-width: 768px) {
-		bottom: 15px;
-		font-size: 12px;
-	}
-	
-	@media (max-width: 480px) {
-		bottom: 10px;
-		font-size: 11px;
-	}
+const SectionTitle = styled.h2`
+  font-family: ${({ theme }) => theme.typography.fontFamily.display.join(', ')};
+  font-size: ${({ theme }) => theme.typography.fontSize['2xl']};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin-bottom: ${({ theme }) => theme.spacing[6]};
+  text-align: center;
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.typography.fontSize.xl};
+  }
+`;
+
+const ActionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: ${({ theme }) => theme.spacing[6]};
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const ActionCard = styled.div`
+  background: ${({ theme }) => theme.colors.background.elevated};
+  border: 1px solid ${({ theme }) => theme.colors.border.light};
+  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
+  padding: ${({ theme }) => theme.spacing[8]};
+  text-align: center;
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.transition.duration.normal} ${({ theme }) => theme.transition.timing.ease};
+  box-shadow: ${({ theme }) => theme.boxShadow.sm};
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: ${({ theme }) => theme.boxShadow.lg};
+    border-color: ${({ theme }) => theme.colors.primary[200]};
+  }
+`;
+
+const ActionIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, 
+    ${({ theme }) => theme.colors.primary[500]}, 
+    ${({ theme }) => theme.colors.primary[600]}
+  );
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  margin: 0 auto ${({ theme }) => theme.spacing[4]};
+  color: white;
+`;
+
+const ActionTitle = styled.h3`
+  font-size: ${({ theme }) => theme.typography.fontSize.xl};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin-bottom: ${({ theme }) => theme.spacing[2]};
+`;
+
+const ActionDescription = styled.p`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  color: ${({ theme }) => theme.colors.text.secondary};
+  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
 `;

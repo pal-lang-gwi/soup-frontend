@@ -5,7 +5,7 @@ import {
   getKeywordRequests,
   approveKeywordRequest,
   rejectKeywordRequest,
-} from '../api/admin/keyword';
+} from '../shared/api/admin/keyword';
 import KeywordRequestTable from '../components/KeywordRequestTable';
 import RejectModal from '../components/RejectModal';
 import Navbar from '../components/Navbar';

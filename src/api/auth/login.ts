@@ -4,10 +4,15 @@ import { api } from "../axiosInstance";
 
 //로그인
 export const onLogInSuccess = (response: AxiosResponse) => {
-    const { accessToken } = response.data;
-
+    const { accessToken } = response.data.data;
     api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-}
+    // 세션 쿠키는 서버에서 자동으로 설정되므로 클라이언트에서 별도 저장 불필요
+};
+
+export const onLogInError = (error: AxiosError) => {
+    // 로그인 실패 처리
+    throw error;
+};
 
 export const onLogIn = async (params: LogInAPIParams) => {
     try {
@@ -44,16 +49,13 @@ export const onSilentRefresh = async() => {
         const response = await api.post('/auth/refresh',);
         if(response.status === 200) {
             onLogInSuccess(response);
-            console.log("accessToken 재발급 완료");
         }
 
     }catch(error) {
         const axiosError = error as AxiosError;
-        console.log("refreshtoken fail", error);
-
+        
         if(axiosError.response?.status === 401){
-            console.log("refreshtoken 만료");
-            //TODO: 로그인 로직 구현현
+            //TODO: 로그인 로직 구현
         }
     }
 }

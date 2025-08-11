@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../features/auth";
 import AdditionalInfoModal from "./AdditionalInfoModal";
 
 interface AdditionalInfoGuardProps {

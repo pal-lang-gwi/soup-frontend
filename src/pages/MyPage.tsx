@@ -1,142 +1,63 @@
 import React from "react";
 import styled from "styled-components";
-import Navbar from "../components/Navbar";
+import Navbar from "../widgets/header/Navbar";
 import { useQuery } from "@tanstack/react-query";
-import { getUserInfo, getMyKeywords } from "../api/user/user";
-import { unsubscribeKeyword } from "../api/keywords";
+import { getUserInfo, getMyKeywords } from "../shared/api/user/user";
+import { unsubscribeKeyword } from "../shared/api/keywords";
 import { useQueryClient } from "@tanstack/react-query";
 import { FaUserCircle, FaEnvelope, FaVenusMars, FaBirthdayCake, FaLeaf, FaTimes } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { showError, showInfo, showKeywordUnsubscribed } from "../utils/sweetAlert";
-
-// 더미 데이터로 마이페이지를 테스트하려면 아래 상수를 true로 바꾸세요!
-const USE_DUMMY = false;
-
-// 더미 데이터 정의 (상단에 한 번만)
-const dummyUser = {
-  email: "testuser@soup.com",
-  nickname: "테스트유저",
-  gender: "FEMALE",
-  birthDate: "1999-01-01",
-};
-const dummyKeywordData = {
-  myKeywordDtos: [
-    { keywordId: 1, keyword: "AI", normalizedKeyword: "ai" },
-    { keywordId: 2, keyword: "경제", normalizedKeyword: "economy" },
-    { keywordId: 3, keyword: "정치", normalizedKeyword: "politics" },
-    { keywordId: 4, keyword: "테크", normalizedKeyword: "tech" },
-  ],
-  currentPage: 0,
-  totalPages: 1,
-};
+import { showError, showKeywordUnsubscribed } from "../shared/lib/sweetAlert";
 
 const MyPage: React.FC = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // 구독 해지 핸들러 (더미/실제 모두 대응)
+  // 구독 해지 핸들러
   const handleUnsubscribe = async (keywordId: number) => {
-    if (USE_DUMMY) {
-      showInfo(`ID: ${keywordId} 키워드 구독을 해지할게요! 👋`);
-      return;
-    }
     try {
       await unsubscribeKeyword(keywordId);
-      showKeywordUnsubscribed("키워드"); // 실제로는 키워드 이름을 가져와야 함
+      showKeywordUnsubscribed("키워드");
       queryClient.invalidateQueries({ queryKey: ["myKeywords"] });
-    } catch (e: any) {
-      showError(e.message || "구독 해지에 실패했어요. 다시 시도해주세요! 😅");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "구독 해지에 실패했어요. 다시 시도해주세요! 😅";
+      showError(errorMessage);
     }
   };
 
-  // 더미 데이터 강제 사용
-  if (USE_DUMMY) {
+  const { data: userInfo, isLoading: userLoading, error: userError } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: getUserInfo,
+  });
+
+  const { data: keywordData, isLoading: keywordLoading, error: keywordError } = useQuery({
+    queryKey: ["myKeywords"],
+    queryFn: () => getMyKeywords(),
+  });
+
+  if (userLoading || keywordLoading) {
     return (
       <PageBackground>
-        <Navbar />
         <MainWrapper>
           <SectionCard>
-            <SectionTitle>마이페이지 (임시 테스트용)</SectionTitle>
-            <SectionSubtitle>내 정보</SectionSubtitle>
-            <InfoList>
-              <InfoRow><FaEnvelope className="icon" /> <Label>이메일</Label> <Value>{dummyUser.email}</Value></InfoRow>
-              <InfoRow><FaUserCircle className="icon" /> <Label>닉네임</Label> <Value>{dummyUser.nickname}</Value></InfoRow>
-              <InfoRow><FaVenusMars className="icon" /> <Label>성별</Label> <Value>{dummyUser.gender}</Value></InfoRow>
-              <InfoRow><FaBirthdayCake className="icon" /> <Label>생년월일</Label> <Value>{dummyUser.birthDate}</Value></InfoRow>
-            </InfoList>
+            <SectionTitle>로딩 중...</SectionTitle>
           </SectionCard>
-
-          <CenteredSectionCard>
-            <SectionSubtitle>나의 뉴스 구독 현황</SectionSubtitle>
-            <KeywordContent>
-              <KeywordList>
-                {dummyKeywordData.myKeywordDtos.map((k) => (
-                  <KeywordPill key={k.keywordId}>
-                    {k.keyword}
-                    <UnsubscribeButton
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleUnsubscribe(k.keywordId);
-                      }}
-                      title="구독 해지"
-                    >
-                      <FaTimes />
-                    </UnsubscribeButton>
-                  </KeywordPill>
-                ))}
-              </KeywordList>
-            </KeywordContent>
-          </CenteredSectionCard>
-
-          {/* <SectionCard>
-            <SectionSubtitle>설정</SectionSubtitle>
-            <SettingContent>
-              <SettingRow>
-                <FaCog className="icon" />
-                <span>비밀번호 변경, 알림 설정 등 사용자가 변경할 수 있는 옵션.</span>
-              </SettingRow>
-              <SettingButton>설정 바로가기</SettingButton>
-            </SettingContent>
-          </SectionCard> */}
         </MainWrapper>
       </PageBackground>
     );
   }
 
-  // 실제 API 호출
-  const {
-    data: user,
-    isLoading: userLoading,
-    isError: userError,
-    error: userErrorObj,
-  } = useQuery({
-    queryKey: ["userInfo"],
-    queryFn: getUserInfo,
-  });
-
-  const {
-    data: keywordData,
-    isLoading: keywordsLoading,
-    isError: keywordError,
-    error: keywordErrorObj,
-  } = useQuery({
-    queryKey: ["myKeywords"],
-    queryFn: () => getMyKeywords(),
-  });
-
-  // 로딩
-  if (userLoading || keywordsLoading) return <p>로딩 중...</p>;
-
-  // 오류 또는 데이터 없음 처리
-  if (userError || keywordError || !user || !keywordData) {
+  if (userError || keywordError) {
     return (
-      <p>
-        오류 발생: { (userErrorObj as Error)?.message || (keywordErrorObj as Error)?.message || "유저 정보 또는 키워드 정보를 불러올 수 없습니다." }
-      </p>
+      <PageBackground>
+        <MainWrapper>
+          <SectionCard>
+            <SectionTitle>오류가 발생했습니다</SectionTitle>
+            <SectionSubtitle>페이지를 새로고침해주세요</SectionSubtitle>
+          </SectionCard>
+        </MainWrapper>
+      </PageBackground>
     );
   }
 
-  // 정상 렌더링
   return (
     <PageBackground>
       <Navbar />
@@ -145,55 +66,54 @@ const MyPage: React.FC = () => {
           <SectionTitle>마이페이지</SectionTitle>
           <SectionSubtitle>내 정보</SectionSubtitle>
           <InfoList>
-            <InfoRow><FaEnvelope className="icon" /> <Label>이메일</Label> <Value>{user.email}</Value></InfoRow>
-            <InfoRow><FaUserCircle className="icon" /> <Label>닉네임</Label> <Value>{user.nickname}</Value></InfoRow>
-            <InfoRow><FaVenusMars className="icon" /> <Label>성별</Label> <Value>{user.gender}</Value></InfoRow>
-            <InfoRow><FaBirthdayCake className="icon" /> <Label>생년월일</Label> <Value>{user.birthDate}</Value></InfoRow>
+            <InfoRow>
+              <FaEnvelope className="icon" />
+              <Label>이메일</Label>
+              <Value>{userInfo?.email || "정보 없음"}</Value>
+            </InfoRow>
+            <InfoRow>
+              <FaUserCircle className="icon" />
+              <Label>닉네임</Label>
+              <Value>{userInfo?.nickname || "정보 없음"}</Value>
+            </InfoRow>
+            <InfoRow>
+              <FaVenusMars className="icon" />
+              <Label>성별</Label>
+              <Value>{userInfo?.gender || "정보 없음"}</Value>
+            </InfoRow>
+            <InfoRow>
+              <FaBirthdayCake className="icon" />
+              <Label>생년월일</Label>
+              <Value>{userInfo?.birthDate || "정보 없음"}</Value>
+            </InfoRow>
           </InfoList>
         </SectionCard>
 
-        <CenteredSectionCard>
-          <SectionSubtitle>나의 뉴스 구독 현황</SectionSubtitle>
+        <SectionCard>
+          <SectionTitle>구독 중인 키워드</SectionTitle>
           <KeywordContent>
-            {keywordData.myKeywordDtos.length === 0 ? (
-              <NoKeywordMsg>
-                <FaLeaf style={{ fontSize: "2rem", color: "#48BB78", marginBottom: 8 }} />
-                구독 중인 키워드가 없습니다.
-              </NoKeywordMsg>
-            ) : (
+            {keywordData?.myKeywordDtos && keywordData.myKeywordDtos.length > 0 ? (
               <KeywordList>
-                {keywordData.myKeywordDtos.map((k) => (
-                  <KeywordPill
-                    key={k.keywordId}
-                    onClick={() => navigate(`/news?keyword=${encodeURIComponent(k.keyword)}`)}
-                  >
-                    {k.keyword}
+                {keywordData.myKeywordDtos.map((keyword) => (
+                  <KeywordPill key={keyword.keywordId}>
+                    <FaLeaf className="keyword-icon" />
+                    {keyword.keyword}
                     <UnsubscribeButton
-                      onClick={e => {
+                      onClick={(e) => {
                         e.stopPropagation();
-                        handleUnsubscribe(k.keywordId);
+                        handleUnsubscribe(keyword.keywordId);
                       }}
-                      title="구독 해지"
                     >
                       <FaTimes />
                     </UnsubscribeButton>
                   </KeywordPill>
                 ))}
               </KeywordList>
+            ) : (
+              <NoKeywordMsg>구독 중인 키워드가 없습니다.</NoKeywordMsg>
             )}
           </KeywordContent>
-        </CenteredSectionCard>
-
-        {/* <SectionCard>
-          <SectionSubtitle>설정</SectionSubtitle>
-          <SettingContent>
-            <SettingRow>
-              <FaCog className="icon" />
-              <span>비밀번호 변경, 알림 설정 등 사용자가 변경할 수 있는 옵션.</span>
-            </SettingRow>
-            <SettingButton>설정 바로가기</SettingButton>
-          </SettingContent>
-        </SectionCard> */}
+        </SectionCard>
       </MainWrapper>
     </PageBackground>
   );
@@ -259,10 +179,6 @@ const SectionCard = styled.section`
     gap: 16px;
     border-radius: 14px;
   }
-`;
-
-const CenteredSectionCard = styled(SectionCard)`
-  text-align: center;
 `;
 
 const SectionTitle = styled.h1`

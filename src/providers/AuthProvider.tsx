@@ -14,18 +14,16 @@ const AuthProvider = ({children} : AuthProviderProps) => {
         const checkLogin = async() =>{
             try{
                 await onSilentRefresh();
-                console.log('토큰있어서 그냥 로그인할게요');
                 if (location.pathname === "/") {
                     navigate('/signup');
                 }
             }catch(error){
-                console.log('에러남', error);
+                // 에러 처리
             }
         };
         checkLogin();
     }, [navigate]);
     return <>{children}</>;
-    
 };
 
 export default AuthProvider

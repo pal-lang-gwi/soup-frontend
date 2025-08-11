@@ -4,7 +4,7 @@ import styled from "styled-components";
 import LoginForm from "../components/LoginForm";
 import SendButton from "./SendButton";
 import { UI_CONSTANTS } from "../constants/ui";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../features/auth";
 
 const Navbar = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
