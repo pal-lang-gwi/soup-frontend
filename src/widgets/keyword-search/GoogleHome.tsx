@@ -22,7 +22,6 @@ import {
   showKeywordRequested
 } from "../../shared/lib/sweetAlert";
 import Button from "../../shared/ui/Button";
-import Navigation from "../../shared/ui/Navigation";
 
 export default function GoogleHome() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -127,8 +126,6 @@ export default function GoogleHome() {
 
   return (
     <Root>
-      <Navigation />
-      
       <MainContent>
         <HeroSection>
           <HeroTitle>

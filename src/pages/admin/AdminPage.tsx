@@ -8,7 +8,7 @@ import {
 } from '../../shared/api/admin/keyword';
 import KeywordRequestTable from '../../components/KeywordRequestTable';
 import RejectModal from '../../components/RejectModal';
-import Navbar from '../../widgets/header/Navbar';
+import Navigation from '../../shared/ui/Navigation';
 import { AdminKeywordResponseListDto } from '../../types/admin';
 
 const AdminPage: React.FC = () => {
@@ -99,7 +99,7 @@ const AdminPage: React.FC = () => {
   return (
     <>
       {/* 고정 네비게이션 */}
-      <Navbar />
+      <Navigation />
 
       {/* 본문 */}
       <div

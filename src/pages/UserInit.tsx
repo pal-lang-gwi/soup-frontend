@@ -5,9 +5,9 @@ import styled from "styled-components";
 import {
 	initUserAdditionalInfo,
 	UserAdditionalInfoRequestDto,
-} from "../api/user";
+} from "../shared/api/user";
 import { useAuth } from "../features/auth";
-import Navbar from "../components/Navbar";
+import Navigation from "../shared/ui/Navigation";
 
 const UserInit: React.FC = () => {
 	const navigate = useNavigate();
@@ -65,7 +65,7 @@ const UserInit: React.FC = () => {
 
 	return (
 		<>
-			<Navbar />
+			<Navigation />
 			<Container>
 				<FormWrapper>
 					<Title>환영합니다! 🎉</Title>

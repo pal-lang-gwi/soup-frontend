@@ -205,6 +205,11 @@ const PageContainer = styled.div`
     ${({ theme }) => theme.colors.background.secondary} 100%
   );
   min-height: 100vh;
+  padding-top: 72px;
+  
+  @media (max-width: 768px) {
+    padding-top: 64px;
+  }
 `;
 
 const HeroSection = styled.section`

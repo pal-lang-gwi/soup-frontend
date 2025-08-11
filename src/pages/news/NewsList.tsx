@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import styled, { keyframes } from "styled-components";
 import { getFilteredNews, DailyNewsRequestDto } from "../../shared/api/news";
 import FilterInput from "../../features/news-browsing/FilterInput";
-import Navbar from "../../widgets/header/Navbar";
+import Navigation from "../../shared/ui/Navigation";
 import { UI_CONSTANTS } from "../../constants/ui";
 import { useSearchParams } from "react-router-dom";
 import ExpandableNewsCard from "../../features/news-browsing/ExpandableCardNews";
@@ -79,7 +79,7 @@ function NewsList() {
   /* ---------------- 실제 화면 ---------------------------------------- */
   return (
     <>
-      <Navbar />
+      <Navigation />
       <PageBackground>
         <MainWrapper>
           <HeaderSection>

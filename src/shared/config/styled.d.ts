@@ -19,6 +19,8 @@ declare module 'styled-components' {
         mainColor: string;
         buttonColor: string;
         mainGreen: string;
+        primaryBlue: string;
+        hoverBlue: string;
         lightGreen: string;
         darkGreen: string;
         success: string;

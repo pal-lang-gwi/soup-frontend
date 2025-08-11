@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { getFilteredNews, DailyNewsRequestDto, NewsDto } from "../../shared/api/news";
 import FilterInput from "../../features/news-browsing/FilterInput";
-import Navbar from "../header/Navbar";
+import Navigation from "../../shared/ui/Navigation";
 import { UI_CONSTANTS } from "../../constants/ui";
 import { extractDateFromISO } from "../../shared/lib/dateUtils";
 import { useSearchParams } from "react-router-dom";
@@ -46,7 +46,7 @@ function NewsList() {
 
   return (
     <>
-      <Navbar />
+      <Navigation />
       <Background>
         <OuterContentWrapper>
           <Header>✉️뉴스 조회✉️</Header>

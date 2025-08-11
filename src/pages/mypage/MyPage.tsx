@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Navbar from "../../widgets/header/Navbar";
+import Navigation from "../../shared/ui/Navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getUserInfo, getMyKeywords } from "../../shared/api/user/user";
 import { unsubscribeKeyword } from "../../shared/api/keywords";
@@ -36,7 +36,7 @@ const MyPage: React.FC = () => {
   if (userLoading || keywordLoading) {
     return (
       <PageBackground>
-        <Navbar />
+        <Navigation />
         <MainWrapper>
           <SectionCard>
             <SectionTitle>로딩 중...</SectionTitle>
@@ -49,7 +49,7 @@ const MyPage: React.FC = () => {
   if (userError || keywordError) {
     return (
       <PageBackground>
-        <Navbar />
+        <Navigation />
         <MainWrapper>
           <SectionCard>
             <SectionTitle>오류가 발생했습니다</SectionTitle>
@@ -62,7 +62,7 @@ const MyPage: React.FC = () => {
 
   return (
     <PageBackground>
-      <Navbar />
+      <Navigation />
       <MainWrapper>
         <SectionCard>
           <SectionTitle>마이페이지</SectionTitle>
@@ -129,14 +129,10 @@ export default MyPage;
 const PageBackground = styled.div`
   min-height: 100vh;
   background: ${({ theme }) => theme.background.gradient.secondary};
-  padding-top: 80px;
+  padding-top: 72px;
   
   @media (max-width: 768px) {
-    padding-top: 60px;
-  }
-  
-  @media (max-width: 480px) {
-    padding-top: 50px;
+    padding-top: 64px;
   }
 `;
 

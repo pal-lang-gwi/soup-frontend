@@ -16,7 +16,7 @@ import UserInit from "./pages/UserInit";
 import { AdditionalInfoGuard } from "./features/auth";
 import "./App.css";
 import "./index.css";
-import MyPage from "./pages/MyPage";
+import { MyPage } from "./pages/mypage";
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient({

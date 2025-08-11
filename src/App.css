@@ -11,7 +11,7 @@
 	/* padding: 2rem; */
 	text-align: center;
 	min-height: 100vh;
-	padding-top: 60px; /* 네비게이션 바 높이만큼 상단 여백 */
+	/* padding-top 제거 - 각 페이지에서 개별 관리 */
 }
 
 .logo {
@@ -52,10 +52,6 @@
 
 /* 모바일 반응형 레이아웃 */
 @media (max-width: 768px) {
-	#root {
-		padding-top: 60px;
-	}
-
 	.card {
 		padding: 1em;
 	}

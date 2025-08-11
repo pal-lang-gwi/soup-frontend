@@ -305,9 +305,11 @@ const modernTheme = {
 // Legacy theme properties for backward compatibility
 const legacyTheme = {
   // Legacy colors
-  mainColor: '#0b9bf0',
-  buttonColor: '#0b9bf0', 
-  mainGreen: '#22c55e',
+  mainColor: '#3182f6',
+  buttonColor: '#2563eb', 
+  mainGreen: '#48BB78',
+  primaryBlue: '#3182f6',
+  hoverBlue: '#2563eb',
   lightGreen: '#dcfce7',
   darkGreen: '#16a34a',
   

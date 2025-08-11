@@ -3,7 +3,7 @@ import styled from "styled-components";
 import SearchInput from "../components/SearchInput";
 import { theme } from "../styles/theme";
 import { useKeywords } from "../hooks/useKeywords";
-import { subscribeKeywords } from "../api/keywords";
+import { subscribeKeywords } from "../shared/api/keywords";
 
 // const KEYWORDS = [
 //     { id: 1, name: 'AI' },

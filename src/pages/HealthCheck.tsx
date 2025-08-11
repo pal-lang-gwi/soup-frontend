@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { axiosServerHealth } from "../api/serverhealth";
-import Navbar from "../components/Navbar";
+import { axiosServerHealth } from "../shared/api/serverhealth";
+import Navigation from "../shared/ui/Navigation";
 import RecheckButton from "../components/RecheckButton";
 
 function HealthCheck() {
@@ -19,7 +19,7 @@ function HealthCheck() {
 
 	return (
 		<>
-			<Navbar />
+			<Navigation />
 			<Background>
 				<ContentWrapper>
 					<RecheckButton onClick={handleHealthCheck}>서버야!</RecheckButton>

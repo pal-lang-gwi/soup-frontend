@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router";
 import NewsPage from "../../widgets/news-list/NewsPage";
 import HealthCheck from "../../pages/HealthCheck";
-import HomePage from "../../pages/HomePage";
-import NewsList from "../../pages/NewsList";
-import AdminPage from "../../pages/AdminPage";
+import { HomePage } from "../../pages/home";
+import { NewsList } from "../../pages/news";
+import { AdminPage } from "../../pages/admin";
 import AdminGuard from "../../components/AdminGuard";
-import LoggedInHomePage from "../../pages/home/LoggedInHomePage";
-import AdditionalInfoGuard from "../../features/auth/AdditionalInfoGuard";
+import { LoggedInHomePage } from "../../pages/home";
+import { AdditionalInfoGuard } from "../../features/auth";
 
 const AppRoutes = () => (
 	<Routes>
