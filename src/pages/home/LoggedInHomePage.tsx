@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { FiSearch, FiTrendingUp, FiPlus, FiCheck, FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { searchKeywords } from "../../shared/api/keywords";
 import { searchKeywordDto } from "../../entities/keyword";
 import { UI_CONSTANTS } from "../../constants/ui";
-import Button from "../../shared/ui/Button";
-import Card, { CardBody } from "../../shared/ui/Card";
 
 const LoggedInHomePage: React.FC = () => {
 	const [searchKeyword, setSearchKeyword] = useState("");
